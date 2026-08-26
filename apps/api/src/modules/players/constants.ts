@@ -1,0 +1,8 @@
+export const SOCKET_EVENTS = {
+  PLAY: "PLAY",
+  PAUSE: "PAUSE",
+  RESUME: "RESUME",
+  STOP: "STOP",
+  QUEUE_UPDATED: "QUEUE_UPDATED",
+  VOLUME: "VOLUME",
+} as const;
