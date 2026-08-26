@@ -1,6 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-interface RequestOptions extends RequestInit {
+interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
 }
 

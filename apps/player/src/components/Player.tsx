@@ -5,6 +5,8 @@ import { YouTubePlayer } from "./YouTubePlayer";
 import { Queue } from "./Queue";
 import { useSocket } from "@/hooks/useSocket";
 import * as api from "@/api";
+import { tryCatch } from "@/utils/try-catch";
+import { isNotNil } from "@/utils/ts-utils";
 import {
   Play,
   Pause,
@@ -14,6 +16,7 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
+import Link from "next/link";
 
 interface PlayerState {
   status: "idle" | "playing" | "paused" | "stopped";
@@ -49,12 +52,14 @@ export function Player({ playerId }: PlayerProps) {
   // Fetch initial state via REST API on mount
   useEffect(() => {
     const fetchInitialState = async () => {
-      try {
-        const data = await api.players.getState(Number(playerId));
-        setState(data);
-      } catch (error) {
+      const [error, data] = await tryCatch(
+        api.players.getState(Number(playerId)),
+      );
+      if (error) {
         console.error("Failed to fetch initial state:", error);
+        return;
       }
+      setState(data as PlayerState);
     };
 
     fetchInitialState();
@@ -109,19 +114,18 @@ export function Player({ playerId }: PlayerProps) {
 
   // Fetch queue
   const fetchQueue = async () => {
-    try {
-      const data = await api.players.getQueue(Number(playerId));
-      setQueue(data);
-    } catch (error) {
+    const [error, data] = await tryCatch(api.players.getQueue(Number(playerId)));
+    if (error) {
       console.error("Failed to fetch queue:", error);
+      return;
     }
+    setQueue(data);
   };
 
   // Handle video ended
   const handleVideoEnded = async () => {
-    try {
-      await api.players.videoEnded(Number(playerId));
-    } catch (error) {
+    const [error] = await tryCatch(api.players.videoEnded(Number(playerId)));
+    if (error) {
       console.error("Failed to report video ended:", error);
     }
   };
@@ -136,8 +140,12 @@ export function Player({ playerId }: PlayerProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
-          <Music className="w-8 h-8 text-spotify-green" />
-          <h1 className="text-section-title font-title font-bold">Teleplay</h1>
+          <Link href="/" className="flex">
+            <Music className="w-8 h-8 text-spotify-green mr-2" />
+            <h1 className="text-section-title font-title font-bold">
+              Teleplay
+            </h1>
+          </Link>
         </div>
         <div className="flex items-center gap-2">
           {connected ? (
@@ -155,7 +163,7 @@ export function Player({ playerId }: PlayerProps) {
         {/* Player */}
         <div className="lg:col-span-2">
           <div className="card-spotify">
-            {state.videoId ? (
+            {isNotNil(state.videoId) ? (
               <YouTubePlayer
                 videoId={state.videoId}
                 status={state.status}
@@ -173,12 +181,12 @@ export function Player({ playerId }: PlayerProps) {
             )}
 
             {/* Now Playing Info */}
-            {state.title && (
+            {isNotNil(state.title) && (
               <div className="mt-4">
                 <h2 className="text-feature-heading font-ui font-semibold">
                   {state.title}
                 </h2>
-                {state.requestedBy && (
+                {isNotNil(state.requestedBy) && (
                   <p className="text-caption text-text-secondary mt-1">
                     Requested by {state.requestedBy}
                   </p>
@@ -192,19 +200,19 @@ export function Player({ playerId }: PlayerProps) {
                 onClick={async () => {
                   const id = Number(playerId);
                   const action = state.status === "paused" ? "resume" : "pause";
-                  try {
-                    if (action === "pause") {
-                      await api.players.pause(id);
-                    } else {
-                      await api.players.resume(id);
-                    }
-                    setState((prev) => ({
-                      ...prev,
-                      status: action === "pause" ? "paused" : "playing",
-                    }));
-                  } catch (error) {
+                  const [error] = await tryCatch(
+                    action === "pause"
+                      ? api.players.pause(id)
+                      : api.players.resume(id),
+                  );
+                  if (error) {
                     console.error(`Failed to ${action}:`, error);
+                    return;
                   }
+                  setState((prev) => ({
+                    ...prev,
+                    status: action === "pause" ? "paused" : "playing",
+                  }));
                 }}
                 className="btn-spotify flex items-center gap-2"
               >
@@ -222,21 +230,23 @@ export function Player({ playerId }: PlayerProps) {
               </button>
               <button
                 onClick={async () => {
-                  try {
-                    await api.players.stop(Number(playerId));
-                    setState((prev) => ({
-                      ...prev,
-                      status: "stopped",
-                      videoId: null,
-                      title: null,
-                      thumbnail: null,
-                      duration: null,
-                      position: 0,
-                      requestedBy: null,
-                    }));
-                  } catch (error) {
+                  const [error] = await tryCatch(
+                    api.players.stop(Number(playerId)),
+                  );
+                  if (error) {
                     console.error("Failed to stop:", error);
+                    return;
                   }
+                  setState((prev) => ({
+                    ...prev,
+                    status: "stopped",
+                    videoId: null,
+                    title: null,
+                    thumbnail: null,
+                    duration: null,
+                    position: 0,
+                    requestedBy: null,
+                  }));
                 }}
                 className="btn-spotify flex items-center gap-2"
               >
@@ -253,9 +263,10 @@ export function Player({ playerId }: PlayerProps) {
                   onChange={async (e) => {
                     const volume = parseInt(e.target.value, 10);
                     setState((prev) => ({ ...prev, volume }));
-                    try {
-                      await api.players.setVolume(Number(playerId), volume);
-                    } catch (error) {
+                    const [error] = await tryCatch(
+                      api.players.setVolume(Number(playerId), volume),
+                    );
+                    if (error) {
                       console.error("Failed to set volume:", error);
                     }
                   }}
