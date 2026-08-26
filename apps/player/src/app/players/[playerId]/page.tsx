@@ -1,11 +1,11 @@
-"use client";
-
-import { useParams } from "next/navigation";
 import { Player } from "@/components/Player";
 
-export default function PlayerPage() {
-  const params = useParams();
-  const playerId = params.playerId as string;
+interface PlayerPageProps {
+  params: Promise<{ playerId: string }>;
+}
+
+export default async function PlayerPage({ params }: PlayerPageProps) {
+  const { playerId } = await params;
 
   return <Player playerId={playerId} />;
 }
