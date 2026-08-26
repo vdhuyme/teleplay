@@ -12,8 +12,6 @@ import {
   Square,
   Volume2,
   Users,
-  ListMusic,
-  History,
   Trash2,
   X,
   Eye,
@@ -45,7 +43,9 @@ export default function PlayersPage() {
   const [deleting, setDeleting] = useState(false);
   const [expandedPlayer, setExpandedPlayer] = useState<number | null>(null);
   const [playerQueue, setPlayerQueue] = useState<api.groups.QueueItem[]>([]);
-  const [playerHistory, setPlayerHistory] = useState<api.groups.PlayHistory[]>([]);
+  const [playerHistory, setPlayerHistory] = useState<api.groups.PlayHistory[]>(
+    [],
+  );
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   useEffect(() => {
@@ -108,10 +108,7 @@ export default function PlayersPage() {
     setLoadingDetails(true);
 
     const [err, data] = await tryCatch(
-      Promise.all([
-        api.groups.queue(groupId),
-        api.groups.history(groupId, 5),
-      ]),
+      Promise.all([api.groups.queue(groupId), api.groups.history(groupId, 5)]),
     );
     if (!err && data) {
       setPlayerQueue(data[0]);
@@ -146,13 +143,17 @@ export default function PlayersPage() {
 
     const [actionErr] = await tryCatch(apiCall!);
     if (actionErr) {
-      setError(actionErr instanceof Error ? actionErr.message : `Failed to ${action}`);
+      setError(
+        actionErr instanceof Error ? actionErr.message : `Failed to ${action}`,
+      );
       return;
     }
 
     const [listErr, listData] = await tryCatch(api.groups.list());
     if (listErr) {
-      setError(listErr instanceof Error ? listErr.message : `Failed to refresh`);
+      setError(
+        listErr instanceof Error ? listErr.message : `Failed to refresh`,
+      );
       return;
     }
     setGroups(listData);

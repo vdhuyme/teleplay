@@ -114,7 +114,9 @@ export function Player({ playerId }: PlayerProps) {
 
   // Fetch queue
   const fetchQueue = async () => {
-    const [error, data] = await tryCatch(api.players.getQueue(Number(playerId)));
+    const [error, data] = await tryCatch(
+      api.players.getQueue(Number(playerId)),
+    );
     if (error) {
       console.error("Failed to fetch queue:", error);
       return;
