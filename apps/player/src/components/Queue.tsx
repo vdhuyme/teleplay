@@ -1,19 +1,10 @@
 "use client";
 
 import { Music, ListMusic } from "lucide-react";
-
-interface QueueItem {
-  id: number;
-  videoId: string;
-  title: string;
-  thumbnail: string;
-  duration: number;
-  addedBy: string;
-  addedAt: string;
-}
+import type { QueueItem as ApiQueueItem } from "@/api/players";
 
 interface QueueProps {
-  items: QueueItem[];
+  items: ApiQueueItem[];
 }
 
 export function Queue({ items }: QueueProps) {
@@ -54,7 +45,7 @@ export function Queue({ items }: QueueProps) {
                   {item.title}
                 </p>
                 <p className="text-caption text-text-secondary">
-                  {formatDuration(item.duration)} · {item.addedBy}
+                  {formatDuration(item.duration)} · {item.requestedBy || "Unknown"}
                 </p>
               </div>
             </div>

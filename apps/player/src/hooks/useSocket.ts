@@ -3,15 +3,69 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 
+interface StateSyncEvent {
+  type: "STATE_SYNC";
+  state: {
+    status: "idle" | "playing" | "paused" | "stopped";
+    videoId: string | null;
+    title: string | null;
+    thumbnail: string | null;
+    duration: number | null;
+    position: number;
+    volume: number;
+    requestedBy: string | null;
+  };
+}
+
+interface PlayEvent {
+  type: "PLAY";
+  videoId: string;
+  title: string;
+  thumbnail: string;
+  duration: number;
+  position: number;
+  requestedBy: string | null;
+}
+
+interface PauseEvent {
+  type: "PAUSE";
+}
+
+interface ResumeEvent {
+  type: "RESUME";
+}
+
+interface StopEvent {
+  type: "STOP";
+}
+
+interface VolumeEvent {
+  type: "VOLUME";
+  volume: number;
+}
+
+interface QueueUpdatedEvent {
+  type: "QUEUE_UPDATED";
+}
+
+type SocketEvent =
+  | StateSyncEvent
+  | PlayEvent
+  | PauseEvent
+  | ResumeEvent
+  | StopEvent
+  | VolumeEvent
+  | QueueUpdatedEvent;
+
 interface UseSocketReturn {
   connected: boolean;
-  lastEvent: any | null;
-  emit: (event: string, data?: any) => void;
+  lastEvent: SocketEvent | null;
+  emit: (event: string, data?: Record<string, unknown>) => void;
 }
 
 export function useSocket(playerId: string): UseSocketReturn {
   const [connected, setConnected] = useState(false);
-  const [lastEvent, setLastEvent] = useState<any | null>(null);
+  const [lastEvent, setLastEvent] = useState<SocketEvent | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -68,7 +122,7 @@ export function useSocket(playerId: string): UseSocketReturn {
     };
   }, [playerId]);
 
-  const emit = useCallback((event: string, data?: any) => {
+  const emit = useCallback((event: string, data?: Record<string, unknown>) => {
     if (socketRef.current) {
       socketRef.current.emit(event, data);
     }
