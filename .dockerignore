@@ -1,0 +1,25 @@
+node_modules
+dist
+.git
+.gitignore
+.claude
+.vscode
+.idea
+*.log
+.env
+.env.*
+!.env.example
+
+README.md
+CODE_OF_CONDUCT.md
+LICENSE
+logo.png
+docker-compose.yml
+
+# apps/<x>/node_modules — rebuilt inside image
+apps/*/node_modules
+apps/*/dist
+
+# packages — source copied explicitly in Dockerfile
+packages/*/node_modules
+packages/*/dist

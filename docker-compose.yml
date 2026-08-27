@@ -1,21 +1,42 @@
 services:
-  mysql:
-    image: mysql:8.4
-    container_name: teleplay-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: teleplay
-      MYSQL_USER: teleplay
-      MYSQL_PASSWORD: teleplay
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    image: teleplay-api:latest
+    container_name: teleplay-api
+    restart: unless-stopped
+    env_file:
+      - apps/api/.env
     ports:
-      - '3306:3306'
-    volumes:
-      - mysql-data:/var/lib/mysql
+      - "${API_PORT:-9001}:${API_PORT:-9001}"
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      interval: 10s
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--spider",
+          "http://localhost:${API_PORT:-9001}/healthz",
+        ]
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 3
+      start_period: 20s
 
-volumes:
-  mysql-data:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: bot
+    image: teleplay-bot:latest
+    container_name: teleplay-bot
+    restart: unless-stopped
+    env_file:
+      - apps/bot/.env
+    environment:
+      API_URL: "http://api:${API_PORT:-9001}"
+    depends_on:
+      api:
+        condition: service_healthy
