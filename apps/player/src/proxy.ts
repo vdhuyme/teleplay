@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { isNil } from "@teleplay/core";
 
 export async function proxy(req: NextRequest) {
   const token = await getToken({
@@ -8,11 +7,19 @@ export async function proxy(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  if (isNil(token)) {
+  const { pathname } = req.nextUrl;
+
+  if (pathname === "/" && token) {
+    return NextResponse.redirect(new URL("/players", req.url));
+  }
+
+  if (pathname.startsWith("/players") && !token) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/players/:path*"] };
+export const config = {
+  matcher: ["/", "/players/:path*"],
+};
