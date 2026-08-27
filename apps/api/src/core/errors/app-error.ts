@@ -1,4 +1,4 @@
-import { HTTP_STATUS_CODE } from "../../utils/http-status";
+import { HTTP_STATUS_CODE } from '../../utils/http-status';
 
 export class AppError extends Error {
   constructor(
@@ -25,7 +25,7 @@ export class QueueEmptyError extends AppError {
   constructor() {
     super(
       QueueEmptyError.name,
-      "The queue is empty",
+      'The queue is empty',
       HTTP_STATUS_CODE.NOT_FOUND,
     );
   }
@@ -35,7 +35,7 @@ export class VideoNotFoundError extends AppError {
   constructor() {
     super(
       VideoNotFoundError.name,
-      "No video found for the query",
+      'No video found for the query',
       HTTP_STATUS_CODE.NOT_FOUND,
     );
   }
@@ -51,7 +51,7 @@ export class InvalidVolumeError extends AppError {
   constructor() {
     super(
       InvalidVolumeError.name,
-      "Volume must be between 0 and 100",
+      'Volume must be between 0 and 100',
       HTTP_STATUS_CODE.BAD_REQUEST,
     );
   }

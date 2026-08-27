@@ -1,14 +1,14 @@
-import { db, queueItems, playHistory, groups } from "../../database/index";
-import { eq, and, asc, desc, sql } from "drizzle-orm";
-import { Youtube } from "@teleplay/youtube";
-import { NoVideoFoundError } from "./error";
-import { PLAYER_STATUS } from "../groups";
-import { sio } from "../..";
-import { isNil } from "@teleplay/core";
-import { SOCKET_EVENTS } from "./constants";
-import { App } from "../../config/env";
+import { db, queueItems, playHistory, groups } from '../../database/index';
+import { eq, and, asc, desc, sql } from 'drizzle-orm';
+import { Youtube } from '@teleplay/youtube';
+import { NoVideoFoundError } from './error';
+import { PLAYER_STATUS } from '../groups';
+import { sio } from '../..';
+import { isNil } from '@teleplay/core';
+import { SOCKET_EVENTS } from './constants';
+import { App } from '../../config/env';
 
-const youtubeClient = new Youtube(App.getOrThrow("YOUTUBE_API_KEY"));
+const youtubeClient = new Youtube(App.getOrThrow('YOUTUBE_API_KEY'));
 export const search = (query: string) => youtubeClient.search(query);
 export const getTrending = () => youtubeClient.trending();
 export const getCategories = () => youtubeClient.categories();
@@ -155,7 +155,7 @@ export async function skip(groupId: number) {
     await db.insert(playHistory).values({
       groupId,
       videoId: state.videoId,
-      title: state.title || "Unknown",
+      title: state.title || 'Unknown',
       requestedBy: state.requestedBy,
     });
   }
@@ -222,7 +222,7 @@ export async function videoEnded(groupId: number) {
     await db.insert(playHistory).values({
       groupId,
       videoId: state.videoId,
-      title: state.title ?? "Unknown",
+      title: state.title ?? 'Unknown',
       requestedBy: state.requestedBy,
     });
   }
@@ -298,7 +298,7 @@ export async function playFromQueue(groupId: number, itemId: number) {
     await db.insert(playHistory).values({
       groupId,
       videoId: state.videoId,
-      title: state.title ?? "Unknown",
+      title: state.title ?? 'Unknown',
       requestedBy: state.requestedBy,
     });
   }

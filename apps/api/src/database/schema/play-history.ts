@@ -4,23 +4,23 @@ import {
   timestamp,
   index,
   bigint,
-} from "drizzle-orm/mysql-core";
+} from 'drizzle-orm/mysql-core';
 
-import { groups } from "./groups";
+import { groups } from './groups';
 
 export const playHistory = mysqlTable(
-  "play_history",
+  'play_history',
   {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    groupId: bigint("group_id", { mode: "number" })
+    id: bigint('id', { mode: 'number' }).primaryKey().autoincrement(),
+    groupId: bigint('group_id', { mode: 'number' })
       .notNull()
-      .references(() => groups.id, { onDelete: "cascade" }),
-    videoId: varchar("video_id", { length: 32 }).notNull(),
-    title: varchar("title", { length: 500 }).notNull(),
-    requestedBy: varchar("requested_by", { length: 255 }),
-    playedAt: timestamp("played_at").defaultNow().notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+      .references(() => groups.id, { onDelete: 'cascade' }),
+    videoId: varchar('video_id', { length: 32 }).notNull(),
+    title: varchar('title', { length: 500 }).notNull(),
+    requestedBy: varchar('requested_by', { length: 255 }),
+    playedAt: timestamp('played_at').defaultNow().notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
   },
-  (table) => [index("group_played_at_idx").on(table.groupId, table.playedAt)],
+  (table) => [index('group_played_at_idx').on(table.groupId, table.playedAt)],
 );

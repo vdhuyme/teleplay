@@ -1,4 +1,4 @@
-import { request } from "./client";
+import { request } from './client';
 
 export interface Group {
   id: number;
@@ -42,7 +42,9 @@ export interface PaginatedResponse<T> {
 }
 
 export function list(page = 1, limit = 10) {
-  return request<PaginatedResponse<Group>>(`/groups?page=${page}&limit=${limit}`);
+  return request<PaginatedResponse<Group>>(
+    `/groups?page=${page}&limit=${limit}`,
+  );
 }
 
 export function get(groupId: number) {
@@ -60,39 +62,42 @@ export function history(groupId: number, page = 1, limit = 20) {
 }
 
 export function remove(groupId: number) {
-  return request(`/groups/${groupId}`, { method: "DELETE" });
+  return request(`/groups/${groupId}`, { method: 'DELETE' });
 }
 
-export function play(groupId: number, data: {
-  query: string;
-  requestedBy?: string;
-  groupName?: string;
-}) {
+export function play(
+  groupId: number,
+  data: {
+    query: string;
+    requestedBy?: string;
+    groupName?: string;
+  },
+) {
   return request(`/groups/${groupId}/play`, {
-    method: "POST",
+    method: 'POST',
     body: data,
   });
 }
 
 export function pause(groupId: number) {
-  return request(`/groups/${groupId}/pause`, { method: "POST" });
+  return request(`/groups/${groupId}/pause`, { method: 'POST' });
 }
 
 export function resume(groupId: number) {
-  return request(`/groups/${groupId}/resume`, { method: "POST" });
+  return request(`/groups/${groupId}/resume`, { method: 'POST' });
 }
 
 export function stop(groupId: number) {
-  return request(`/groups/${groupId}/stop`, { method: "POST" });
+  return request(`/groups/${groupId}/stop`, { method: 'POST' });
 }
 
 export function skip(groupId: number) {
-  return request(`/groups/${groupId}/skip`, { method: "POST" });
+  return request(`/groups/${groupId}/skip`, { method: 'POST' });
 }
 
 export function setVolume(groupId: number, volume: number) {
   return request(`/groups/${groupId}/volume`, {
-    method: "POST",
+    method: 'POST',
     body: { volume },
   });
 }

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Music, ListMusic } from "lucide-react";
-import { tryCatch } from "@teleplay/core";
-import * as api from "@/api";
-import type { QueueItem as ApiQueueItem } from "@/api/players";
+import { useState } from 'react';
+import { Music, ListMusic } from 'lucide-react';
+import { tryCatch } from '@teleplay/core';
+import * as api from '@/api';
+import type { QueueItem as ApiQueueItem } from '@/api/players';
 
 interface QueueProps {
   items: ApiQueueItem[];
@@ -17,7 +17,7 @@ export function Queue({ items, playerId }: QueueProps) {
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handlePlay = async (itemId: number) => {
@@ -26,7 +26,7 @@ export function Queue({ items, playerId }: QueueProps) {
       api.players.playFromQueue(Number(playerId), itemId),
     );
     if (error) {
-      console.error("Failed to play from queue:", error);
+      console.error('Failed to play from queue:', error);
     }
     setPlayingId(null);
   };
@@ -64,7 +64,8 @@ export function Queue({ items, playerId }: QueueProps) {
                   {item.title}
                 </p>
                 <p className="text-caption text-text-secondary">
-                  {formatDuration(item.duration)} · {item.requestedBy || "Unknown"}
+                  {formatDuration(item.duration)} ·{' '}
+                  {item.requestedBy || 'Unknown'}
                 </p>
               </div>
             </button>

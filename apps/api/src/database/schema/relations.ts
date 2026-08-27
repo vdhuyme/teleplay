@@ -1,7 +1,7 @@
-import { relations } from "drizzle-orm";
-import { groups } from "./groups";
-import { queueItems } from "./queue-items";
-import { playHistory } from "./play-history";
+import { relations } from 'drizzle-orm';
+import { groups } from './groups';
+import { queueItems } from './queue-items';
+import { playHistory } from './play-history';
 
 export const groupsRelations = relations(groups, ({ many }) => ({
   queueItems: many(queueItems),

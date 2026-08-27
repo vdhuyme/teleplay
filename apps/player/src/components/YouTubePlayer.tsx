@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 interface YouTubePlayerProps {
   videoId: string;
-  status: "idle" | "playing" | "paused" | "stopped";
+  status: 'idle' | 'playing' | 'paused' | 'stopped';
   volume: number;
   position: number;
-  onStateChange: (status: "idle" | "playing" | "paused" | "stopped") => void;
+  onStateChange: (status: 'idle' | 'playing' | 'paused' | 'stopped') => void;
   onEnded: () => void;
 }
 
@@ -44,9 +44,9 @@ export function YouTubePlayer({
     }
 
     // Load the IFrame Player API code asynchronously
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName("script")[0];
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
     window.onYouTubeIframeAPIReady = () => {
@@ -92,7 +92,7 @@ export function YouTubePlayer({
     if (pendingVideoRef.current) {
       event.target.loadVideoById(pendingVideoRef.current);
       pendingVideoRef.current = null;
-    } else if (propsRef.current.status === "playing") {
+    } else if (propsRef.current.status === 'playing') {
       event.target.playVideo();
     }
   };
@@ -103,10 +103,10 @@ export function YouTubePlayer({
 
     switch (event.data) {
       case YT.PlayerState.PLAYING:
-        propsRef.current.onStateChange("playing");
+        propsRef.current.onStateChange('playing');
         break;
       case YT.PlayerState.PAUSED:
-        propsRef.current.onStateChange("paused");
+        propsRef.current.onStateChange('paused');
         break;
       case YT.PlayerState.ENDED:
         propsRef.current.onEnded();
@@ -140,9 +140,9 @@ export function YouTubePlayer({
 
     const currentState = playerRef.current.getPlayerState();
 
-    if (status === "playing" && currentState !== YT.PlayerState.PLAYING) {
+    if (status === 'playing' && currentState !== YT.PlayerState.PLAYING) {
       playerRef.current.playVideo();
-    } else if (status === "paused" && currentState !== YT.PlayerState.PAUSED) {
+    } else if (status === 'paused' && currentState !== YT.PlayerState.PAUSED) {
       playerRef.current.pauseVideo();
     }
   }, [status]);

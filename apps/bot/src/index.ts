@@ -1,10 +1,10 @@
-import dotenv from "dotenv";
-import { bot } from "./bot";
+import dotenv from 'dotenv';
+import { bot } from './bot';
 
 dotenv.config();
 
 bot.start({
   onStart: () => {
-    console.log("🤖 Bot is running!");
+    console.log('🤖 Bot is running!');
   },
 });

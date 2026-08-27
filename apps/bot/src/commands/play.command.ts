@@ -1,18 +1,18 @@
-import { Context } from "grammy";
-import * as apiClient from "../api/api-client";
-import { tryCatch } from "@teleplay/core";
-import { isNil } from "@teleplay/core";
+import { Context } from 'grammy';
+import * as apiClient from '../api/api-client';
+import { tryCatch } from '@teleplay/core';
+import { isNil } from '@teleplay/core';
 
 export async function playCommand(ctx: Context) {
   const messageText = ctx.message?.text;
   if (!messageText) return;
 
-  const query = messageText.replace("/play", "").trim();
+  const query = messageText.replace('/play', '').trim();
 
   if (!query) {
     await ctx.reply(
       "Please provide a song name. Example: /play We don't talk anymore - Charlie Puth",
-      { parse_mode: "Markdown" },
+      { parse_mode: 'Markdown' },
     );
 
     return;
@@ -21,18 +21,18 @@ export async function playCommand(ctx: Context) {
   const chatId = ctx.chat?.id;
 
   if (isNil(chatId)) {
-    await ctx.reply("This command only works in groups.", {
-      parse_mode: "Markdown",
+    await ctx.reply('This command only works in groups.', {
+      parse_mode: 'Markdown',
     });
     return;
   }
 
   const requestedBy =
-    [ctx.from?.first_name, ctx.from?.last_name].filter(Boolean).join(" ") ||
+    [ctx.from?.first_name, ctx.from?.last_name].filter(Boolean).join(' ') ||
     ctx.from?.username;
   const groupName = ctx.chat?.title;
 
-  await ctx.reply("Searching for your song...", { parse_mode: "Markdown" });
+  await ctx.reply('Searching for your song...', { parse_mode: 'Markdown' });
 
   const [error, video] = await tryCatch(
     apiClient.play(String(chatId), {
@@ -43,9 +43,9 @@ export async function playCommand(ctx: Context) {
   );
 
   if (error) {
-    await ctx.reply(`Error: ${error.message}`, { parse_mode: "Markdown" });
+    await ctx.reply(`Error: ${error.message}`, { parse_mode: 'Markdown' });
     return;
   }
 
-  await ctx.reply(`Added: ${video.title}`, { parse_mode: "Markdown" });
+  await ctx.reply(`Added: ${video.title}`, { parse_mode: 'Markdown' });
 }

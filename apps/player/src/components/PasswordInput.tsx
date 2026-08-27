@@ -1,10 +1,13 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { Input, type InputProps } from "./Input";
+import * as React from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import { Input, type InputProps } from './Input';
 
-export interface PasswordInputProps extends Omit<InputProps, "type" | "rightSlot"> {}
+export interface PasswordInputProps extends Omit<
+  InputProps,
+  'type' | 'rightSlot'
+> {}
 
 export const PasswordInput = React.forwardRef<
   HTMLInputElement,
@@ -15,12 +18,12 @@ export const PasswordInput = React.forwardRef<
   return (
     <Input
       ref={ref}
-      type={visible ? "text" : "password"}
+      type={visible ? 'text' : 'password'}
       rightSlot={
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          aria-label={visible ? "Hide password" : "Show password"}
+          aria-label={visible ? 'Hide password' : 'Show password'}
           className="p-1.5 text-text-secondary hover:text-text-base rounded-full transition-colors"
         >
           {visible ? (
@@ -34,4 +37,4 @@ export const PasswordInput = React.forwardRef<
     />
   );
 });
-PasswordInput.displayName = "PasswordInput";
+PasswordInput.displayName = 'PasswordInput';

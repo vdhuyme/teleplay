@@ -1,13 +1,13 @@
-import { Router } from "express";
-import validate from "express-zod-safe";
-import z from "zod";
+import { Router } from 'express';
+import validate from 'express-zod-safe';
+import z from 'zod';
 import {
   playRequestSchema,
   volumeRequestSchema,
-} from "../../core/schemas/player";
-import { playerService } from "../players/index";
-import * as groupService from "./service";
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../../core/constants/pagination";
+} from '../../core/schemas/player';
+import { playerService } from '../players/index';
+import * as groupService from './service';
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from '../../core/constants/pagination';
 
 const paginationQuery = z.object({
   page: z.coerce.number().int().min(1).optional(),
@@ -16,7 +16,7 @@ const paginationQuery = z.object({
 
 const router = Router();
 
-router.get("/", validate({ query: paginationQuery }), async (req, res) => {
+router.get('/', validate({ query: paginationQuery }), async (req, res) => {
   const page = req.query.page ?? DEFAULT_PAGE;
   const limit = req.query.limit ?? DEFAULT_LIMIT;
 
@@ -24,7 +24,7 @@ router.get("/", validate({ query: paginationQuery }), async (req, res) => {
 });
 
 router.get(
-  "/:groupId",
+  '/:groupId',
   validate({ params: { groupId: z.coerce.number().int() } }),
   async (req, res) => {
     const { groupId } = req.params;
@@ -34,7 +34,7 @@ router.get(
 );
 
 router.get(
-  "/:groupId/queue",
+  '/:groupId/queue',
   validate({ params: { groupId: z.coerce.number().int() } }),
   async (req, res) => {
     const { groupId } = req.params;
@@ -44,7 +44,7 @@ router.get(
 );
 
 router.get(
-  "/:groupId/history",
+  '/:groupId/history',
   validate({
     params: { groupId: z.coerce.number().int() },
     query: paginationQuery,
@@ -59,7 +59,7 @@ router.get(
 );
 
 router.delete(
-  "/:groupId",
+  '/:groupId',
   validate({ params: { groupId: z.coerce.number().int() } }),
   async (req, res) => {
     await groupService.remove(req.params.groupId);
@@ -69,7 +69,7 @@ router.delete(
 );
 
 router.post(
-  "/:groupId/play",
+  '/:groupId/play',
   validate({
     params: { groupId: z.coerce.number().int() },
     body: playRequestSchema,
@@ -90,7 +90,7 @@ router.post(
 );
 
 router.post(
-  "/:groupId/pause",
+  '/:groupId/pause',
   validate({ params: { groupId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.pause(req.params.groupId);
@@ -100,7 +100,7 @@ router.post(
 );
 
 router.post(
-  "/:groupId/resume",
+  '/:groupId/resume',
   validate({ params: { groupId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.resume(req.params.groupId);
@@ -110,7 +110,7 @@ router.post(
 );
 
 router.post(
-  "/:groupId/stop",
+  '/:groupId/stop',
   validate({ params: { groupId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.stop(req.params.groupId);
@@ -120,7 +120,7 @@ router.post(
 );
 
 router.post(
-  "/:groupId/skip",
+  '/:groupId/skip',
   validate({ params: { groupId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.skip(req.params.groupId);
@@ -130,7 +130,7 @@ router.post(
 );
 
 router.post(
-  "/:groupId/volume",
+  '/:groupId/volume',
   validate({
     params: { groupId: z.coerce.number().int() },
     body: volumeRequestSchema,

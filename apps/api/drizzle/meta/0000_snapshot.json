@@ -103,9 +103,7 @@
       "compositePrimaryKeys": {
         "groups_id": {
           "name": "groups_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -178,10 +176,7 @@
       "indexes": {
         "group_played_at_idx": {
           "name": "group_played_at_idx",
-          "columns": [
-            "group_id",
-            "played_at"
-          ],
+          "columns": ["group_id", "played_at"],
           "isUnique": false
         }
       },
@@ -189,9 +184,7 @@
       "compositePrimaryKeys": {
         "play_history_id": {
           "name": "play_history_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -285,10 +278,7 @@
       "indexes": {
         "group_position_idx": {
           "name": "group_position_idx",
-          "columns": [
-            "group_id",
-            "position"
-          ],
+          "columns": ["group_id", "position"],
           "isUnique": false
         }
       },
@@ -296,9 +286,7 @@
       "compositePrimaryKeys": {
         "queue_items_id": {
           "name": "queue_items_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

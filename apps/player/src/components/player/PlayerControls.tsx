@@ -1,7 +1,7 @@
-import { Play, Pause, Square, Volume2 } from "lucide-react";
-import * as api from "@/api";
-import { tryCatch } from "@teleplay/core";
-import type { PlayerState } from "@/hooks/usePlayerState";
+import { Play, Pause, Square, Volume2 } from 'lucide-react';
+import * as api from '@/api';
+import { tryCatch } from '@teleplay/core';
+import type { PlayerState } from '@/hooks/usePlayerState';
 
 interface PlayerControlsProps {
   playerId: string;
@@ -22,15 +22,15 @@ export function PlayerControls({
 }: PlayerControlsProps) {
   const handlePauseResume = async () => {
     const id = Number(playerId);
-    const action = state.status === "paused" ? "resume" : "pause";
+    const action = state.status === 'paused' ? 'resume' : 'pause';
     const [error] = await tryCatch(
-      action === "pause" ? api.players.pause(id) : api.players.resume(id),
+      action === 'pause' ? api.players.pause(id) : api.players.resume(id),
     );
     if (error) {
       console.error(`Failed to ${action}:`, error);
       return;
     }
-    if (action === "pause") {
+    if (action === 'pause') {
       onPause();
     } else {
       onResume();
@@ -40,7 +40,7 @@ export function PlayerControls({
   const handleStop = async () => {
     const [error] = await tryCatch(api.players.stop(Number(playerId)));
     if (error) {
-      console.error("Failed to stop:", error);
+      console.error('Failed to stop:', error);
       return;
     }
     onStop();
@@ -53,14 +53,17 @@ export function PlayerControls({
       api.players.setVolume(Number(playerId), volume),
     );
     if (error) {
-      console.error("Failed to set volume:", error);
+      console.error('Failed to set volume:', error);
     }
   };
 
   return (
     <div className="flex items-center gap-4 mt-6">
-      <button onClick={handlePauseResume} className="btn-spotify flex items-center gap-2">
-        {state.status === "paused" ? (
+      <button
+        onClick={handlePauseResume}
+        className="btn-spotify flex items-center gap-2"
+      >
+        {state.status === 'paused' ? (
           <>
             <Play className="w-4 h-4" />
             <span>Play</span>
@@ -72,7 +75,10 @@ export function PlayerControls({
           </>
         )}
       </button>
-      <button onClick={handleStop} className="btn-spotify flex items-center gap-2">
+      <button
+        onClick={handleStop}
+        className="btn-spotify flex items-center gap-2"
+      >
         <Square className="w-4 h-4" />
         <span>Stop</span>
       </button>

@@ -1,18 +1,18 @@
-import { Router } from "express";
-import validate from "express-zod-safe";
-import z from "zod";
+import { Router } from 'express';
+import validate from 'express-zod-safe';
+import z from 'zod';
 import {
   playFromQueueSchema,
   playRequestSchema,
   searchRequestSchema,
   volumeRequestSchema,
-} from "../../core/schemas/player";
-import * as playerService from "./service";
+} from '../../core/schemas/player';
+import * as playerService from './service';
 
 const router = Router();
 
 router.get(
-  "/:playerId/state",
+  '/:playerId/state',
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     res.json(await playerService.getState(req.params.playerId));
@@ -20,7 +20,7 @@ router.get(
 );
 
 router.post(
-  "/:playerId/play",
+  '/:playerId/play',
   validate({
     params: { playerId: z.coerce.number().int() },
     body: playRequestSchema,
@@ -34,7 +34,7 @@ router.post(
 );
 
 router.post(
-  "/:playerId/pause",
+  '/:playerId/pause',
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.pause(req.params.playerId);
@@ -44,7 +44,7 @@ router.post(
 );
 
 router.post(
-  "/:playerId/resume",
+  '/:playerId/resume',
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.resume(req.params.playerId);
@@ -54,7 +54,7 @@ router.post(
 );
 
 router.post(
-  "/:playerId/stop",
+  '/:playerId/stop',
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.stop(req.params.playerId);
@@ -64,7 +64,7 @@ router.post(
 );
 
 router.post(
-  "/:playerId/skip",
+  '/:playerId/skip',
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.skip(req.params.playerId);
@@ -74,7 +74,7 @@ router.post(
 );
 
 router.post(
-  "/:playerId/play-from-queue",
+  '/:playerId/play-from-queue',
   validate({
     params: { playerId: z.coerce.number().int() },
     body: playFromQueueSchema,
@@ -87,7 +87,7 @@ router.post(
 );
 
 router.post(
-  "/:playerId/events/ended",
+  '/:playerId/events/ended',
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.videoEnded(req.params.playerId);
@@ -97,7 +97,7 @@ router.post(
 );
 
 router.post(
-  "/:playerId/volume",
+  '/:playerId/volume',
   validate({
     params: { playerId: z.coerce.number().int() },
     body: volumeRequestSchema,
@@ -113,7 +113,7 @@ router.post(
 );
 
 router.get(
-  "/:playerId/queue",
+  '/:playerId/queue',
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     res.json(await playerService.getQueue(req.params.playerId));
@@ -121,7 +121,7 @@ router.get(
 );
 
 router.post(
-  "/:playerId/search",
+  '/:playerId/search',
   validate({
     params: { playerId: z.coerce.number().int() },
     body: searchRequestSchema,
@@ -131,16 +131,16 @@ router.post(
   },
 );
 
-router.get("/trending", async (_req, res) => {
+router.get('/trending', async (_req, res) => {
   res.json(await playerService.getTrending());
 });
 
-router.get("/categories", async (_req, res) => {
+router.get('/categories', async (_req, res) => {
   res.json(await playerService.getCategories());
 });
 
 router.post(
-  "/:playerId/queue",
+  '/:playerId/queue',
   validate({
     params: { playerId: z.coerce.number().int() },
     body: playRequestSchema,
@@ -156,7 +156,7 @@ router.post(
 );
 
 router.delete(
-  "/:playerId/queue/:itemId",
+  '/:playerId/queue/:itemId',
   validate({
     params: {
       playerId: z.coerce.number().int(),
@@ -171,7 +171,7 @@ router.delete(
 );
 
 router.delete(
-  "/:playerId/queue",
+  '/:playerId/queue',
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.clearQueue(req.params.playerId);

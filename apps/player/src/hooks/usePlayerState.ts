@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { usePlayerSocket } from "./usePlayerSocket";
-import * as api from "@/api";
-import { tryCatch } from "@teleplay/core";
+import { useEffect, useState } from 'react';
+import { usePlayerSocket } from './usePlayerSocket';
+import * as api from '@/api';
+import { tryCatch } from '@teleplay/core';
 
 export interface PlayerState {
-  status: "idle" | "playing" | "paused" | "stopped";
+  status: 'idle' | 'playing' | 'paused' | 'stopped';
   videoId: string | null;
   title: string | null;
   thumbnail: string | null;
@@ -17,7 +17,7 @@ export interface PlayerState {
 }
 
 const initialState: PlayerState = {
-  status: "idle",
+  status: 'idle',
   videoId: null,
   title: null,
   thumbnail: null,
@@ -40,7 +40,7 @@ export function usePlayerState(playerId: string) {
         api.players.getState(Number(playerId)),
       );
       if (error) {
-        console.error("Failed to fetch initial state:", error);
+        console.error('Failed to fetch initial state:', error);
         return;
       }
       setState(data as PlayerState);
@@ -54,13 +54,13 @@ export function usePlayerState(playerId: string) {
     if (!lastEvent) return;
 
     switch (lastEvent.type) {
-      case "STATE_SYNC":
+      case 'STATE_SYNC':
         setState(lastEvent.state);
         break;
-      case "PLAY":
+      case 'PLAY':
         setState((prev) => ({
           ...prev,
-          status: "playing",
+          status: 'playing',
           videoId: lastEvent.videoId,
           title: lastEvent.title,
           thumbnail: lastEvent.thumbnail,
@@ -69,16 +69,16 @@ export function usePlayerState(playerId: string) {
           requestedBy: lastEvent.requestedBy,
         }));
         break;
-      case "PAUSE":
-        setState((prev) => ({ ...prev, status: "paused" }));
+      case 'PAUSE':
+        setState((prev) => ({ ...prev, status: 'paused' }));
         break;
-      case "RESUME":
-        setState((prev) => ({ ...prev, status: "playing" }));
+      case 'RESUME':
+        setState((prev) => ({ ...prev, status: 'playing' }));
         break;
-      case "STOP":
+      case 'STOP':
         setState((prev) => ({
           ...prev,
-          status: "idle",
+          status: 'idle',
           videoId: null,
           title: null,
           thumbnail: null,
@@ -87,10 +87,10 @@ export function usePlayerState(playerId: string) {
           requestedBy: null,
         }));
         break;
-      case "VOLUME":
+      case 'VOLUME':
         setState((prev) => ({ ...prev, volume: lastEvent.volume }));
         break;
-      case "QUEUE_UPDATED":
+      case 'QUEUE_UPDATED':
         fetchQueue();
         break;
     }
@@ -102,7 +102,7 @@ export function usePlayerState(playerId: string) {
       api.players.getQueue(Number(playerId)),
     );
     if (error) {
-      console.error("Failed to fetch queue:", error);
+      console.error('Failed to fetch queue:', error);
       return;
     }
     setQueue(data);
@@ -112,7 +112,7 @@ export function usePlayerState(playerId: string) {
   const handleVideoEnded = async () => {
     const [error] = await tryCatch(api.players.videoEnded(Number(playerId)));
     if (error) {
-      console.error("Failed to report video ended:", error);
+      console.error('Failed to report video ended:', error);
     }
   };
 

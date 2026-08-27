@@ -1,21 +1,21 @@
-import { google, youtube_v3 } from "googleapis";
-import { YouTubeSearchResult } from "./type";
+import { google, youtube_v3 } from 'googleapis';
+import { YouTubeSearchResult } from './type';
 
 export class Youtube {
   private readonly client: youtube_v3.Youtube;
 
   constructor(public apiKey: string) {
     this.client = google.youtube({
-      version: "v3",
+      version: 'v3',
       auth: this.apiKey,
     });
   }
 
   async search(query: string): Promise<YouTubeSearchResult[]> {
     const response = await this.client.search.list({
-      part: ["snippet"],
+      part: ['snippet'],
       q: query,
-      type: ["video"],
+      type: ['video'],
       maxResults: 10,
     });
 
@@ -28,33 +28,33 @@ export class Youtube {
 
   async categories() {
     const response = await this.client.videoCategories.list({
-      part: ["snippet"],
-      regionCode: "VN",
+      part: ['snippet'],
+      regionCode: 'VN',
     });
 
     return (
       response.data.items?.map((item) => ({
         id: item.id!,
-        title: item.snippet?.title || "Unknown",
+        title: item.snippet?.title || 'Unknown',
       })) || []
     );
   }
 
   async trending() {
     const response = await this.client.videos.list({
-      part: ["snippet", "contentDetails"],
-      chart: "mostPopular",
-      regionCode: "VN",
+      part: ['snippet', 'contentDetails'],
+      chart: 'mostPopular',
+      regionCode: 'VN',
       maxResults: 10,
     });
 
     return (
       response.data.items?.map((item) => ({
         videoId: item.id!,
-        title: item.snippet?.title || "Unknown",
-        thumbnail: item.snippet?.thumbnails?.medium?.url || "",
-        duration: this.parseDuration(item.contentDetails?.duration || "PT0S"),
-        channelTitle: item.snippet?.channelTitle || "Unknown",
+        title: item.snippet?.title || 'Unknown',
+        thumbnail: item.snippet?.thumbnails?.medium?.url || '',
+        duration: this.parseDuration(item.contentDetails?.duration || 'PT0S'),
+        channelTitle: item.snippet?.channelTitle || 'Unknown',
       })) || []
     );
   }
@@ -63,17 +63,17 @@ export class Youtube {
     if (!videoIds.length) return [];
 
     const response = await this.client.videos.list({
-      part: ["contentDetails", "snippet"],
+      part: ['contentDetails', 'snippet'],
       id: videoIds,
     });
 
     return (
       response.data.items?.map((item) => ({
         videoId: item.id!,
-        title: item.snippet?.title || "Unknown",
-        thumbnail: item.snippet?.thumbnails?.medium?.url || "",
-        duration: this.parseDuration(item.contentDetails?.duration || "PT0S"),
-        channelTitle: item.snippet?.channelTitle || "Unknown",
+        title: item.snippet?.title || 'Unknown',
+        thumbnail: item.snippet?.thumbnails?.medium?.url || '',
+        duration: this.parseDuration(item.contentDetails?.duration || 'PT0S'),
+        channelTitle: item.snippet?.channelTitle || 'Unknown',
       })) || []
     );
   }

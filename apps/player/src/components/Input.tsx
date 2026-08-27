@@ -1,5 +1,5 @@
-import * as React from "react";
-import { cn } from "@/utils/cn";
+import * as React from 'react';
+import { cn } from '@/utils/cn';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -26,10 +26,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={type}
             id={inputId}
             className={cn(
-              "bg-bg-surface-light text-text-base rounded-pill px-4 py-3 outline-none transition-all w-full",
-              "focus:ring-1 focus:ring-white",
-              error && "ring-1 ring-text-negative",
-              rightSlot && "pr-12",
+              'bg-bg-surface-light text-text-base rounded-pill px-4 py-3 outline-none transition-all w-full',
+              'focus:ring-1 focus:ring-white',
+              error && 'ring-1 ring-text-negative',
+              rightSlot && 'pr-12',
               className,
             )}
             ref={ref}
@@ -46,7 +46,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
   },
 );
-Input.displayName = "Input";
+Input.displayName = 'Input';
 
 export { Input };
-

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+coverage/
+.pnpm-store/
+
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+*.min.js
+*.min.css
+*.bundle.js
+
+logo.jpg

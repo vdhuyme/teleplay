@@ -1,6 +1,6 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "./Button";
-import { cn } from "@/utils/cn";
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from './Button';
+import { cn } from '@/utils/cn';
 
 interface PaginationProps {
   page: number;
@@ -13,15 +13,15 @@ interface PaginationProps {
 function getPageNumbers(
   current: number,
   totalPages: number,
-): (number | "...")[] {
+): (number | '...')[] {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  const pages: (number | "...")[] = [1];
+  const pages: (number | '...')[] = [1];
 
   if (current > 3) {
-    pages.push("...");
+    pages.push('...');
   }
 
   const start = Math.max(2, current - 1);
@@ -32,7 +32,7 @@ function getPageNumbers(
   }
 
   if (current < totalPages - 2) {
-    pages.push("...");
+    pages.push('...');
   }
 
   if (totalPages > 1) {
@@ -56,7 +56,7 @@ export function Pagination({
   const pages = getPageNumbers(page, totalPages);
 
   return (
-    <div className={cn("flex items-center justify-center gap-1", className)}>
+    <div className={cn('flex items-center justify-center gap-1', className)}>
       <Button
         variant="ghost"
         size="icon"
@@ -67,14 +67,14 @@ export function Pagination({
       </Button>
 
       {pages.map((p, i) =>
-        p === "..." ? (
+        p === '...' ? (
           <span key={`ellipsis-${i}`} className="px-2 text-text-secondary">
             ...
           </span>
         ) : (
           <Button
             key={p}
-            variant={p === page ? "default" : "ghost"}
+            variant={p === page ? 'default' : 'ghost'}
             size="icon"
             onClick={() => onPageChange(p)}
           >

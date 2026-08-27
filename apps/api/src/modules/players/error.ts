@@ -1,5 +1,5 @@
-import { AppError } from "../../core/errors/app-error";
-import { HTTP_STATUS_CODE } from "../../utils/http-status";
+import { AppError } from '../../core/errors/app-error';
+import { HTTP_STATUS_CODE } from '../../utils/http-status';
 
 export class PlayerLockError extends AppError {
   constructor(playerId: string) {

@@ -1,5 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { NextResponse, type NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 export async function proxy(req: NextRequest) {
   const token = await getToken({
@@ -9,17 +9,17 @@ export async function proxy(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  if (pathname === "/" && token) {
-    return NextResponse.redirect(new URL("/players", req.url));
+  if (pathname === '/' && token) {
+    return NextResponse.redirect(new URL('/players', req.url));
   }
 
-  if (pathname.startsWith("/players") && !token) {
-    return NextResponse.redirect(new URL("/", req.url));
+  if (pathname.startsWith('/players') && !token) {
+    return NextResponse.redirect(new URL('/', req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/players/:path*"],
+  matcher: ['/', '/players/:path*'],
 };

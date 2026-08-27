@@ -1,4 +1,4 @@
-import { isNil, isUndefined } from "./ts-utils";
+import { isNil, isUndefined } from './ts-utils';
 
 export interface MaskOptions {
   maskChar?: string;
@@ -27,11 +27,11 @@ export interface MaskOptions {
  */
 export function mask(value: string | null, options: MaskOptions = {}): string {
   if (isNil(value)) {
-    return "";
+    return '';
   }
 
   const {
-    maskChar = "*",
+    maskChar = '*',
     visibleStart = 0,
     visibleEnd = 0,
     percentage,

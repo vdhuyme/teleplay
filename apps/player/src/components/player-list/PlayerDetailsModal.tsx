@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { History, ListMusic, X } from "lucide-react";
-import { Card } from "../Card";
-import { EmptyState } from "../EmptyState";
-import { LoadingOverlay } from "../LoadingOverlay";
-import { Pagination } from "../Pagination";
-import * as api from "@/api";
-import { tryCatch } from "@teleplay/core";
+import { useEffect, useState } from 'react';
+import { History, ListMusic, X } from 'lucide-react';
+import { Card } from '../Card';
+import { EmptyState } from '../EmptyState';
+import { LoadingOverlay } from '../LoadingOverlay';
+import { Pagination } from '../Pagination';
+import * as api from '@/api';
+import { tryCatch } from '@teleplay/core';
 
 const HISTORY_LIMIT = 20;
 
@@ -23,7 +23,7 @@ export function PlayerDetailsModal({
   const [queue, setQueue] = useState<api.groups.QueueItem[]>([]);
   const [history, setPlayerHistory] = useState<api.groups.PlayHistory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"queue" | "history">("queue");
+  const [activeTab, setActiveTab] = useState<'queue' | 'history'>('queue');
   const [historyPage, setHistoryPage] = useState(1);
   const [historyTotal, setHistoryTotal] = useState(0);
 
@@ -61,21 +61,21 @@ export function PlayerDetailsModal({
 
         <div className="flex border-b">
           <button
-            onClick={() => setActiveTab("queue")}
+            onClick={() => setActiveTab('queue')}
             className={`flex-1 p-3 text-body-large font-medium transition-colors ${
-              activeTab === "queue"
-                ? "border-b-2 border-spotify-green text-spotify-green"
-                : "text-text-secondary hover:text-text-base"
+              activeTab === 'queue'
+                ? 'border-b-2 border-spotify-green text-spotify-green'
+                : 'text-text-secondary hover:text-text-base'
             }`}
           >
             Queue
           </button>
           <button
-            onClick={() => setActiveTab("history")}
+            onClick={() => setActiveTab('history')}
             className={`flex-1 p-3 text-body-large font-medium transition-colors ${
-              activeTab === "history"
-                ? "border-b-2 border-spotify-green text-spotify-green"
-                : "text-text-secondary hover:text-text-base"
+              activeTab === 'history'
+                ? 'border-b-2 border-spotify-green text-spotify-green'
+                : 'text-text-secondary hover:text-text-base'
             }`}
           >
             History
@@ -85,7 +85,7 @@ export function PlayerDetailsModal({
         <div className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-bg-surface [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:transition-colors hover:[&::-webkit-scrollbar-thumb]:bg-border-dark [scrollbar-width:thin] [scrollbar-color:var(--color-bg-surface)_transparent]">
           {loading ? (
             <LoadingOverlay />
-          ) : activeTab === "queue" ? (
+          ) : activeTab === 'queue' ? (
             queue.length === 0 ? (
               <EmptyState
                 icon={ListMusic}

@@ -1,16 +1,16 @@
-import { Context } from "grammy";
-import * as apiClient from "../api/api-client";
-import { tryCatch } from "@teleplay/core";
+import { Context } from 'grammy';
+import * as apiClient from '../api/api-client';
+import { tryCatch } from '@teleplay/core';
 
 export async function volumeCommand(ctx: Context) {
   const messageText = ctx.message?.text;
   if (!messageText) return;
 
-  const volumeStr = messageText.replace("/volume", "").trim();
+  const volumeStr = messageText.replace('/volume', '').trim();
 
   if (!volumeStr) {
-    await ctx.reply("Please provide a volume level. Example: /volume 80", {
-      parse_mode: "Markdown",
+    await ctx.reply('Please provide a volume level. Example: /volume 80', {
+      parse_mode: 'Markdown',
     });
     return;
   }
@@ -18,8 +18,8 @@ export async function volumeCommand(ctx: Context) {
   const volume = Number(volumeStr);
 
   if (!Number.isInteger(volume) || volume < 0 || volume > 100) {
-    await ctx.reply("Volume must be a number between 0 and 100.", {
-      parse_mode: "Markdown",
+    await ctx.reply('Volume must be a number between 0 and 100.', {
+      parse_mode: 'Markdown',
     });
     return;
   }
@@ -27,8 +27,8 @@ export async function volumeCommand(ctx: Context) {
   const chatId = ctx.chat?.id;
 
   if (!chatId) {
-    await ctx.reply("This command only works in groups.", {
-      parse_mode: "Markdown",
+    await ctx.reply('This command only works in groups.', {
+      parse_mode: 'Markdown',
     });
     return;
   }
@@ -38,9 +38,9 @@ export async function volumeCommand(ctx: Context) {
   );
 
   if (error) {
-    await ctx.reply(`Error: ${error.message}`, { parse_mode: "Markdown" });
+    await ctx.reply(`Error: ${error.message}`, { parse_mode: 'Markdown' });
     return;
   }
 
-  await ctx.reply(`Volume set to ${volume}`, { parse_mode: "Markdown" });
+  await ctx.reply(`Volume set to ${volume}`, { parse_mode: 'Markdown' });
 }

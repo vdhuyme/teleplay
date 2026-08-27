@@ -1,7 +1,7 @@
-import { useRouter } from "next/navigation";
-import { Music, Play, Pause, Trash2, Eye } from "lucide-react";
-import { Card } from "../Card";
-import type { Group } from "@/api/groups";
+import { useRouter } from 'next/navigation';
+import { Music, Play, Pause, Trash2, Eye } from 'lucide-react';
+import { Card } from '../Card';
+import type { Group } from '@/api/groups';
 
 interface PlayerCardProps {
   player: Group;
@@ -11,9 +11,9 @@ interface PlayerCardProps {
 
 function getStatusIcon(status: string) {
   switch (status) {
-    case "playing":
+    case 'playing':
       return <Play className="w-4 h-4 text-spotify-green" />;
-    case "paused":
+    case 'paused':
       return <Pause className="w-4 h-4 text-yellow-500" />;
     default:
       return <Music className="w-4 h-4 text-text-secondary" />;
@@ -22,14 +22,14 @@ function getStatusIcon(status: string) {
 
 function getStatusText(status: string) {
   switch (status) {
-    case "playing":
-      return "Playing";
-    case "paused":
-      return "Paused";
-    case "stopped":
-      return "Stopped";
+    case 'playing':
+      return 'Playing';
+    case 'paused':
+      return 'Paused';
+    case 'stopped':
+      return 'Stopped';
     default:
-      return "Idle";
+      return 'Idle';
   }
 }
 

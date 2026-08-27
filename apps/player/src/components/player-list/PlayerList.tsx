@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useCallback } from "react";
-import { Music } from "lucide-react";
-import * as api from "@/api";
-import { tryCatch } from "@teleplay/core";
-import { useGroupsSocket } from "@/hooks/useGroupsSocket";
-import { EmptyState } from "../EmptyState";
-import { LoadingOverlay } from "../LoadingOverlay";
-import { Pagination } from "../Pagination";
-import { PlayerCard } from "./PlayerCard";
-import { PlayerDetailsModal } from "./PlayerDetailsModal";
+import { useEffect, useState, useCallback } from 'react';
+import { Music } from 'lucide-react';
+import * as api from '@/api';
+import { tryCatch } from '@teleplay/core';
+import { useGroupsSocket } from '@/hooks/useGroupsSocket';
+import { EmptyState } from '../EmptyState';
+import { LoadingOverlay } from '../LoadingOverlay';
+import { Pagination } from '../Pagination';
+import { PlayerCard } from './PlayerCard';
+import { PlayerDetailsModal } from './PlayerDetailsModal';
 
 const PAGE_LIMIT = 20;
 
@@ -27,7 +27,7 @@ export function PlayerList() {
     setLoading(true);
     const [err, data] = await tryCatch(api.groups.list(page, PAGE_LIMIT));
     if (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } else {
       setGroups(data.data);
       setTotal(data.total);
@@ -45,7 +45,7 @@ export function PlayerList() {
     setDeleting(true);
     const [err] = await tryCatch(api.groups.remove(groupId));
     if (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete");
+      setError(err instanceof Error ? err.message : 'Failed to delete');
     } else {
       setDeleteConfirm(null);
       const [fetchErr, data] = await tryCatch(
@@ -141,7 +141,7 @@ export function PlayerList() {
                 className="btn-spotify bg-red-500 hover:bg-red-600"
                 disabled={deleting}
               >
-                {deleting ? "Deleting..." : "Delete"}
+                {deleting ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>

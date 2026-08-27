@@ -5,27 +5,27 @@ import {
   bigint,
   timestamp,
   index,
-} from "drizzle-orm/mysql-core";
+} from 'drizzle-orm/mysql-core';
 
-import { groups } from "./groups";
+import { groups } from './groups';
 
 export const queueItems = mysqlTable(
-  "queue_items",
+  'queue_items',
   {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    groupId: bigint("group_id", { mode: "number" })
+    id: bigint('id', { mode: 'number' }).primaryKey().autoincrement(),
+    groupId: bigint('group_id', { mode: 'number' })
       .notNull()
-      .references(() => groups.id, { onDelete: "cascade" }),
-    videoId: varchar("video_id", { length: 32 }).notNull(),
-    title: varchar("title", { length: 500 }).notNull(),
-    thumbnail: varchar("thumbnail", { length: 1000 }),
-    duration: int("duration", { unsigned: true }),
-    votes: bigint("votes", { mode: "number", unsigned: true })
+      .references(() => groups.id, { onDelete: 'cascade' }),
+    videoId: varchar('video_id', { length: 32 }).notNull(),
+    title: varchar('title', { length: 500 }).notNull(),
+    thumbnail: varchar('thumbnail', { length: 1000 }),
+    duration: int('duration', { unsigned: true }),
+    votes: bigint('votes', { mode: 'number', unsigned: true })
       .default(1)
       .notNull(),
-    requestedBy: varchar("requested_by", { length: 255 }),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+    requestedBy: varchar('requested_by', { length: 255 }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
   },
-  (table) => [index("group_votes_idx").on(table.groupId, table.votes)],
+  (table) => [index('group_votes_idx').on(table.groupId, table.votes)],
 );

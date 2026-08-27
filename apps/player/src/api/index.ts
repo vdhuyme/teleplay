@@ -1,2 +1,2 @@
-export * as groups from "./groups";
-export * as players from "./players";
+export * as groups from './groups';
+export * as players from './players';

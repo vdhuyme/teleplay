@@ -1,13 +1,13 @@
-import dotenv from "dotenv";
-import { isString, isUndefined } from "@teleplay/core";
+import dotenv from 'dotenv';
+import { isString, isUndefined } from '@teleplay/core';
 
 dotenv.config();
 
 const ENV = process.env;
 
 export const BOT_ENV = {
-  TELEGRAM_BOT_TOKEN: "TELEGRAM_BOT_TOKEN",
-  API_URL: "API_URL",
+  TELEGRAM_BOT_TOKEN: 'TELEGRAM_BOT_TOKEN',
+  API_URL: 'API_URL',
 };
 
 type BotEnvKey = (typeof BOT_ENV)[keyof typeof BOT_ENV];
@@ -39,10 +39,10 @@ export class App {
   }
 
   public static isProduction(): boolean {
-    return ENV.NODE_ENV === "production";
+    return ENV.NODE_ENV === 'production';
   }
 
   public static isDevelopment(): boolean {
-    return ENV.NODE_ENV !== "production";
+    return ENV.NODE_ENV !== 'production';
   }
 }

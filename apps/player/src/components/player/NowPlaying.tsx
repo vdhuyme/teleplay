@@ -1,11 +1,11 @@
-import { Music } from "lucide-react";
-import { YouTubePlayer } from "../YouTubePlayer";
-import { isNotNil } from "@teleplay/core";
-import type { PlayerState } from "@/hooks/usePlayerState";
+import { Music } from 'lucide-react';
+import { YouTubePlayer } from '../YouTubePlayer';
+import { isNotNil } from '@teleplay/core';
+import type { PlayerState } from '@/hooks/usePlayerState';
 
 interface NowPlayingProps {
   state: PlayerState;
-  onStateChange: (status: PlayerState["status"]) => void;
+  onStateChange: (status: PlayerState['status']) => void;
   onEnded: () => void;
 }
 

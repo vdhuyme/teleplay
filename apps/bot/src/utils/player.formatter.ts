@@ -1,27 +1,27 @@
-import { InlineKeyboard } from "grammy";
-import { PLAYER_STATUS, PlayerState, QueueItem } from "../type";
+import { InlineKeyboard } from 'grammy';
+import { PLAYER_STATUS, PlayerState, QueueItem } from '../type';
 
 export function formatNowPlaying(state: PlayerState | null) {
   if (!state || state.status === PLAYER_STATUS.IDLE || !state.videoId) {
-    return "_Nothing is playing._";
+    return '_Nothing is playing._';
   }
 
-  const lines = [`*Now Playing*`, ``, `*${state.title || "Unknown"}*`];
+  const lines = [`*Now Playing*`, ``, `*${state.title || 'Unknown'}*`];
 
   if (state.requestedBy) {
     lines.push(``, `Requested by _${state.requestedBy}_`);
   }
 
-  return lines.join("\n");
+  return lines.join('\n');
 }
 
 export function formatNowPlayingKeyboard(playerId: string) {
   return new InlineKeyboard()
-    .text("Pause", `pause:${playerId}`)
-    .text("Skip", `skip:${playerId}`)
+    .text('Pause', `pause:${playerId}`)
+    .text('Skip', `skip:${playerId}`)
     .row()
-    .text("Queue", `queue:${playerId}`)
-    .text("Stop", `stop:${playerId}`);
+    .text('Queue', `queue:${playerId}`)
+    .text('Stop', `stop:${playerId}`);
 }
 
 export function formatQueue(state: PlayerState | null, queue: QueueItem[]) {
@@ -32,14 +32,14 @@ export function formatQueue(state: PlayerState | null, queue: QueueItem[]) {
     (state.status === PLAYER_STATUS.PLAYING ||
       state.status === PLAYER_STATUS.PAUSED)
   ) {
-    lines.push(``, `*Now Playing*`, `> ${state.title ?? "Unknown"}`);
+    lines.push(``, `*Now Playing*`, `> ${state.title ?? 'Unknown'}`);
   }
 
   if (queue.length > 0) {
     lines.push(``, `*Up Next*`);
 
     queue.forEach((item, index) => {
-      const requestedBy = item.requestedBy ? ` _${item.requestedBy}_` : "";
+      const requestedBy = item.requestedBy ? ` _${item.requestedBy}_` : '';
       lines.push(`${index + 1}. ${item.title}${requestedBy}`);
     });
   } else if (
@@ -50,7 +50,7 @@ export function formatQueue(state: PlayerState | null, queue: QueueItem[]) {
     lines.push(``, `_Queue is empty._`);
   }
 
-  return lines.join("\n");
+  return lines.join('\n');
 }
 
 export function formatHelp() {
@@ -74,5 +74,5 @@ export function formatHelp() {
     `  /now \\- View current song`,
     `  /volume \\- Set volume 0\\-100`,
     `  /help \\- Show this help`,
-  ].join("\n");
+  ].join('\n');
 }

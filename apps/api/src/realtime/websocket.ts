@@ -1,5 +1,5 @@
-import { Server as HttpServer } from "http";
-import { Server as SocketServer, Socket } from "socket.io";
+import { Server as HttpServer } from 'http';
+import { Server as SocketServer, Socket } from 'socket.io';
 
 export class SocketIoServer {
   private sio: SocketServer;
@@ -7,8 +7,8 @@ export class SocketIoServer {
   constructor(server: HttpServer) {
     this.sio = new SocketServer(server, {
       cors: {
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       },
     });
   }
@@ -65,6 +65,6 @@ export class SocketIoServer {
   }
 
   onConnection(handler: (socket: Socket) => void): void {
-    this.sio.on("connection", handler);
+    this.sio.on('connection', handler);
   }
 }

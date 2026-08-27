@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { usePlayerState } from "@/hooks/usePlayerState";
-import { PlayerHeader } from "./player/PlayerHeader";
-import { NowPlaying } from "./player/NowPlaying";
-import { PlayerControls } from "./player/PlayerControls";
-import { Queue } from "./Queue";
+import { usePlayerState } from '@/hooks/usePlayerState';
+import { PlayerHeader } from './player/PlayerHeader';
+import { NowPlaying } from './player/NowPlaying';
+import { PlayerControls } from './player/PlayerControls';
+import { Queue } from './Queue';
 
 interface PlayerProps {
   playerId: string;
@@ -15,17 +15,17 @@ export function Player({ playerId }: PlayerProps) {
     usePlayerState(playerId);
 
   const handlePause = () => {
-    setState((prev) => ({ ...prev, status: "paused" }));
+    setState((prev) => ({ ...prev, status: 'paused' }));
   };
 
   const handleResume = () => {
-    setState((prev) => ({ ...prev, status: "playing" }));
+    setState((prev) => ({ ...prev, status: 'playing' }));
   };
 
   const handleStop = () => {
     setState((prev) => ({
       ...prev,
-      status: "idle",
+      status: 'idle',
       videoId: null,
       title: null,
       thumbnail: null,
@@ -39,7 +39,9 @@ export function Player({ playerId }: PlayerProps) {
     setState((prev) => ({ ...prev, volume }));
   };
 
-  const handleStateChange = (status: "idle" | "playing" | "paused" | "stopped") => {
+  const handleStateChange = (
+    status: 'idle' | 'playing' | 'paused' | 'stopped',
+  ) => {
     setState((prev) => ({ ...prev, status }));
   };
 

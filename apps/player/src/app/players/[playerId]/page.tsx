@@ -1,8 +1,8 @@
-import { Player } from "@/components/Player";
+import { Player } from '@/components/Player';
 
 export const metadata = {
-  title: "Player Details - Teleplay",
-  description: "View and manage a specific Telegram bot player.",
+  title: 'Player Details - Teleplay',
+  description: 'View and manage a specific Telegram bot player.',
 };
 
 interface PlayerPageProps {

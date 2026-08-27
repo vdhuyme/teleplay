@@ -1,22 +1,22 @@
-import { Context } from "grammy";
-import * as apiClient from "../api/api-client";
-import { tryCatch } from "@teleplay/core";
-import { searchResults } from "../commands/search.command";
+import { Context } from 'grammy';
+import * as apiClient from '../api/api-client';
+import { tryCatch } from '@teleplay/core';
+import { searchResults } from '../commands/search.command';
 
 const actions = {
   pause: async (ctx: Context, playerId: string) => {
     await apiClient.pause(playerId);
-    await ctx.answerCallbackQuery({ text: "Paused" });
+    await ctx.answerCallbackQuery({ text: 'Paused' });
   },
 
   skip: async (ctx: Context, playerId: string) => {
     await apiClient.skip(playerId);
-    await ctx.answerCallbackQuery({ text: "Skipped" });
+    await ctx.answerCallbackQuery({ text: 'Skipped' });
   },
 
   stop: async (ctx: Context, playerId: string) => {
     await apiClient.stop(playerId);
-    await ctx.answerCallbackQuery({ text: "Stopped" });
+    await ctx.answerCallbackQuery({ text: 'Stopped' });
   },
 
   queue: async (ctx: Context, playerId: string) => {
@@ -32,14 +32,14 @@ const actions = {
 
   sp: async (ctx: Context, playerId: string) => {
     const callbackData = ctx.callbackQuery?.data;
-    const parts = callbackData?.split(":");
+    const parts = callbackData?.split(':');
     const index = parts?.[2] ? parseInt(parts[2], 10) : -1;
 
     const results = searchResults.get(playerId);
 
     if (!results || index < 0 || index >= results.length) {
       await ctx.answerCallbackQuery({
-        text: "Search results expired or invalid selection",
+        text: 'Search results expired or invalid selection',
       });
       return;
     }
@@ -50,14 +50,14 @@ const actions = {
     );
 
     if (error) {
-      await ctx.answerCallbackQuery({ text: "Error playing song" });
+      await ctx.answerCallbackQuery({ text: 'Error playing song' });
       return;
     }
 
     searchResults.delete(playerId);
     await ctx.answerCallbackQuery({ text: `Playing: ${video.title}` });
     await ctx.editMessageText(`Playing: *${video.title}*`, {
-      parse_mode: "Markdown",
+      parse_mode: 'Markdown',
     });
   },
 } satisfies Record<string, (ctx: Context, playerId: string) => Promise<void>>;
@@ -67,11 +67,11 @@ export async function playCallback(ctx: Context) {
 
   if (!callbackData) return;
 
-  const [action, playerId] = callbackData.split(":");
+  const [action, playerId] = callbackData.split(':');
 
   if (!playerId) {
     await ctx.answerCallbackQuery({
-      text: "Invalid callback data",
+      text: 'Invalid callback data',
     });
 
     return;
@@ -81,7 +81,7 @@ export async function playCallback(ctx: Context) {
 
   if (!handler) {
     await ctx.answerCallbackQuery({
-      text: "Unknown action",
+      text: 'Unknown action',
     });
 
     return;
@@ -91,7 +91,7 @@ export async function playCallback(ctx: Context) {
 
   if (error) {
     await ctx.answerCallbackQuery({
-      text: "Error executing action",
+      text: 'Error executing action',
     });
   }
 }

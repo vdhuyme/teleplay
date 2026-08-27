@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { LogIn, Music } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { Button } from "@/components/Button";
-import { Input } from "@/components/Input";
-import { Card } from "@/components/Card";
-import { PasswordInput } from "@/components/PasswordInput";
-import { useRouter } from "next/navigation";
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import { LogIn, Music } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
+import { Card } from '@/components/Card';
+import { PasswordInput } from '@/components/PasswordInput';
+import { useRouter } from 'next/navigation';
 
 const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  username: z.string().min(1, 'Username is required'),
+  password: z.string().min(1, 'Password is required'),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -34,21 +34,21 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     setLoading(true);
-    setError("");
+    setError('');
 
-    const result = await signIn("credentials", {
+    const result = await signIn('credentials', {
       username: data.username,
       password: data.password,
       redirect: false,
     });
 
     if (result?.error) {
-      setError("Invalid username or password");
+      setError('Invalid username or password');
       setLoading(false);
       return;
     }
 
-    router.push("/players");
+    router.push('/players');
   };
 
   return (
@@ -69,14 +69,14 @@ export function LoginForm() {
             <Input
               label="Username"
               placeholder="Enter your username"
-              {...register("username")}
+              {...register('username')}
               error={errors.username?.message}
             />
 
             <PasswordInput
               label="Password"
               placeholder="Enter your password"
-              {...register("password")}
+              {...register('password')}
               error={errors.password?.message}
             />
 

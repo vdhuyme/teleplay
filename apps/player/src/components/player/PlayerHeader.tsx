@@ -1,5 +1,5 @@
-import { Music, Wifi, WifiOff } from "lucide-react";
-import Link from "next/link";
+import { Music, Wifi, WifiOff } from 'lucide-react';
+import Link from 'next/link';
 
 interface PlayerHeaderProps {
   connected: boolean;
@@ -21,7 +21,7 @@ export function PlayerHeader({ connected }: PlayerHeaderProps) {
           <WifiOff className="w-4 h-4 text-text-negative" />
         )}
         <span className="text-caption text-text-secondary">
-          {connected ? "Connected" : "Disconnected"}
+          {connected ? 'Connected' : 'Disconnected'}
         </span>
       </div>
     </div>

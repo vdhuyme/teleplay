@@ -1,2 +1,2 @@
-export type { YouTubeSearchResult } from "./type";
-export { Youtube } from "./youtube";
+export type { YouTubeSearchResult } from './type';
+export { Youtube } from './youtube';

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 interface SocketContextValue {
   socket: Socket | null;
@@ -23,19 +23,19 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const socket = io(
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
+      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
       {
-        transports: ["websocket", "polling"],
+        transports: ['websocket', 'polling'],
       },
     );
 
     socketRef.current = socket;
 
-    socket.on("connect", () => {
+    socket.on('connect', () => {
       setConnected(true);
     });
 
-    socket.on("disconnect", () => {
+    socket.on('disconnect', () => {
       setConnected(false);
     });
 

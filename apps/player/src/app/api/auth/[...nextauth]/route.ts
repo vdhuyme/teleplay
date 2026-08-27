@@ -1,20 +1,20 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
 
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
         username: {
-          label: "Username",
-          type: "text",
-          placeholder: "Enter username",
+          label: 'Username',
+          type: 'text',
+          placeholder: 'Enter username',
         },
         password: {
-          label: "Password",
-          type: "password",
-          placeholder: "Enter password",
+          label: 'Password',
+          type: 'password',
+          placeholder: 'Enter password',
         },
       },
       async authorize(credentials) {
@@ -34,10 +34,10 @@ const handler = NextAuth({
     }),
   ],
   pages: {
-    signIn: "/",
+    signIn: '/',
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
