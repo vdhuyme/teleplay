@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { ZodError } from "zod";
 import { AppError } from "../core/errors/index";
 import { HTTP_STATUS_CODE } from "../utils/http-status";
 
@@ -14,21 +13,7 @@ export function errorHandler(
       error: {
         code: err.code,
         message: err.message,
-      },
-    });
-
-    return;
-  }
-
-  if (err instanceof ZodError) {
-    res.status(HTTP_STATUS_CODE.UNPROCESSABLE_ENTITY).json({
-      error: {
-        code: "VALIDATION_ERROR",
-        message: "Request validation failed",
-        details: err.issues.map((issue) => ({
-          field: issue.path.join("."),
-          message: issue.message,
-        })),
+        timestamp: new Date(),
       },
     });
 
