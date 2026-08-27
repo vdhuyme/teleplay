@@ -46,12 +46,16 @@ COPY --from=deps  /app/apps/api/package.json   ./apps/api/package.json
 COPY --from=deps  /app/apps/bot/package.json   ./apps/bot/package.json
 COPY --from=build /app/packages                ./packages
 
+COPY deploy.sh ./deploy.sh
+RUN chmod +x ./deploy.sh
+
 RUN pnpm install --prod --frozen-lockfile \
     --filter @teleplay/api...
 
 USER node
-ARG API_PORT=10000
-EXPOSE ${API_PORT}
+ARG PORT=10000
+EXPOSE ${PORT}
+ENTRYPOINT ["./deploy.sh"]
 CMD ["tsx", "apps/api/dist/index.js"]
 
 # ---------- bot (runtime) ----------
@@ -74,4 +78,5 @@ RUN pnpm install --prod --frozen-lockfile \
     --filter @teleplay/bot...
 
 USER node
+ENTRYPOINT ["./deploy.sh"]
 CMD ["tsx", "apps/bot/dist/index.js"]

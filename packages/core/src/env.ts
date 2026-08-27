@@ -11,7 +11,7 @@ export type Environment = (typeof Environment)[keyof typeof Environment];
 export const API_ENV_KEYS = {
   DATABASE_URL: 'DATABASE_URL',
   YOUTUBE_API_KEY: 'YOUTUBE_API_KEY',
-  API_PORT: 'API_PORT',
+  PORT: 'PORT',
 } as const;
 
 export const BOT_ENV = {
