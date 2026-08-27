@@ -52,10 +52,11 @@ COPY --from=build /app/packages                ./packages
 RUN pnpm install --prod --frozen-lockfile \
     --filter @teleplay/api...
 
-USER node
 ARG PORT=10000
 EXPOSE ${PORT}
-ENTRYPOINT ["./deploy.sh"]
+
+# ENTRYPOINT ["./deploy.sh"]
+
 CMD ["tsx", "apps/api/dist/index.js"]
 
 # ---------- bot (runtime) ----------
@@ -77,6 +78,4 @@ COPY --from=build /app/packages                ./packages
 RUN pnpm install --prod --frozen-lockfile \
     --filter @teleplay/bot...
 
-USER node
-ENTRYPOINT ["./deploy.sh"]
 CMD ["tsx", "apps/bot/dist/index.js"]
