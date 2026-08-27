@@ -2,6 +2,7 @@ import { Router } from "express";
 import validate from "express-zod-safe";
 import z from "zod";
 import {
+  playFromQueueSchema,
   playRequestSchema,
   searchRequestSchema,
   volumeRequestSchema,
@@ -67,6 +68,19 @@ router.post(
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     await playerService.skip(req.params.playerId);
+
+    res.json({ success: true });
+  },
+);
+
+router.post(
+  "/:playerId/play-from-queue",
+  validate({
+    params: { playerId: z.coerce.number().int() },
+    body: playFromQueueSchema,
+  }),
+  async (req, res) => {
+    await playerService.playFromQueue(req.params.playerId, req.body.itemId);
 
     res.json({ success: true });
   },

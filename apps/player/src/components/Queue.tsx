@@ -1,17 +1,34 @@
 "use client";
 
+import { useState } from "react";
 import { Music, ListMusic } from "lucide-react";
+import { tryCatch } from "@teleplay/core";
+import * as api from "@/api";
 import type { QueueItem as ApiQueueItem } from "@/api/players";
 
 interface QueueProps {
   items: ApiQueueItem[];
+  playerId: string;
 }
 
-export function Queue({ items }: QueueProps) {
+export function Queue({ items, playerId }: QueueProps) {
+  const [playingId, setPlayingId] = useState<number | null>(null);
+
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const handlePlay = async (itemId: number) => {
+    setPlayingId(itemId);
+    const [error] = await tryCatch(
+      api.players.playFromQueue(Number(playerId), itemId),
+    );
+    if (error) {
+      console.error("Failed to play from queue:", error);
+    }
+    setPlayingId(null);
   };
 
   return (
@@ -31,9 +48,11 @@ export function Queue({ items }: QueueProps) {
       ) : (
         <div className="space-y-3">
           {items.map((item) => (
-            <div
+            <button
               key={item.id}
-              className="flex items-center gap-3 p-3 bg-bg-surface rounded-md"
+              onClick={() => handlePlay(item.id)}
+              disabled={playingId === item.id}
+              className="w-full flex items-center gap-3 p-3 bg-bg-surface hover:bg-bg-card-alt rounded-md transition-colors text-left disabled:opacity-50"
             >
               <img
                 src={item.thumbnail}
@@ -48,7 +67,7 @@ export function Queue({ items }: QueueProps) {
                   {formatDuration(item.duration)} · {item.requestedBy || "Unknown"}
                 </p>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       )}

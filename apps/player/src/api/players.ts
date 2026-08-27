@@ -88,3 +88,10 @@ export function clearQueue(playerId: number) {
 export function videoEnded(playerId: number) {
   return request(`/players/${playerId}/events/ended`, { method: "POST" });
 }
+
+export function playFromQueue(playerId: number, itemId: number) {
+  return request(`/players/${playerId}/play-from-queue`, {
+    method: "POST",
+    body: { itemId },
+  });
+}

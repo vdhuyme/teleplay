@@ -69,7 +69,7 @@ export function Player({ playerId }: PlayerProps) {
 
         {/* Queue */}
         <div className="lg:col-span-1">
-          <Queue items={queue} />
+          <Queue items={queue} playerId={playerId} />
         </div>
       </div>
     </div>

@@ -278,6 +278,61 @@ export async function videoEnded(groupId: number) {
   });
 }
 
+export async function playFromQueue(groupId: number, itemId: number) {
+  const items = await db
+    .select()
+    .from(queueItems)
+    .where(and(eq(queueItems.id, itemId), eq(queueItems.groupId, groupId)))
+    .limit(1);
+
+  if (items.length === 0) return;
+
+  const item = items[0];
+
+  const state = await getState(groupId);
+  if (state?.videoId && state.status !== PLAYER_STATUS.IDLE) {
+    await db.insert(playHistory).values({
+      groupId,
+      videoId: state.videoId,
+      title: state.title ?? "Unknown",
+      requestedBy: state.requestedBy,
+    });
+  }
+
+  await db
+    .insert(groups)
+    .values({
+      id: groupId,
+      status: PLAYER_STATUS.PLAYING,
+      videoId: item.videoId,
+      title: item.title,
+      thumbnail: item.thumbnail,
+      duration: item.duration,
+      requestedBy: item.requestedBy,
+    })
+    .onDuplicateKeyUpdate({
+      set: {
+        status: PLAYER_STATUS.PLAYING,
+        videoId: item.videoId,
+        title: item.title,
+        thumbnail: item.thumbnail,
+        duration: item.duration,
+        requestedBy: item.requestedBy,
+      },
+    });
+
+  await db.delete(queueItems).where(eq(queueItems.id, itemId));
+
+  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.PLAY, {
+    type: SOCKET_EVENTS.PLAY,
+    videoId: item.videoId,
+    title: item.title,
+    thumbnail: item.thumbnail,
+    duration: item.duration,
+    requestedBy: item.requestedBy,
+  });
+}
+
 export async function setVolume(groupId: number, volume: number) {
   await db
     .insert(groups)
