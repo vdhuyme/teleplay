@@ -1,5 +1,6 @@
 'use client';
 
+import { App } from '@/utils/env';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
@@ -22,12 +23,9 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(
-      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
-      {
-        transports: ['websocket', 'polling'],
-      },
-    );
+    const socket = io(App.get('API_URL') ?? '', {
+      transports: ['websocket', 'polling'],
+    });
 
     socketRef.current = socket;
 

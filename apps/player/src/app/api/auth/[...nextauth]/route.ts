@@ -1,5 +1,10 @@
+import { App } from '@/utils/env';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+
+const authSecret = App.getOrThrow('NEXTAUTH_SECRET');
+const username = App.get('AUTH_USERNAME', 'admin');
+const password = App.get('AUTH_PASSWORD', 'admin123');
 
 const handler = NextAuth({
   providers: [
@@ -21,8 +26,8 @@ const handler = NextAuth({
         if (
           credentials?.username &&
           credentials?.password &&
-          credentials.username === process.env.AUTH_USERNAME &&
-          credentials.password === process.env.AUTH_PASSWORD
+          credentials.username === username &&
+          credentials.password === password
         ) {
           return {
             id: credentials.username,
@@ -39,7 +44,7 @@ const handler = NextAuth({
   session: {
     strategy: 'jwt',
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: authSecret,
 });
 
 export { handler as GET, handler as POST };
