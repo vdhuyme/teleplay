@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --env-file=../../.env src/index.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "start": "node dist/index.js",
@@ -14,7 +14,6 @@
   "dependencies": {
     "@teleplay/core": "workspace:*",
     "@teleplay/youtube": "workspace:*",
-    "dotenv": "^17.4.2",
     "grammy": "^1.45.1"
   },
   "devDependencies": {

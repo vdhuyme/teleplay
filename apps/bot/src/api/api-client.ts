@@ -5,7 +5,7 @@ import {
   SearchResult,
   VolumeRequest,
 } from '../type';
-import { App } from '../config/env';
+import { App } from '@teleplay/core';
 
 async function request<T = unknown>(
   path: string,

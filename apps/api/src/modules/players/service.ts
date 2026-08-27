@@ -6,7 +6,7 @@ import { PLAYER_STATUS } from '../groups';
 import { sio } from '../..';
 import { isNil } from '@teleplay/core';
 import { SOCKET_EVENTS } from './constants';
-import { App } from '../../config/env';
+import { App } from '@teleplay/core';
 
 const youtubeClient = new Youtube(App.getOrThrow('YOUTUBE_API_KEY'));
 export const search = (query: string) => youtubeClient.search(query);

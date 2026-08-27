@@ -1,5 +1,5 @@
 import { Bot } from 'grammy';
-import { App } from './config/env';
+import { App } from '@teleplay/core';
 import { startCommand } from './commands/start.command';
 import { helpCommand } from './commands/help.command';
 import { playCommand } from './commands/play.command';

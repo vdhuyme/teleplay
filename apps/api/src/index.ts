@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import { app, logger } from './app';
 import { SocketIoServer } from './realtime/websocket';
-import { App } from './config/env';
+import { App } from '@teleplay/core';
 
 const httpServer = createServer(app);
 
