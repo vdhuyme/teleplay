@@ -21,7 +21,7 @@ export interface QueueItem {
   title: string;
   thumbnail: string;
   duration: number;
-  position: number;
+  votes: number;
   requestedBy: string | null;
 }
 

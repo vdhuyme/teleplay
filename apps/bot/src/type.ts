@@ -44,7 +44,6 @@ export interface QueueItem {
   title: string;
   thumbnail: string | null;
   duration: number | null;
-  position: number;
   votes: number;
   requestedBy: string | null;
   createdAt: Date;
