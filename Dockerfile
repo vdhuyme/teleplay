@@ -46,8 +46,8 @@ COPY --from=deps  /app/apps/api/package.json   ./apps/api/package.json
 COPY --from=deps  /app/apps/bot/package.json   ./apps/bot/package.json
 COPY --from=build /app/packages                ./packages
 
-COPY deploy.sh ./deploy.sh
-RUN chmod +x ./deploy.sh
+# COPY deploy.sh ./deploy.sh
+# RUN chmod +x ./deploy.sh
 
 RUN pnpm install --prod --frozen-lockfile \
     --filter @teleplay/api...
