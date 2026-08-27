@@ -1,7 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import { SocketProvider } from "@/hooks/SocketContext";
+import { SocketProvider } from "@/contexts/SocketContext";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

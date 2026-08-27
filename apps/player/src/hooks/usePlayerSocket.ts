@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useSocketContext } from "./SocketContext";
+import { useSocketContext } from "../contexts/SocketContext";
 
 interface StateSyncEvent {
   type: "STATE_SYNC";
@@ -63,7 +63,7 @@ interface UseSocketReturn {
   emit: (event: string, data?: Record<string, unknown>) => void;
 }
 
-export function useSocket(playerId: string): UseSocketReturn {
+export function usePlayerSocket(playerId: string): UseSocketReturn {
   const { socket, connected } = useSocketContext();
   const [lastEvent, setLastEvent] = useState<SocketEvent | null>(null);
 

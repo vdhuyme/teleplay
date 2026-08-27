@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSocket } from "./useSocket";
+import { usePlayerSocket } from "./usePlayerSocket";
 import * as api from "@/api";
 import { tryCatch } from "@teleplay/core";
 
@@ -31,7 +31,7 @@ export function usePlayerState(playerId: string) {
   const [state, setState] = useState<PlayerState>(initialState);
   const [queue, setQueue] = useState<api.players.QueueItem[]>([]);
 
-  const { connected, lastEvent } = useSocket(playerId);
+  const { connected, lastEvent } = usePlayerSocket(playerId);
 
   // Fetch initial state via REST API on mount
   useEffect(() => {

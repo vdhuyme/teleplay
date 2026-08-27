@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSocketContext } from "./SocketContext";
+import { useSocketContext } from "../contexts/SocketContext";
 
 export function useGroupsSocket(onGroupsUpdated: () => void) {
   const { socket } = useSocketContext();
