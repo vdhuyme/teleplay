@@ -69,6 +69,8 @@ export async function play(
       requestedBy: requestedBy ?? null,
     });
 
+    sio.broadcast(SOCKET_EVENTS.GROUPS_UPDATED, { groupId });
+
     return video;
   }
 
