@@ -108,7 +108,9 @@ export async function pause(groupId: number) {
     .values({ id: groupId, status: PLAYER_STATUS.PAUSED })
     .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.PAUSED } });
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.PAUSE, { type: SOCKET_EVENTS.PAUSE });
+  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.PAUSE, {
+    type: SOCKET_EVENTS.PAUSE,
+  });
 }
 
 export async function resume(groupId: number) {
@@ -117,7 +119,9 @@ export async function resume(groupId: number) {
     .values({ id: groupId, status: PLAYER_STATUS.PLAYING })
     .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.PLAYING } });
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.RESUME, { type: SOCKET_EVENTS.RESUME });
+  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.RESUME, {
+    type: SOCKET_EVENTS.RESUME,
+  });
 }
 
 export async function stop(groupId: number) {
@@ -126,7 +130,9 @@ export async function stop(groupId: number) {
     .values({ id: groupId, status: PLAYER_STATUS.STOPPED })
     .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.STOPPED } });
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.STOP, { type: SOCKET_EVENTS.STOP });
+  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.STOP, {
+    type: SOCKET_EVENTS.STOP,
+  });
 }
 
 export async function skip(groupId: number) {
@@ -168,7 +174,9 @@ export async function skip(groupId: number) {
       .values({ id: groupId, status: PLAYER_STATUS.IDLE })
       .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.IDLE } });
 
-    sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.STOP, { type: SOCKET_EVENTS.STOP });
+    sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.STOP, {
+      type: SOCKET_EVENTS.STOP,
+    });
 
     return;
   }
@@ -236,7 +244,9 @@ export async function videoEnded(groupId: number) {
       .values({ id: groupId, status: PLAYER_STATUS.IDLE })
       .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.IDLE } });
 
-    sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.STOP, { type: SOCKET_EVENTS.STOP });
+    sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.STOP, {
+      type: SOCKET_EVENTS.STOP,
+    });
 
     return;
   }
@@ -285,7 +295,10 @@ export async function setVolume(groupId: number, volume: number) {
     .values({ id: groupId, volume })
     .onDuplicateKeyUpdate({ set: { volume } });
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.VOLUME, { type: SOCKET_EVENTS.VOLUME, volume });
+  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.VOLUME, {
+    type: SOCKET_EVENTS.VOLUME,
+    volume,
+  });
 }
 
 export async function getQueue(groupId: number) {
