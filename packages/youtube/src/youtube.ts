@@ -59,23 +59,6 @@ export class Youtube {
     );
   }
 
-  async artists(query = "music") {
-    const response = await this.client.search.list({
-      part: ["snippet"],
-      q: query,
-      type: ["channel"],
-      maxResults: 20,
-    });
-
-    return (
-      response.data.items?.map((item) => ({
-        channelId: item.id?.channelId || "",
-        title: item.snippet?.title || "Unknown",
-        thumbnail: item.snippet?.thumbnails?.medium?.url || "",
-      })) || []
-    );
-  }
-
   private async getVideoDetails(videoIds: string[]) {
     if (!videoIds.length) return [];
 
