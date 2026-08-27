@@ -15,11 +15,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@teleplay/youtube": "workspace:*",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
-    "@teleplay/youtube": "workspace:*",
     "mysql2": "^3.24.2",
     "pino": "^10.3.1",
     "socket.io": "^4.8.3",
