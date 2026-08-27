@@ -19,41 +19,33 @@ export class Youtube {
       maxResults: 10,
     });
 
-    const videoIds = response.data.items
-      ?.map((item) => item.id?.videoId)
-      .filter(Boolean) as string[];
+    return this.getVideoDetails(
+      response.data.items
+        ?.map((item) => item.id?.videoId)
+        .filter(Boolean) as string[],
+    );
+  }
 
-    if (videoIds.length === 0) {
-      return [];
-    }
-
-    const detailsResponse = await this.client.videos.list({
-      part: ["contentDetails", "snippet"],
-      id: videoIds,
+  async categories() {
+    const response = await this.client.videoCategories.list({
+      part: ["snippet"],
+      regionCode: "VN",
     });
 
     return (
-      detailsResponse.data.items?.map((item) => ({
-        videoId: item.id!,
+      response.data.items?.map((item) => ({
+        id: item.id!,
         title: item.snippet?.title || "Unknown",
-        thumbnail: item.snippet?.thumbnails?.medium?.url || "",
-        duration: this.parseDuration(item.contentDetails?.duration || "PT0S"),
-        channelTitle: item.snippet?.channelTitle || "Unknown",
       })) || []
     );
   }
 
-  async getTrending(
-    regionCode = "VN",
-    videoCategoryId = "10",
-    maxResults = 10,
-  ): Promise<YouTubeSearchResult[]> {
+  async trending() {
     const response = await this.client.videos.list({
       part: ["snippet", "contentDetails"],
       chart: "mostPopular",
-      regionCode,
-      videoCategoryId,
-      maxResults,
+      regionCode: "VN",
+      maxResults: 10,
     });
 
     return (
@@ -67,41 +59,33 @@ export class Youtube {
     );
   }
 
-  async getArtistVideos(
-    artistName: string,
-    maxResults = 10,
-  ): Promise<YouTubeSearchResult[]> {
-    const channelResponse = await this.client.search.list({
+  async artists(query = "music") {
+    const response = await this.client.search.list({
       part: ["snippet"],
-      q: artistName,
+      q: query,
       type: ["channel"],
-      maxResults: 1,
+      maxResults: 20,
     });
 
-    const channelId = channelResponse.data.items?.[0]?.id?.channelId;
-    if (!channelId) return [];
+    return (
+      response.data.items?.map((item) => ({
+        channelId: item.id?.channelId || "",
+        title: item.snippet?.title || "Unknown",
+        thumbnail: item.snippet?.thumbnails?.medium?.url || "",
+      })) || []
+    );
+  }
 
-    const videosResponse = await this.client.search.list({
-      part: ["snippet"],
-      channelId,
-      type: ["video"],
-      order: "viewCount",
-      maxResults,
-    });
+  private async getVideoDetails(videoIds: string[]) {
+    if (!videoIds.length) return [];
 
-    const videoIds = videosResponse.data.items
-      ?.map((item) => item.id?.videoId)
-      .filter(Boolean) as string[];
-
-    if (videoIds.length === 0) return [];
-
-    const detailsResponse = await this.client.videos.list({
+    const response = await this.client.videos.list({
       part: ["contentDetails", "snippet"],
       id: videoIds,
     });
 
     return (
-      detailsResponse.data.items?.map((item) => ({
+      response.data.items?.map((item) => ({
         videoId: item.id!,
         title: item.snippet?.title || "Unknown",
         thumbnail: item.snippet?.thumbnails?.medium?.url || "",
@@ -115,10 +99,10 @@ export class Youtube {
     const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
     if (!match) return 0;
 
-    const hours = parseInt(match[1] || "0");
-    const minutes = parseInt(match[2] || "0");
-    const seconds = parseInt(match[3] || "0");
-
-    return hours * 3600 + minutes * 60 + seconds;
+    return (
+      Number(match[1] || 0) * 3600 +
+      Number(match[2] || 0) * 60 +
+      Number(match[3] || 0)
+    );
   }
 }
