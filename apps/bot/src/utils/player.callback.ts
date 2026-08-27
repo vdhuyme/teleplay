@@ -1,6 +1,6 @@
 import { Context } from "grammy";
 import * as apiClient from "../api/api-client";
-import { tryCatch } from "./try-catch";
+import { tryCatch } from "@teleplay/core/utils/try-catch";
 import { searchResults } from "../commands/search.command";
 
 const actions = {
