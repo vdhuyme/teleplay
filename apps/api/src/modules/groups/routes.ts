@@ -7,11 +7,20 @@ import {
 } from "../../core/schemas/player";
 import { playerService } from "../players/index";
 import * as groupService from "./service";
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from "../../core/constants/pagination";
+
+const paginationQuery = z.object({
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+});
 
 const router = Router();
 
-router.get("/", async (_req, res) => {
-  res.json(await groupService.list());
+router.get("/", validate({ query: paginationQuery }), async (req, res) => {
+  const page = req.query.page ?? DEFAULT_PAGE;
+  const limit = req.query.limit ?? DEFAULT_LIMIT;
+
+  res.json(await groupService.list(page, limit));
 });
 
 router.get(
@@ -38,13 +47,14 @@ router.get(
   "/:groupId/history",
   validate({
     params: { groupId: z.coerce.number().int() },
-    query: z.object({ limit: z.coerce.number().int().optional() }),
+    query: paginationQuery,
   }),
   async (req, res) => {
     const { groupId } = req.params;
-    const limit = req.query.limit ?? 20;
+    const page = req.query.page ?? DEFAULT_PAGE;
+    const limit = req.query.limit ?? DEFAULT_LIMIT;
 
-    res.json(await groupService.history(groupId, limit));
+    res.json(await groupService.history(groupId, page, limit));
   },
 );
 
