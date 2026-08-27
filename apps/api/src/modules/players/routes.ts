@@ -3,6 +3,7 @@ import validate from "express-zod-safe";
 import z from "zod";
 import {
   playRequestSchema,
+  searchRequestSchema,
   volumeRequestSchema,
 } from "../../core/schemas/player";
 import * as playerService from "./service";
@@ -102,6 +103,17 @@ router.get(
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
     res.json(await playerService.getQueue(req.params.playerId));
+  },
+);
+
+router.post(
+  "/:playerId/search",
+  validate({
+    params: { playerId: z.coerce.number().int() },
+    body: searchRequestSchema,
+  }),
+  async (req, res) => {
+    res.json(await playerService.search(req.body.query));
   },
 );
 

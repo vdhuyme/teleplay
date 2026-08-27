@@ -6,8 +6,10 @@ import { PLAYER_STATUS } from "../groups";
 import { sio } from "../..";
 import { isNil } from "@teleplay/core";
 import { SOCKET_EVENTS } from "./constants";
+import { App } from "../../config/env";
 
-const ytb = new Youtube();
+const youtubeClient = new Youtube(App.getOrThrow("YOUTUBE_API_KEY"));
+export const search = (query: string) => youtubeClient.search(query);
 
 export async function getState(groupId: number) {
   return db.query.groups.findFirst({
@@ -21,7 +23,7 @@ export async function play(
   requestedBy?: string,
   groupName?: string,
 ) {
-  const results = await ytb.search(query);
+  const results = await search(query);
   const video = results[0];
   if (!video) {
     throw new NoVideoFoundError(query);
@@ -302,7 +304,7 @@ export async function addToQueue(
   requestedBy?: string,
   groupName?: string,
 ) {
-  const results = await ytb.search(query);
+  const results = await search(query);
   const video = results[0];
   if (!video) {
     throw new NoVideoFoundError(query);

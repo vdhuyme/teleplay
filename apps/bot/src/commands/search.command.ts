@@ -1,10 +1,9 @@
 import { Context, InlineKeyboard } from "grammy";
 import { SearchResult } from "../type";
+import * as apiClient from "../api/api-client";
 import { tryCatch } from "@teleplay/core";
-import { Youtube } from "@teleplay/youtube";
 import { isNil } from "@teleplay/core";
 
-const ytb = new Youtube();
 export const searchResults = new Map<string, SearchResult[]>();
 
 export async function searchCommand(ctx: Context) {
@@ -36,7 +35,7 @@ export async function searchCommand(ctx: Context) {
 
   await ctx.reply("Searching...");
 
-  const [error, results] = await tryCatch(ytb.search(query));
+  const [error, results] = await tryCatch(apiClient.search(playerId, query));
   if (error) {
     await ctx.reply(`Error: ${error.message}`);
 

@@ -11,10 +11,10 @@ export interface YouTubeSearchResult {
 export class Youtube {
   private readonly client: youtube_v3.Youtube;
 
-  constructor() {
+  constructor(public apiKey: string) {
     this.client = google.youtube({
       version: "v3",
-      auth: process.env.YOUTUBE_API_KEY,
+      auth: this.apiKey,
     });
   }
 

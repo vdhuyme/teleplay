@@ -68,6 +68,13 @@ export async function getQueue(playerId: string) {
   return request<QueueItem[]>(`/players/${playerId}/queue`);
 }
 
+export async function search(playerId: string, query: string) {
+  return request<SearchResult[]>(`/players/${playerId}/search`, {
+    method: "POST",
+    body: JSON.stringify({ query }),
+  });
+}
+
 export async function addToQueue(playerId: string, data: PlayRequest) {
   return request(`/players/${playerId}/queue`, {
     method: "POST",
