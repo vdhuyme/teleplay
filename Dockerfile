@@ -46,8 +46,8 @@ COPY --from=deps  /app/apps/api/package.json   ./apps/api/package.json
 COPY --from=deps  /app/apps/bot/package.json   ./apps/bot/package.json
 COPY --from=build /app/packages                ./packages
 
-# COPY deploy.sh ./deploy.sh
-# RUN chmod +x ./deploy.sh
+COPY deploy.sh ./deploy.sh
+RUN sed -i 's/\r$//' deploy.sh && chmod +x deploy.sh
 
 RUN pnpm install --prod --frozen-lockfile \
     --filter @teleplay/api...
@@ -55,7 +55,7 @@ RUN pnpm install --prod --frozen-lockfile \
 ARG PORT=10000
 EXPOSE ${PORT}
 
-# ENTRYPOINT ["./deploy.sh"]
+ENTRYPOINT ["./deploy.sh"]
 
 CMD ["tsx", "apps/api/dist/index.js"]
 
