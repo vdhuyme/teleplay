@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { isString, isUndefined } from "../utils/ts-utils";
+import { isString, isUndefined } from "@teleplay/core";
 
 dotenv.config();
 

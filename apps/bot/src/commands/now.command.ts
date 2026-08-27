@@ -4,7 +4,7 @@ import {
   formatNowPlaying,
   formatNowPlayingKeyboard,
 } from "../utils/player.formatter";
-import { tryCatch } from "../utils/try-catch";
+import { tryCatch } from "@teleplay/core";
 
 export async function nowCommand(ctx: Context) {
   const chatId = ctx.chat?.id;

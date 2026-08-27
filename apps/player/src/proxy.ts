@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { isNil } from "./utils/ts-utils";
+import { isNil } from "@teleplay/core";
 
 export async function proxy(req: NextRequest) {
   const token = await getToken({

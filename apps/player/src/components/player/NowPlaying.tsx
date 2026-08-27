@@ -1,6 +1,6 @@
 import { Music } from "lucide-react";
 import { YouTubePlayer } from "../YouTubePlayer";
-import { isNotNil } from "@/utils/ts-utils";
+import { isNotNil } from "@teleplay/core";
 import type { PlayerState } from "@/hooks/usePlayerState";
 
 interface NowPlayingProps {

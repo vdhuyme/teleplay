@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@teleplay/core": "workspace:*",
     "@teleplay/youtube": "workspace:*",
     "dotenv": "^17.4.2",
     "grammy": "^1.45.1"

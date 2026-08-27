@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import * as api from "@/api";
-import { tryCatch } from "@/utils/try-catch";
+import { tryCatch } from "@teleplay/core";
 import { LoadingOverlay } from "../LoadingOverlay";
 import { PlayerCard } from "./PlayerCard";
 import { PlayerDetailsModal } from "./PlayerDetailsModal";

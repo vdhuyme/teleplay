@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import * as apiClient from "../api/api-client";
 import { formatQueue } from "../utils/player.formatter";
-import { tryCatch } from "../utils/try-catch";
+import { tryCatch } from "@teleplay/core";
 
 export async function queueCommand(ctx: Context) {
   const chatId = ctx.chat?.id;

@@ -1,6 +1,6 @@
 import { Play, Pause, Square, Volume2 } from "lucide-react";
 import * as api from "@/api";
-import { tryCatch } from "@/utils/try-catch";
+import { tryCatch } from "@teleplay/core";
 import type { PlayerState } from "@/hooks/usePlayerState";
 
 interface PlayerControlsProps {

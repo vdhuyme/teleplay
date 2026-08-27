@@ -1,7 +1,7 @@
 import { Context } from "grammy";
 import * as apiClient from "../api/api-client";
-import { tryCatch } from "../utils/try-catch";
-import { isNil } from "../utils/ts-utils";
+import { tryCatch } from "@teleplay/core";
+import { isNil } from "@teleplay/core";
 
 export async function playCommand(ctx: Context) {
   const messageText = ctx.message?.text;

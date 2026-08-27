@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSocket } from "./useSocket";
 import * as api from "@/api";
-import { tryCatch } from "@/utils/try-catch";
+import { tryCatch } from "@teleplay/core";
 
 export interface PlayerState {
   status: "idle" | "playing" | "paused" | "stopped";

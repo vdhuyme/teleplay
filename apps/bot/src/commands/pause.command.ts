@@ -1,6 +1,6 @@
 import { Context } from "grammy";
 import * as apiClient from "../api/api-client";
-import { tryCatch } from "../utils/try-catch";
+import { tryCatch } from "@teleplay/core";
 
 export async function pauseCommand(ctx: Context) {
   const chatId = ctx.chat?.id;

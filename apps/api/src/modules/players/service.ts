@@ -4,7 +4,7 @@ import { Youtube } from "@teleplay/youtube";
 import { NoVideoFoundError } from "./error";
 import { PLAYER_STATUS } from "../groups";
 import { sio } from "../..";
-import { isNil } from "../../utils/ts-utils";
+import { isNil } from "@teleplay/core";
 import { SOCKET_EVENTS } from "./constants";
 
 const ytb = new Youtube();

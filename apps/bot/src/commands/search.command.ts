@@ -1,8 +1,8 @@
 import { Context, InlineKeyboard } from "grammy";
 import { SearchResult } from "../type";
-import { tryCatch } from "../utils/try-catch";
+import { tryCatch } from "@teleplay/core";
 import { Youtube } from "@teleplay/youtube";
-import { isNil } from "../utils/ts-utils";
+import { isNil } from "@teleplay/core";
 
 const ytb = new Youtube();
 export const searchResults = new Map<string, SearchResult[]>();
