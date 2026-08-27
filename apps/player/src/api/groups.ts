@@ -34,8 +34,15 @@ export interface PlayHistory {
   playedAt: Date;
 }
 
-export function list() {
-  return request<Group[]>("/groups");
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export function list(page = 1, limit = 10) {
+  return request<PaginatedResponse<Group>>(`/groups?page=${page}&limit=${limit}`);
 }
 
 export function get(groupId: number) {
@@ -46,8 +53,10 @@ export function queue(groupId: number) {
   return request<QueueItem[]>(`/groups/${groupId}/queue`);
 }
 
-export function history(groupId: number, limit = 20) {
-  return request<PlayHistory[]>(`/groups/${groupId}/history?limit=${limit}`);
+export function history(groupId: number, page = 1, limit = 20) {
+  return request<PaginatedResponse<PlayHistory>>(
+    `/groups/${groupId}/history?page=${page}&limit=${limit}`,
+  );
 }
 
 export function remove(groupId: number) {

@@ -6,8 +6,11 @@ import * as api from "@/api";
 import { tryCatch } from "@teleplay/core";
 import { EmptyState } from "../EmptyState";
 import { LoadingOverlay } from "../LoadingOverlay";
+import { Pagination } from "../Pagination";
 import { PlayerCard } from "./PlayerCard";
 import { PlayerDetailsModal } from "./PlayerDetailsModal";
+
+const PAGE_LIMIT = 20;
 
 export function PlayerList() {
   const [groups, setGroups] = useState<api.groups.Group[]>([]);
@@ -16,20 +19,24 @@ export function PlayerList() {
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [expandedPlayer, setExpandedPlayer] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     const fetchGroups = async () => {
-      const [err, data] = await tryCatch(api.groups.list());
+      setLoading(true);
+      const [err, data] = await tryCatch(api.groups.list(page, PAGE_LIMIT));
       if (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } else {
-        setGroups(data);
+        setGroups(data.data);
+        setTotal(data.total);
       }
       setLoading(false);
     };
 
     fetchGroups();
-  }, []);
+  }, [page]);
 
   const handleDelete = async (groupId: number) => {
     setDeleting(true);
@@ -37,8 +44,14 @@ export function PlayerList() {
     if (err) {
       setError(err instanceof Error ? err.message : "Failed to delete");
     } else {
-      setGroups((prev) => prev.filter((g) => g.id !== groupId));
       setDeleteConfirm(null);
+      const [fetchErr, data] = await tryCatch(
+        api.groups.list(page, PAGE_LIMIT),
+      );
+      if (!fetchErr) {
+        setGroups(data.data);
+        setTotal(data.total);
+      }
     }
     setDeleting(false);
   };
@@ -79,16 +92,26 @@ export function PlayerList() {
             description="Players will appear here once your bot is added to a Telegram group."
           />
         ) : (
-          <div className="space-y-4">
-            {groups.map((group) => (
-              <PlayerCard
-                key={group.id}
-                player={group}
-                onDelete={handleDeleteClick}
-                onExpand={handleExpand}
-              />
-            ))}
-          </div>
+          <>
+            <div className="space-y-4">
+              {groups.map((group) => (
+                <PlayerCard
+                  key={group.id}
+                  player={group}
+                  onDelete={handleDeleteClick}
+                  onExpand={handleExpand}
+                />
+              ))}
+            </div>
+
+            <Pagination
+              page={page}
+              total={total}
+              limit={PAGE_LIMIT}
+              onPageChange={setPage}
+              className="mt-6"
+            />
+          </>
         )}
       </div>
 

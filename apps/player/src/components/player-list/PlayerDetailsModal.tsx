@@ -5,8 +5,11 @@ import { History, ListMusic, X } from "lucide-react";
 import { Card } from "../Card";
 import { EmptyState } from "../EmptyState";
 import { LoadingOverlay } from "../LoadingOverlay";
+import { Pagination } from "../Pagination";
 import * as api from "@/api";
 import { tryCatch } from "@teleplay/core";
+
+const HISTORY_LIMIT = 20;
 
 interface PlayerDetailsModalProps {
   playerId: number;
@@ -21,22 +24,27 @@ export function PlayerDetailsModal({
   const [history, setPlayerHistory] = useState<api.groups.PlayHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"queue" | "history">("queue");
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyTotal, setHistoryTotal] = useState(0);
 
   useEffect(() => {
     const fetchDetails = async () => {
       setLoading(true);
       const [queueErr, queueData] = await tryCatch(api.groups.queue(playerId));
       const [historyErr, historyData] = await tryCatch(
-        api.groups.history(playerId),
+        api.groups.history(playerId, historyPage, HISTORY_LIMIT),
       );
 
       if (!queueErr) setQueue(queueData);
-      if (!historyErr) setPlayerHistory(historyData);
+      if (!historyErr) {
+        setPlayerHistory(historyData.data);
+        setHistoryTotal(historyData.total);
+      }
       setLoading(false);
     };
 
     fetchDetails();
-  }, [playerId]);
+  }, [playerId, historyPage]);
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -137,6 +145,14 @@ export function PlayerDetailsModal({
                   </div>
                 </div>
               ))}
+
+              <Pagination
+                page={historyPage}
+                total={historyTotal}
+                limit={HISTORY_LIMIT}
+                onPageChange={setHistoryPage}
+                className="mt-4"
+              />
             </div>
           )}
         </div>
