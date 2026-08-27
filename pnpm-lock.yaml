@@ -20,6 +20,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@teleplay/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@teleplay/youtube':
         specifier: workspace:*
         version: link:../../packages/youtube
@@ -72,6 +75,9 @@ importers:
 
   apps/bot:
     dependencies:
+      '@teleplay/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@teleplay/youtube':
         specifier: workspace:*
         version: link:../../packages/youtube
@@ -97,6 +103,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.9.1
         version: 5.9.1(react-hook-form@7.86.0(react@19.2.8))(zod@4.4.3)
+      '@teleplay/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -152,6 +161,12 @@ importers:
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/core:
+    devDependencies:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
