@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Application } from 'express';
 import cors from 'cors';
 import pino from 'pino';
 import { setGlobalOptions } from 'express-zod-safe';
@@ -10,7 +10,7 @@ import { notFoundHandler } from './middleware/not-found';
 setGlobalOptions({ defaultSchemaObject: 'lax', missingSchemaBehavior: 'any' });
 
 const logger = pino();
-const app = express();
+const app: Application = express();
 
 app.use(cors());
 app.use(express.json());

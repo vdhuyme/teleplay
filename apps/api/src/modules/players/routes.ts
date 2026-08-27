@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Router as RouterType } from 'express';
 import validate from 'express-zod-safe';
 import z from 'zod';
 import {
@@ -9,7 +9,7 @@ import {
 } from '../../core/schemas/player';
 import * as playerService from './service';
 
-const router = Router();
+const router: RouterType = Router();
 
 router.get(
   '/:playerId/state',

@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Router as RouterType } from 'express';
 import validate from 'express-zod-safe';
 import z from 'zod';
 import {
@@ -14,7 +14,7 @@ const paginationQuery = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional(),
 });
 
-const router = Router();
+const router: RouterType = Router();
 
 router.get('/', validate({ query: paginationQuery }), async (req, res) => {
   const page = req.query.page ?? DEFAULT_PAGE;
