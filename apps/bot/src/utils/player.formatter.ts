@@ -60,6 +60,7 @@ export function formatHelp() {
     `*Playback*`,
     `  /play \\- Play a song`,
     `  /search \\- Search and select`,
+    `  /suggest \\- Suggest songs by genre/trend/artist`,
     `  /pause \\- Pause playback`,
     `  /resume \\- Resume playback`,
     `  /skip \\- Skip to next song`,

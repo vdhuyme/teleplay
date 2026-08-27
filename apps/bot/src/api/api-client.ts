@@ -100,3 +100,9 @@ export async function setVolume(playerId: string, data: VolumeRequest) {
     body: JSON.stringify(data),
   });
 }
+
+export async function getGroupHistory(groupId: string, limit = 10) {
+  return request<{ videoId: string; title: string }[]>(
+    `/groups/${groupId}/history?limit=${limit}`,
+  );
+}
