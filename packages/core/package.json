@@ -1,0 +1,15 @@
+{
+  "name": "@teleplay/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./utils/index.ts",
+  "types": "./utils/index.ts",
+  "exports": {
+    ".": "./utils/index.ts",
+    "./utils/*": "./utils/*.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
