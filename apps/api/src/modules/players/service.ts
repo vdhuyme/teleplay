@@ -1,5 +1,5 @@
 import { db, queueItems, playHistory, groups } from "../../database/index";
-import { eq, and, asc, desc } from "drizzle-orm";
+import { eq, and, asc, desc, sql } from "drizzle-orm";
 import { Youtube } from "@teleplay/youtube";
 import { NoVideoFoundError } from "./error";
 import { PLAYER_STATUS } from "../groups";
@@ -8,17 +8,6 @@ import { isNil } from "@teleplay/core";
 import { SOCKET_EVENTS } from "./constants";
 
 const ytb = new Youtube();
-
-async function getMaxPosition(groupId: number): Promise<number> {
-  const result = await db
-    .select({ position: queueItems.position })
-    .from(queueItems)
-    .where(eq(queueItems.groupId, groupId))
-    .orderBy(desc(queueItems.position))
-    .limit(1);
-
-  return result[0]?.position ?? 0;
-}
 
 export async function getState(groupId: number) {
   return db.query.groups.findFirst({
@@ -54,7 +43,6 @@ export async function play(
         title: video.title,
         thumbnail: video.thumbnail,
         duration: video.duration,
-        position: 0,
         requestedBy: requestedBy ?? null,
         name: groupName ?? null,
       })
@@ -65,7 +53,6 @@ export async function play(
           title: video.title,
           thumbnail: video.thumbnail,
           duration: video.duration,
-          position: 0,
           requestedBy: requestedBy ?? null,
           name: groupName ?? null,
         },
@@ -77,23 +64,39 @@ export async function play(
       title: video.title,
       thumbnail: video.thumbnail,
       duration: video.duration,
-      position: 0,
       requestedBy: requestedBy ?? null,
     });
 
     return video;
   }
 
-  const maxPosition = await getMaxPosition(groupId);
-  await db.insert(queueItems).values({
-    groupId,
-    videoId: video.videoId,
-    title: video.title,
-    thumbnail: video.thumbnail,
-    duration: video.duration,
-    position: maxPosition + 1,
-    requestedBy: requestedBy ?? null,
-  });
+  const existing = await db
+    .select({ id: queueItems.id })
+    .from(queueItems)
+    .where(
+      and(
+        eq(queueItems.groupId, groupId),
+        eq(queueItems.videoId, video.videoId),
+      ),
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
+    await db
+      .update(queueItems)
+      .set({ votes: sql`${queueItems.votes} + 1` })
+      .where(eq(queueItems.id, existing[0].id));
+  } else {
+    await db.insert(queueItems).values({
+      groupId,
+      videoId: video.videoId,
+      title: video.title,
+      thumbnail: video.thumbnail,
+      duration: video.duration,
+      requestedBy: requestedBy ?? null,
+      votes: 1,
+    });
+  }
 
   sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.QUEUE_UPDATED, {
     type: SOCKET_EVENTS.QUEUE_UPDATED,
@@ -151,21 +154,11 @@ export async function skip(groupId: number) {
     });
   }
 
-  const currentItem = await db
-    .select()
-    .from(queueItems)
-    .where(and(eq(queueItems.groupId, groupId), eq(queueItems.position, 0)))
-    .limit(1);
-
-  if (currentItem.length > 0) {
-    await db.delete(queueItems).where(eq(queueItems.id, currentItem[0].id));
-  }
-
   const nextItem = await db
     .select()
     .from(queueItems)
     .where(eq(queueItems.groupId, groupId))
-    .orderBy(asc(queueItems.position))
+    .orderBy(desc(queueItems.votes), asc(queueItems.id))
     .limit(1);
 
   if (nextItem.length === 0) {
@@ -191,7 +184,6 @@ export async function skip(groupId: number) {
       title: next.title,
       thumbnail: next.thumbnail,
       duration: next.duration,
-      position: 0,
       requestedBy: next.requestedBy,
     })
     .onDuplicateKeyUpdate({
@@ -201,7 +193,6 @@ export async function skip(groupId: number) {
         title: next.title,
         thumbnail: next.thumbnail,
         duration: next.duration,
-        position: 0,
         requestedBy: next.requestedBy,
       },
     });
@@ -214,7 +205,6 @@ export async function skip(groupId: number) {
     title: next.title,
     thumbnail: next.thumbnail,
     duration: next.duration,
-    position: 0,
     requestedBy: next.requestedBy,
   });
 }
@@ -235,7 +225,7 @@ export async function videoEnded(groupId: number) {
     .select()
     .from(queueItems)
     .where(eq(queueItems.groupId, groupId))
-    .orderBy(asc(queueItems.position))
+    .orderBy(desc(queueItems.votes), asc(queueItems.id))
     .limit(1);
 
   if (nextItem.length === 0) {
@@ -261,7 +251,6 @@ export async function videoEnded(groupId: number) {
       title: next.title,
       thumbnail: next.thumbnail,
       duration: next.duration,
-      position: 0,
       requestedBy: next.requestedBy,
     })
     .onDuplicateKeyUpdate({
@@ -271,7 +260,6 @@ export async function videoEnded(groupId: number) {
         title: next.title,
         thumbnail: next.thumbnail,
         duration: next.duration,
-        position: 0,
         requestedBy: next.requestedBy,
       },
     });
@@ -284,7 +272,6 @@ export async function videoEnded(groupId: number) {
     title: next.title,
     thumbnail: next.thumbnail,
     duration: next.duration,
-    position: 0,
     requestedBy: next.requestedBy,
   });
 }
@@ -306,7 +293,7 @@ export async function getQueue(groupId: number) {
     .select()
     .from(queueItems)
     .where(eq(queueItems.groupId, groupId))
-    .orderBy(asc(queueItems.position));
+    .orderBy(desc(queueItems.votes), asc(queueItems.id));
 }
 
 export async function addToQueue(
@@ -321,15 +308,14 @@ export async function addToQueue(
     throw new NoVideoFoundError(query);
   }
 
-  const maxPosition = await getMaxPosition(groupId);
   await db.insert(queueItems).values({
     groupId,
     videoId: video.videoId,
     title: video.title,
     thumbnail: video.thumbnail,
     duration: video.duration,
-    position: maxPosition + 1,
     requestedBy: requestedBy ?? null,
+    votes: 1,
   });
 
   await db

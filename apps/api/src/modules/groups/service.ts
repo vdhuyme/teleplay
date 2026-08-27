@@ -38,7 +38,7 @@ export async function queue(groupId: number) {
     .select()
     .from(queueItems)
     .where(eq(queueItems.groupId, groupId))
-    .orderBy(asc(queueItems.position));
+    .orderBy(desc(queueItems.votes), asc(queueItems.id));
 }
 
 export async function history(groupId: number, limit = 20) {

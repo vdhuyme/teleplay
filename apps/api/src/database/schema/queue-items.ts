@@ -16,7 +16,6 @@ export const queueItems = mysqlTable(
     title: varchar("title", { length: 500 }).notNull(),
     thumbnail: varchar("thumbnail", { length: 1000 }),
     duration: int("duration", { unsigned: true }),
-    position: int("position", { unsigned: true }).notNull(),
     votes: bigint("votes", { mode: "number", unsigned: true })
       .default(1)
       .notNull(),
@@ -24,5 +23,6 @@ export const queueItems = mysqlTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   },
-  (table) => [index("group_position_idx").on(table.groupId, table.position)],
+  (table) => [index("group_votes_idx").on(table.groupId, table.votes)],
 );
+
