@@ -6,11 +6,15 @@ import {
   bigint,
 } from "drizzle-orm/mysql-core";
 
+import { groups } from "./groups";
+
 export const playHistory = mysqlTable(
   "play_history",
   {
     id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    groupId: bigint("group_id", { mode: "number" }).notNull(),
+    groupId: bigint("group_id", { mode: "number" })
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
     videoId: varchar("video_id", { length: 32 }).notNull(),
     title: varchar("title", { length: 500 }).notNull(),
     requestedBy: varchar("requested_by", { length: 255 }),

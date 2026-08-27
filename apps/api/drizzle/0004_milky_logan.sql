@@ -1,0 +1,2 @@
+ALTER TABLE `play_history` ADD CONSTRAINT `play_history_group_id_groups_id_fk` FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `queue_items` ADD CONSTRAINT `queue_items_group_id_groups_id_fk` FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`) ON DELETE cascade ON UPDATE no action;

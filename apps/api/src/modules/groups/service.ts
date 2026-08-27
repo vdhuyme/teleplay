@@ -4,7 +4,7 @@ import { GroupNotFoundError } from "./error";
 
 export async function get(groupId: number) {
   const result = await db.query.groups.findFirst({
-    where: eq(groups.id, Number(groupId)),
+    where: eq(groups.id, groupId),
     with: {
       queueItems: true,
       playHistory: {
@@ -51,7 +51,5 @@ export async function history(groupId: number, limit = 20) {
 }
 
 export async function remove(groupId: number): Promise<void> {
-  await db.delete(groups).where(eq(groups.id, Number(groupId)));
-  await db.delete(queueItems).where(eq(queueItems.groupId, groupId));
-  await db.delete(playHistory).where(eq(playHistory.groupId, groupId));
+  await db.delete(groups).where(eq(groups.id, groupId));
 }

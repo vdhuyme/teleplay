@@ -7,11 +7,15 @@ import {
   index,
 } from "drizzle-orm/mysql-core";
 
+import { groups } from "./groups";
+
 export const queueItems = mysqlTable(
   "queue_items",
   {
     id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    groupId: bigint("group_id", { mode: "number" }).notNull(),
+    groupId: bigint("group_id", { mode: "number" })
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
     videoId: varchar("video_id", { length: 32 }).notNull(),
     title: varchar("title", { length: 500 }).notNull(),
     thumbnail: varchar("thumbnail", { length: 1000 }),
@@ -25,4 +29,3 @@ export const queueItems = mysqlTable(
   },
   (table) => [index("group_votes_idx").on(table.groupId, table.votes)],
 );
-
