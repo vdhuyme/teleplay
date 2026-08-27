@@ -50,7 +50,8 @@ RUN pnpm install --prod --frozen-lockfile \
     --filter @teleplay/api...
 
 USER node
-EXPOSE 9001
+ARG API_PORT=8000
+EXPOSE ${API_PORT}
 CMD ["tsx", "apps/api/dist/index.js"]
 
 # ---------- bot (runtime) ----------
