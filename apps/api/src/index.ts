@@ -10,7 +10,7 @@ sio.onConnection((ws) =>
   ws.on('join', async (playerId: string) => sio.joinRoom(ws.id, playerId)),
 );
 
-const port = Number(App.get('API_PORT', '10000'));
+const port = App.isDevelopment() ? Number(App.get('API_PORT', '8000')) : 10000;
 httpServer.listen(port, '0.0.0.0', () => {
   logger.info(`🚀 HTTP server running on port ${port}`);
 });
