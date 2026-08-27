@@ -12,6 +12,7 @@ export async function playCommand(ctx: Context) {
   if (!query) {
     await ctx.reply(
       "Please provide a song name. Example: /play We don't talk anymore - Charlie Puth",
+      { parse_mode: "Markdown" },
     );
 
     return;
@@ -20,7 +21,9 @@ export async function playCommand(ctx: Context) {
   const chatId = ctx.chat?.id;
 
   if (isNil(chatId)) {
-    await ctx.reply("This command only works in groups.");
+    await ctx.reply("This command only works in groups.", {
+      parse_mode: "Markdown",
+    });
     return;
   }
 
@@ -29,7 +32,7 @@ export async function playCommand(ctx: Context) {
     ctx.from?.username;
   const groupName = ctx.chat?.title;
 
-  await ctx.reply("Searching for your song...");
+  await ctx.reply("Searching for your song...", { parse_mode: "Markdown" });
 
   const [error, video] = await tryCatch(
     apiClient.play(String(chatId), {
@@ -40,9 +43,9 @@ export async function playCommand(ctx: Context) {
   );
 
   if (error) {
-    await ctx.reply(`Error: ${error.message}`);
+    await ctx.reply(`Error: ${error.message}`, { parse_mode: "Markdown" });
     return;
   }
 
-  await ctx.reply(`Added: ${video.title}`);
+  await ctx.reply(`Added: ${video.title}`, { parse_mode: "Markdown" });
 }

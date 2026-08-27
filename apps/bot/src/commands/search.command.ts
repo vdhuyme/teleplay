@@ -15,6 +15,7 @@ export async function searchCommand(ctx: Context) {
   if (!query) {
     await ctx.reply(
       "Please provide a search query. Example: /search Em của ngày hôm qua",
+      { parse_mode: "Markdown" },
     );
 
     return;
@@ -23,7 +24,9 @@ export async function searchCommand(ctx: Context) {
   const chatId = ctx.chat?.id;
 
   if (isNil(chatId)) {
-    await ctx.reply("This command only works in groups.");
+    await ctx.reply("This command only works in groups.", {
+      parse_mode: "Markdown",
+    });
 
     return;
   }
@@ -33,17 +36,17 @@ export async function searchCommand(ctx: Context) {
     [ctx.from?.first_name, ctx.from?.last_name].filter(Boolean).join(" ") ||
     ctx.from?.username;
 
-  await ctx.reply("Searching...");
+  await ctx.reply("Searching...", { parse_mode: "Markdown" });
 
   const [error, results] = await tryCatch(apiClient.search(playerId, query));
   if (error) {
-    await ctx.reply(`Error: ${error.message}`);
+    await ctx.reply(`Error: ${error.message}`, { parse_mode: "Markdown" });
 
     return;
   }
 
   if (!results.length) {
-    await ctx.reply("No results found.");
+    await ctx.reply("No results found.", { parse_mode: "Markdown" });
 
     return;
   }
@@ -68,6 +71,7 @@ export async function searchCommand(ctx: Context) {
   });
 
   await ctx.reply("Select a song to play:", {
+    parse_mode: "Markdown",
     reply_markup: keyboard,
   });
 }

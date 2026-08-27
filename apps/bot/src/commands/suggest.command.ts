@@ -145,11 +145,14 @@ export async function suggestCommand(ctx: Context) {
   const chatId = ctx.chat?.id;
 
   if (isNil(chatId)) {
-    await ctx.reply("This command only works in groups.");
+    await ctx.reply("This command only works in groups.", {
+      parse_mode: "Markdown",
+    });
     return;
   }
 
   await ctx.reply("Choose a category:", {
+    parse_mode: "Markdown",
     reply_markup: buildMainKeyboard(),
   });
 }

@@ -6,16 +6,18 @@ export async function skipCommand(ctx: Context) {
   const chatId = ctx.chat?.id;
 
   if (!chatId) {
-    await ctx.reply("This command only works in groups.");
+    await ctx.reply("This command only works in groups.", {
+      parse_mode: "Markdown",
+    });
     return;
   }
 
   const [error] = await tryCatch(apiClient.skip(String(chatId)));
 
   if (error) {
-    await ctx.reply(`Error: ${error.message}`);
+    await ctx.reply(`Error: ${error.message}`, { parse_mode: "Markdown" });
     return;
   }
 
-  await ctx.reply("Skipped");
+  await ctx.reply("Skipped", { parse_mode: "Markdown" });
 }
