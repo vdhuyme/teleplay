@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { History, ListMusic, X } from "lucide-react";
 import { Card } from "../Card";
+import { EmptyState } from "../EmptyState";
 import { LoadingOverlay } from "../LoadingOverlay";
 import * as api from "@/api";
 import { tryCatch } from "@teleplay/core";
@@ -12,7 +13,10 @@ interface PlayerDetailsModalProps {
   onClose: () => void;
 }
 
-export function PlayerDetailsModal({ playerId, onClose }: PlayerDetailsModalProps) {
+export function PlayerDetailsModal({
+  playerId,
+  onClose,
+}: PlayerDetailsModalProps) {
   const [queue, setQueue] = useState<api.groups.QueueItem[]>([]);
   const [history, setPlayerHistory] = useState<api.groups.PlayHistory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +26,9 @@ export function PlayerDetailsModal({ playerId, onClose }: PlayerDetailsModalProp
     const fetchDetails = async () => {
       setLoading(true);
       const [queueErr, queueData] = await tryCatch(api.groups.queue(playerId));
-      const [historyErr, historyData] = await tryCatch(api.groups.history(playerId));
+      const [historyErr, historyData] = await tryCatch(
+        api.groups.history(playerId),
+      );
 
       if (!queueErr) setQueue(queueData);
       if (!historyErr) setPlayerHistory(historyData);
@@ -68,23 +74,33 @@ export function PlayerDetailsModal({ playerId, onClose }: PlayerDetailsModalProp
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-bg-surface [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:transition-colors hover:[&::-webkit-scrollbar-thumb]:bg-border-dark [scrollbar-width:thin] [scrollbar-color:var(--color-bg-surface)_transparent]">
           {loading ? (
             <LoadingOverlay />
           ) : activeTab === "queue" ? (
             queue.length === 0 ? (
-              <p className="text-center text-text-secondary py-8">Queue is empty</p>
+              <EmptyState
+                icon={ListMusic}
+                title="Queue is empty"
+                description="Songs requested from the bot will show up here."
+                className="py-8"
+              />
             ) : (
               <div className="space-y-2">
                 {queue.map((item) => (
-                  <div key={item.id} className="flex items-center gap-3 p-2 bg-bg-surface rounded-md">
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 p-2 bg-bg-surface rounded-md"
+                  >
                     <img
                       src={item.thumbnail}
                       alt={item.title}
                       className="w-12 h-12 rounded object-cover"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-body-large font-medium truncate">{item.title}</p>
+                      <p className="text-body-large font-medium truncate">
+                        {item.title}
+                      </p>
                       {item.requestedBy && (
                         <p className="text-caption text-text-secondary">
                           Requested by {item.requestedBy}
@@ -96,15 +112,26 @@ export function PlayerDetailsModal({ playerId, onClose }: PlayerDetailsModalProp
               </div>
             )
           ) : history.length === 0 ? (
-            <p className="text-center text-text-secondary py-8">No history</p>
+            <EmptyState
+              icon={History}
+              title="No history yet"
+              description="Played songs will be recorded here."
+              className="py-8"
+            />
           ) : (
             <div className="space-y-2">
               {history.map((item) => (
-                <div key={item.id} className="flex items-center gap-3 p-2 bg-bg-surface rounded-md">
+                <div
+                  key={item.id}
+                  className="flex items-center gap-3 p-2 bg-bg-surface rounded-md"
+                >
                   <div className="flex-1 min-w-0">
-                    <p className="text-body-large font-medium truncate">{item.title}</p>
+                    <p className="text-body-large font-medium truncate">
+                      {item.title}
+                    </p>
                     <p className="text-caption text-text-secondary">
-                      {item.requestedBy && `Requested by ${item.requestedBy} • `}
+                      {item.requestedBy &&
+                        `Requested by ${item.requestedBy} • `}
                       {new Date(item.playedAt).toLocaleString()}
                     </p>
                   </div>

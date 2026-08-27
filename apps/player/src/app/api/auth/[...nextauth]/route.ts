@@ -6,11 +6,18 @@ const handler = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "Enter username" },
-        password: { label: "Password", type: "password" },
+        username: {
+          label: "Username",
+          type: "text",
+          placeholder: "Enter username",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+          placeholder: "Enter password",
+        },
       },
       async authorize(credentials) {
-        // Simple demo auth - replace with real validation
         if (
           credentials?.username &&
           credentials?.password &&
@@ -20,7 +27,6 @@ const handler = NextAuth({
           return {
             id: credentials.username,
             name: credentials.username,
-            email: `${credentials.username}@teleplay.local`,
           };
         }
         return null;

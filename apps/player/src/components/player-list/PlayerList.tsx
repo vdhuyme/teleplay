@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Music } from "lucide-react";
 import * as api from "@/api";
 import { tryCatch } from "@teleplay/core";
+import { EmptyState } from "../EmptyState";
 import { LoadingOverlay } from "../LoadingOverlay";
 import { PlayerCard } from "./PlayerCard";
 import { PlayerDetailsModal } from "./PlayerDetailsModal";
 
-export function PlayerListClient() {
+export function PlayerList() {
   const [groups, setGroups] = useState<api.groups.Group[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,9 +73,11 @@ export function PlayerListClient() {
         )}
 
         {groups.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-body-large text-text-secondary">No players found</p>
-          </div>
+          <EmptyState
+            icon={Music}
+            title="No players yet"
+            description="Players will appear here once your bot is added to a Telegram group."
+          />
         ) : (
           <div className="space-y-4">
             {groups.map((group) => (

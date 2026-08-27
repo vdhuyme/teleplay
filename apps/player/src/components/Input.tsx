@@ -4,10 +4,11 @@ import { cn } from "@/utils/cn";
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  rightSlot?: React.ReactNode;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, error, id, ...props }, ref) => {
+  ({ className, type, label, error, id, rightSlot, ...props }, ref) => {
     const inputId = id || React.useId();
 
     return (
@@ -20,18 +21,26 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        <input
-          type={type}
-          id={inputId}
-          className={cn(
-            "bg-bg-surface-light text-text-base rounded-pill px-4 py-3 outline-none transition-all w-full",
-            "focus:ring-1 focus:ring-white",
-            error && "ring-1 ring-text-negative",
-            className,
+        <div className="relative">
+          <input
+            type={type}
+            id={inputId}
+            className={cn(
+              "bg-bg-surface-light text-text-base rounded-pill px-4 py-3 outline-none transition-all w-full",
+              "focus:ring-1 focus:ring-white",
+              error && "ring-1 ring-text-negative",
+              rightSlot && "pr-12",
+              className,
+            )}
+            ref={ref}
+            {...props}
+          />
+          {rightSlot && (
+            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+              {rightSlot}
+            </div>
           )}
-          ref={ref}
-          {...props}
-        />
+        </div>
         {error && <p className="text-small text-text-negative">{error}</p>}
       </div>
     );
@@ -40,3 +49,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = "Input";
 
 export { Input };
+
