@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Music } from "lucide-react";
 import * as api from "@/api";
 import { tryCatch } from "@teleplay/core";
+import { useGroupsSocket } from "@/hooks/useGroupsSocket";
 import { EmptyState } from "../EmptyState";
 import { LoadingOverlay } from "../LoadingOverlay";
 import { Pagination } from "../Pagination";
@@ -22,21 +23,23 @@ export function PlayerList() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
-  useEffect(() => {
-    const fetchGroups = async () => {
-      setLoading(true);
-      const [err, data] = await tryCatch(api.groups.list(page, PAGE_LIMIT));
-      if (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } else {
-        setGroups(data.data);
-        setTotal(data.total);
-      }
-      setLoading(false);
-    };
+  const fetchGroups = useCallback(async () => {
+    setLoading(true);
+    const [err, data] = await tryCatch(api.groups.list(page, PAGE_LIMIT));
+    if (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } else {
+      setGroups(data.data);
+      setTotal(data.total);
+    }
+    setLoading(false);
+  }, [page]);
 
+  useEffect(() => {
     fetchGroups();
   }, [page]);
+
+  useGroupsSocket(fetchGroups);
 
   const handleDelete = async (groupId: number) => {
     setDeleting(true);

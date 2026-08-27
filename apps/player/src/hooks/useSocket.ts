@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import { io, Socket } from "socket.io-client";
+import { useEffect, useState, useCallback } from "react";
+import { useSocketContext } from "./SocketContext";
 
 interface StateSyncEvent {
   type: "STATE_SYNC";
@@ -64,69 +64,69 @@ interface UseSocketReturn {
 }
 
 export function useSocket(playerId: string): UseSocketReturn {
-  const [connected, setConnected] = useState(false);
+  const { socket, connected } = useSocketContext();
   const [lastEvent, setLastEvent] = useState<SocketEvent | null>(null);
-  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
-      {
-        transports: ["websocket", "polling"],
-      },
-    );
+    if (!socket) return;
 
-    socketRef.current = socket;
+    socket.emit("join", playerId);
 
-    socket.on("connect", () => {
-      console.log("Socket.IO connected");
-      setConnected(true);
-      socket.emit("join", playerId);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Socket.IO disconnected");
-      setConnected(false);
-    });
-
-    socket.on("STATE_SYNC", (state) => {
+    const handleStateSync = (state: StateSyncEvent["state"]) => {
       setLastEvent({ type: "STATE_SYNC", state });
-    });
+    };
 
-    socket.on("PLAY", (data) => {
+    const handlePlay = (data: Omit<PlayEvent, "type">) => {
       setLastEvent({ type: "PLAY", ...data });
-    });
+    };
 
-    socket.on("PAUSE", () => {
+    const handlePause = () => {
       setLastEvent({ type: "PAUSE" });
-    });
+    };
 
-    socket.on("RESUME", () => {
+    const handleResume = () => {
       setLastEvent({ type: "RESUME" });
-    });
+    };
 
-    socket.on("STOP", () => {
+    const handleStop = () => {
       setLastEvent({ type: "STOP" });
-    });
+    };
 
-    socket.on("VOLUME", (data) => {
+    const handleVolume = (data: { volume: number }) => {
       setLastEvent({ type: "VOLUME", ...data });
-    });
+    };
 
-    socket.on("QUEUE_UPDATED", () => {
+    const handleQueueUpdated = () => {
       setLastEvent({ type: "QUEUE_UPDATED" });
-    });
+    };
+
+    socket.on("STATE_SYNC", handleStateSync);
+    socket.on("PLAY", handlePlay);
+    socket.on("PAUSE", handlePause);
+    socket.on("RESUME", handleResume);
+    socket.on("STOP", handleStop);
+    socket.on("VOLUME", handleVolume);
+    socket.on("QUEUE_UPDATED", handleQueueUpdated);
 
     return () => {
-      socket.disconnect();
+      socket.off("STATE_SYNC", handleStateSync);
+      socket.off("PLAY", handlePlay);
+      socket.off("PAUSE", handlePause);
+      socket.off("RESUME", handleResume);
+      socket.off("STOP", handleStop);
+      socket.off("VOLUME", handleVolume);
+      socket.off("QUEUE_UPDATED", handleQueueUpdated);
     };
-  }, [playerId]);
+  }, [socket, playerId]);
 
-  const emit = useCallback((event: string, data?: Record<string, unknown>) => {
-    if (socketRef.current) {
-      socketRef.current.emit(event, data);
-    }
-  }, []);
+  const emit = useCallback(
+    (event: string, data?: Record<string, unknown>) => {
+      if (socket) {
+        socket.emit(event, data);
+      }
+    },
+    [socket],
+  );
 
   return { connected, lastEvent, emit };
 }
