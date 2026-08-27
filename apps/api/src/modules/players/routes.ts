@@ -131,6 +131,14 @@ router.post(
   },
 );
 
+router.get("/trending", async (_req, res) => {
+  res.json(await playerService.getTrending());
+});
+
+router.get("/categories", async (_req, res) => {
+  res.json(await playerService.getCategories());
+});
+
 router.post(
   "/:playerId/queue",
   validate({
@@ -156,10 +164,7 @@ router.delete(
     },
   }),
   async (req, res) => {
-    await playerService.removeFromQueue(
-      req.params.playerId,
-      req.params.itemId,
-    );
+    await playerService.removeFromQueue(req.params.playerId, req.params.itemId);
 
     res.json({ success: true });
   },

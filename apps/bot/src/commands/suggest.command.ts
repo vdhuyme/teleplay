@@ -5,42 +5,6 @@ import { SearchResult } from "../type";
 
 export const suggestResults = new Map<string, SearchResult[]>();
 
-interface SubcategoryItem {
-  label: string;
-  query: string;
-}
-
-const CATEGORIES = {
-  genre: {
-    label: "By Genre",
-    subcategories: {
-      vpop: { label: "V-Pop", query: "V-Pop hit 2025" },
-      ballad: { label: "Ballad", query: "Vietnamese Ballad best" },
-      rap: { label: "Rap/Hip-Hop", query: "Rap Viet Hip-Hop best" },
-      edm: { label: "EDM", query: "EDM Vietnamese hit" },
-      rock: { label: "Rock", query: "Rock Viet best" },
-      acoustic: { label: "Acoustic", query: "Acoustic Vietnamese chill" },
-    } satisfies Record<string, SubcategoryItem>,
-  },
-  trending: {
-    label: "Trending",
-    query: "Vietnam music trending today",
-  },
-  artist: {
-    label: "By Artist",
-    subcategories: {
-      sontung: { label: "Son Tung M-TP", query: "Son Tung M-TP" },
-      dendau: { label: "Den Vau", query: "Den Vau" },
-      hinhhai: { label: "Hua Kim Tuyen", query: "Hua Kim Tuyen" },
-      erik: { label: "ERIK", query: "ERIK music" },
-      hoangthuylinh: { label: "Hoang Thuy Linh", query: "Hoang Thuy Linh" },
-    } satisfies Record<string, SubcategoryItem>,
-  },
-  history: { label: "History" },
-} as const;
-
-type CategoryKey = keyof typeof CATEGORIES;
-
 function getPlayerId(ctx: Context): string | null {
   const chatId = ctx.chat?.id;
   if (isNil(chatId)) return null;
@@ -79,33 +43,22 @@ function buildMainKeyboard(): InlineKeyboard {
   const keyboard = new InlineKeyboard();
 
   keyboard
-    .text("**By Genre**", "sg:genre")
-    .text("**Trending**", "sg:trending")
+    .text("By Genre", "sg:genre")
+    .text("Trending", "sg:trending")
     .row()
-    .text("**By Artist**", "sg:artist")
-    .text("**History**", "sg:history");
+    .text("History", "sg:history");
 
   return keyboard;
 }
 
-function buildSubcategoryKeyboard(
-  category: "genre" | "artist",
+function buildCategoriesKeyboard(
+  categories: { id: string; title: string }[],
 ): InlineKeyboard {
   const keyboard = new InlineKeyboard();
-  const subcategories = CATEGORIES[category].subcategories;
 
-  const entries = Object.entries(subcategories);
-  for (let i = 0; i < entries.length; i += 2) {
-    const [key1, sub1] = entries[i];
-    keyboard.text(sub1.label, `sgs:${category}:${key1}`);
-
-    if (i + 1 < entries.length) {
-      const [, sub2] = entries[i + 1];
-      keyboard.text(sub2.label, `sgs:${category}:${entries[i + 1][0]}`);
-    }
-
-    keyboard.row();
-  }
+  categories.forEach((category) => {
+    keyboard.text(category.title, `sgc:${category.id}`).row();
+  });
 
   keyboard.text("Back", "sgmain");
 
@@ -121,12 +74,16 @@ async function searchAndShow(
   const [error, results] = await tryCatch(apiClient.search(playerId, query));
 
   if (error) {
-    await ctx.editMessageText("Search error.");
+    await ctx.editMessageText("Search error.", {
+      parse_mode: "Markdown",
+    });
     return;
   }
 
   if (!results.length) {
-    await ctx.editMessageText("No results found.");
+    await ctx.editMessageText("No results found.", {
+      parse_mode: "Markdown",
+    });
     return;
   }
 
@@ -136,6 +93,36 @@ async function searchAndShow(
   );
 
   await ctx.editMessageText(`Results for "*${query}*"`, {
+    parse_mode: "Markdown",
+    reply_markup: buildResultsKeyboard(playerId, results),
+  });
+}
+
+async function showTrending(ctx: Context, playerId: string) {
+  const [error, results] = await tryCatch(apiClient.getTrending());
+
+  if (error) {
+    await ctx.editMessageText("Failed to load trending.", {
+      parse_mode: "Markdown",
+    });
+    return;
+  }
+
+  if (!results.length) {
+    await ctx.editMessageText("No trending videos found.", {
+      parse_mode: "Markdown",
+    });
+    return;
+  }
+
+  const requestedBy = getRequestedBy(ctx);
+
+  suggestResults.set(
+    playerId,
+    results.map((video) => ({ ...video, requestedBy })),
+  );
+
+  await ctx.editMessageText("*Trending Now*", {
     parse_mode: "Markdown",
     reply_markup: buildResultsKeyboard(playerId, results),
   });
@@ -161,7 +148,7 @@ export async function suggestCallback(ctx: Context) {
   const callbackData = ctx.callbackQuery?.data;
   if (!callbackData) return;
 
-  const category = callbackData.split(":")[1] as CategoryKey;
+  const category = callbackData.split(":")[1];
   const playerId = getPlayerId(ctx);
 
   if (!playerId) {
@@ -172,9 +159,10 @@ export async function suggestCallback(ctx: Context) {
   await ctx.answerCallbackQuery();
 
   if (category === "trending") {
-    const requestedBy = getRequestedBy(ctx);
-    await ctx.editMessageText("Searching...");
-    await searchAndShow(ctx, playerId, CATEGORIES.trending.query, requestedBy);
+    await ctx.editMessageText("Loading trending...", {
+      parse_mode: "Markdown",
+    });
+    await showTrending(ctx, playerId);
     return;
   }
 
@@ -184,12 +172,16 @@ export async function suggestCallback(ctx: Context) {
     );
 
     if (error) {
-      await ctx.editMessageText("Failed to load history.");
+      await ctx.editMessageText("Failed to load history.", {
+        parse_mode: "Markdown",
+      });
       return;
     }
 
     if (!history.length) {
-      await ctx.editMessageText("No play history yet.");
+      await ctx.editMessageText("No play history yet.", {
+        parse_mode: "Markdown",
+      });
       return;
     }
 
@@ -220,49 +212,55 @@ export async function suggestCallback(ctx: Context) {
     return;
   }
 
-  if (category === "genre" || category === "artist") {
-    await ctx.editMessageText(
-      `Choose ${CATEGORIES[category].label.toLowerCase()}:`,
-      {
-        reply_markup: buildSubcategoryKeyboard(category),
-      },
-    );
+  if (category === "genre") {
+    const [error, categories] = await tryCatch(apiClient.getCategories());
+
+    if (error || !categories?.length) {
+      await ctx.editMessageText("Failed to load categories.", {
+        parse_mode: "Markdown",
+      });
+      return;
+    }
+
+    await ctx.editMessageText("Choose a genre:", {
+      parse_mode: "Markdown",
+      reply_markup: buildCategoriesKeyboard(categories),
+    });
     return;
   }
 }
 
-export async function suggestSubCallback(ctx: Context) {
+export async function suggestCategoryCallback(ctx: Context) {
   const callbackData = ctx.callbackQuery?.data;
   if (!callbackData) return;
 
-  const [, category, subKey] = callbackData.split(":");
+  const [, categoryId] = callbackData.split(":");
   const playerId = getPlayerId(ctx);
 
-  if (!playerId) {
+  if (!playerId || !categoryId) {
     await ctx.answerCallbackQuery({ text: "Error" });
     return;
   }
 
   await ctx.answerCallbackQuery();
 
-  const subcategories =
-    category === "genre"
-      ? CATEGORIES.genre.subcategories
-      : category === "artist"
-        ? CATEGORIES.artist.subcategories
-        : null;
+  const [error, categories] = await tryCatch(apiClient.getCategories());
+  const category = categories?.find((c) => c.id === categoryId);
 
-  if (!subcategories) return;
-
-  const subcategory = subcategories[subKey as keyof typeof subcategories] as
-    | SubcategoryItem
-    | undefined;
-  if (!subcategory) return;
+  if (error || !category) {
+    await ctx.editMessageText("Failed to load category.", {
+      parse_mode: "Markdown",
+    });
+    return;
+  }
 
   const requestedBy = getRequestedBy(ctx);
+  const query = `${category.title} music`;
 
-  await ctx.editMessageText("Searching...");
-  await searchAndShow(ctx, playerId, subcategory.query, requestedBy);
+  await ctx.editMessageText("Searching...", {
+    parse_mode: "Markdown",
+  });
+  await searchAndShow(ctx, playerId, query, requestedBy);
 }
 
 export async function suggestPlayCallback(ctx: Context) {

@@ -10,6 +10,8 @@ import { App } from "../../config/env";
 
 const youtubeClient = new Youtube(App.getOrThrow("YOUTUBE_API_KEY"));
 export const search = (query: string) => youtubeClient.search(query);
+export const getTrending = () => youtubeClient.trending();
+export const getCategories = () => youtubeClient.categories();
 
 export async function getState(groupId: number) {
   return db.query.groups.findFirst({

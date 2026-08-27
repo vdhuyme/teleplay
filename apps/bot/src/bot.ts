@@ -16,7 +16,7 @@ import { playCallback } from "./utils/player.callback";
 import {
   suggestCommand,
   suggestCallback,
-  suggestSubCallback,
+  suggestCategoryCallback,
   suggestPlayCallback,
   suggestBackCallback,
 } from "./commands/suggest.command";
@@ -45,7 +45,7 @@ bot.callbackQuery(/^stop:-?\d+$/, playCallback);
 bot.callbackQuery(/^queue:-?\d+$/, playCallback);
 bot.callbackQuery(/^sp:/, playCallback);
 bot.callbackQuery(/^sg:/, suggestCallback);
-bot.callbackQuery(/^sgs:/, suggestSubCallback);
+bot.callbackQuery(/^sgc:/, suggestCategoryCallback);
 bot.callbackQuery(/^sgp:/, suggestPlayCallback);
 bot.callbackQuery(/^sgback:/, suggestBackCallback);
 bot.callbackQuery("sgmain", suggestBackCallback);

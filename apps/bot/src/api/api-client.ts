@@ -75,6 +75,14 @@ export async function search(playerId: string, query: string) {
   });
 }
 
+export async function getTrending() {
+  return request<SearchResult[]>(`/players/trending`);
+}
+
+export async function getCategories() {
+  return request<{ id: string; title: string }[]>(`/players/categories`);
+}
+
 export async function addToQueue(playerId: string, data: PlayRequest) {
   return request(`/players/${playerId}/queue`, {
     method: "POST",
