@@ -12,15 +12,15 @@ services:
     env_file:
       - .env
     ports:
-      - "${PORT:-10000}:${PORT:-10000}"
+      - '${PORT:-10000}:${PORT:-10000}'
     healthcheck:
       test:
         [
-          "CMD",
-          "wget",
-          "--quiet",
-          "--spider",
-          "http://localhost:${PORT:-10000}/healthz",
+          'CMD',
+          'wget',
+          '--quiet',
+          '--spider',
+          'http://localhost:${PORT:-10000}/healthz',
         ]
       interval: 30s
       timeout: 5s

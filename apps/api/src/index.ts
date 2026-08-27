@@ -11,6 +11,6 @@ sio.onConnection((ws) =>
 );
 
 const port = Number(App.get('PORT', '10000'));
-httpServer.listen(port, () => {
-  logger.info(`🚀 HTTP server running on port ${port}`);
-});
+httpServer.listen(port, () =>
+  logger.info(`🚀 HTTP server running on port ${port}`),
+);
