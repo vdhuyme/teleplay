@@ -1,117 +1,67 @@
+import { createHttpClient } from '@teleplay/core';
+import { App } from '@teleplay/core';
 import {
+  Paginated,
   PlayRequest,
   PlayerState,
   QueueItem,
   SearchResult,
   VolumeRequest,
 } from '../type';
-import { App } from '@teleplay/core';
 
-async function request<T = unknown>(
-  path: string,
-  options: RequestInit = {},
-): Promise<T> {
-  const url = `${App.getOrThrow('API_URL')}${path}`;
+const http = createHttpClient({ baseUrl: App.getOrThrow('API_URL') });
 
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
+export const getState = (playerId: string) =>
+  http.get<PlayerState | null>(`/players/${playerId}/state`);
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error?.message || 'API request failed');
-  }
+export const play = (playerId: string, data: PlayRequest) =>
+  http.post<SearchResult>(`/players/${playerId}/play`, data);
 
-  return response.json();
-}
+export const pause = (playerId: string) =>
+  http.post(`/players/${playerId}/pause`);
 
-export async function getState(playerId: string) {
-  return request<PlayerState | null>(`/players/${playerId}/state`);
-}
+export const resume = (playerId: string) =>
+  http.post(`/players/${playerId}/resume`);
 
-export async function play(playerId: string, data: PlayRequest) {
-  return request<SearchResult>(`/players/${playerId}/play`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-}
+export const stop = (playerId: string) =>
+  http.post(`/players/${playerId}/stop`);
 
-export async function pause(playerId: string) {
-  return request(`/players/${playerId}/pause`, {
-    method: 'POST',
-  });
-}
+export const skip = (playerId: string) =>
+  http.post(`/players/${playerId}/skip`);
 
-export async function resume(playerId: string) {
-  return request(`/players/${playerId}/resume`, {
-    method: 'POST',
-  });
-}
+export const getQueue = (playerId: string) =>
+  http.get<QueueItem[]>(`/players/${playerId}/queue`);
 
-export async function stop(playerId: string) {
-  return request(`/players/${playerId}/stop`, {
-    method: 'POST',
-  });
-}
+export const search = (playerId: string, query: string) =>
+  http.post<SearchResult[]>(`/players/${playerId}/search`, { query });
 
-export async function skip(playerId: string) {
-  return request(`/players/${playerId}/skip`, {
-    method: 'POST',
-  });
-}
+export const getTrending = () => http.get<SearchResult[]>(`/players/trending`);
 
-export async function getQueue(playerId: string) {
-  return request<QueueItem[]>(`/players/${playerId}/queue`);
-}
+export const getCategories = () =>
+  http.get<{ id: string; title: string }[]>(`/players/categories`);
 
-export async function search(playerId: string, query: string) {
-  return request<SearchResult[]>(`/players/${playerId}/search`, {
-    method: 'POST',
-    body: JSON.stringify({ query }),
-  });
-}
+export const addToQueue = (playerId: string, data: PlayRequest) =>
+  http.post(`/players/${playerId}/queue`, data);
 
-export async function getTrending() {
-  return request<SearchResult[]>(`/players/trending`);
-}
+export const removeFromQueue = (playerId: string, itemId: number) =>
+  http.delete(`/players/${playerId}/queue/${itemId}`);
 
-export async function getCategories() {
-  return request<{ id: string; title: string }[]>(`/players/categories`);
-}
+export const clearQueue = (playerId: string) =>
+  http.delete(`/players/${playerId}/queue`);
 
-export async function addToQueue(playerId: string, data: PlayRequest) {
-  return request(`/players/${playerId}/queue`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-}
+export const setVolume = (playerId: string, data: VolumeRequest) =>
+  http.post(`/players/${playerId}/volume`, data);
 
-export async function removeFromQueue(playerId: string, itemId: number) {
-  return request(`/players/${playerId}/queue/${itemId}`, {
-    method: 'DELETE',
-  });
-}
+export const getGroupHistory = async (
+  groupId: string,
+  limit = 10,
+): Promise<{ videoId: string; title: string }[]> => {
+  const result = await http.get<
+    Paginated<{
+      videoId: string;
+      title: string;
+    }>
+  >(`/groups/${groupId}/history`, { params: { limit } });
 
-export async function clearQueue(playerId: string) {
-  return request(`/players/${playerId}/queue`, {
-    method: 'DELETE',
-  });
-}
-
-export async function setVolume(playerId: string, data: VolumeRequest) {
-  return request(`/players/${playerId}/volume`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-}
-
-export async function getGroupHistory(groupId: string, limit = 10) {
-  const result = await request<{
-    data: { videoId: string; title: string }[];
-  }>(`/groups/${groupId}/history?limit=${limit}`);
   return result.data;
-}
+};
