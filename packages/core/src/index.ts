@@ -3,3 +3,4 @@ export * from './try-catch';
 export * from './mask';
 export * from './delay';
 export * from './env';
+export * from './http';
