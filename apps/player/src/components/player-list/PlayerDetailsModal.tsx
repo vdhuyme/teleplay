@@ -46,8 +46,29 @@ export function PlayerDetailsModal({
     fetchDetails();
   }, [playerId, historyPage]);
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <Card className="w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-feature-heading font-semibold">Player Details</h2>
@@ -82,7 +103,7 @@ export function PlayerDetailsModal({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-bg-surface [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:transition-colors hover:[&::-webkit-scrollbar-thumb]:bg-border-dark [scrollbar-width:thin] [scrollbar-color:var(--color-bg-surface)_transparent]">
+        <div className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-bg-surface [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:transition-colors hover:[&::-webkit-scrollbar-thumb]:bg-border-dark scrollbar-thin [scrollbar-color:var(--color-bg-surface)_transparent]">
           {loading ? (
             <LoadingOverlay />
           ) : activeTab === 'queue' ? (

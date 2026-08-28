@@ -1,13 +1,10 @@
 import { Router, type Router as RouterType } from 'express';
 import validate from 'express-zod-safe';
 import z from 'zod';
-import {
-  playRequestSchema,
-  volumeRequestSchema,
-} from '../../core/schemas/player';
+import { playRequestSchema, volumeRequestSchema } from '../schemas/player';
 import { playerService } from '../players/index';
 import * as groupService from './service';
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from '../../core/constants/pagination';
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from '../constants/pagination';
 
 const paginationQuery = z.object({
   page: z.coerce.number().int().min(1).optional(),

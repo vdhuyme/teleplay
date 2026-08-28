@@ -2,10 +2,9 @@ import express, { type Application } from 'express';
 import cors from 'cors';
 import pino from 'pino';
 import { setGlobalOptions } from 'express-zod-safe';
-import { playerRoutes } from './modules/players';
-import groupRoutes from './modules/groups/routes';
-import { errorHandler } from './middleware/error-handler';
-import { notFoundHandler } from './middleware/not-found';
+import { playerRoutes } from './players';
+import { groupRoutes } from './groups';
+import { errorHandler, notFoundHandler } from './middleware';
 
 setGlobalOptions({ defaultSchemaObject: 'lax', missingSchemaBehavior: 'any' });
 

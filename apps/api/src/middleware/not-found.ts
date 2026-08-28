@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { HTTP_STATUS_CODE } from '../utils/http-status';
+import { HTTP_STATUS_CODE } from '../utils';
 
 export function notFoundHandler(
   req: Request,

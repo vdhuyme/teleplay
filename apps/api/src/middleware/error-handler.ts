@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../core/errors/index';
 import { HTTP_STATUS_CODE } from '../utils/http-status';
+import { AppError } from '../errors';
 
 export function errorHandler(
   err: Error,

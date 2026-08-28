@@ -1,7 +1,7 @@
-import { db, queueItems, playHistory, groups } from '../../database/index';
+import { db, queueItems, playHistory, groups } from '../database/index';
 import { eq, desc, asc, count } from 'drizzle-orm';
 import { GroupNotFoundError } from './error';
-import { PaginatedResult } from '../../core/constants/pagination';
+import { PaginatedResult } from '../constants';
 
 export async function get(groupId: number) {
   const result = await db.query.groups.findFirst({
