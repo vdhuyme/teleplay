@@ -30,6 +30,14 @@ interface PlayBody {
   groupName?: string;
 }
 
+export interface SearchResult {
+  videoId: string;
+  title: string;
+  thumbnail: string;
+  duration: number;
+  channelTitle?: string;
+}
+
 export const getState = (playerId: number) =>
   http.get<PlayerState>(`/players/${playerId}/state`);
 
@@ -71,3 +79,11 @@ export const videoEnded = (playerId: number) =>
 
 export const playFromQueue = (playerId: number, itemId: number) =>
   http.post(`/players/${playerId}/play-from-queue`, { itemId });
+
+export const search = (playerId: number, query: string) =>
+  http.post<SearchResult[]>(`/players/${playerId}/search`, { query });
+
+export const getTrending = () => http.get<SearchResult[]>('/players/trending');
+
+export const getCategories = () =>
+  http.get<{ id: string; name: string }[]>('/players/categories');
