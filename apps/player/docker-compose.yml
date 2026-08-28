@@ -1,0 +1,15 @@
+services:
+  player:
+    build:
+      context: ../..
+      dockerfile: apps/player/Dockerfile
+      target: player
+      args:
+        PORT: ${PORT:-3000}
+    image: teleplay-player:latest
+    container_name: teleplay-player
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
