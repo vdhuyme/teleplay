@@ -1,17 +1,6 @@
-import { Bot } from 'grammy';
+import { Bot, Context } from 'grammy';
 import { App } from '@teleplay/core';
-import { startCommand } from './commands/start.command';
-import { helpCommand } from './commands/help.command';
-import { playCommand } from './commands/play.command';
-import { searchCommand } from './commands/search.command';
-import { pauseCommand } from './commands/pause.command';
-import { resumeCommand } from './commands/resume.command';
-import { skipCommand } from './commands/skip.command';
-import { stopCommand } from './commands/stop.command';
-import { queueCommand } from './commands/queue.command';
-import { nowCommand } from './commands/now.command';
-import { volumeCommand } from './commands/volume.command';
-import { clearCommand } from './commands/clear.command';
+import { reactRandom } from './utils/reaction';
 import { playCallback } from './utils/player.callback';
 import {
   suggestCommand,
@@ -20,10 +9,30 @@ import {
   suggestPlayCallback,
   suggestBackCallback,
 } from './commands/suggest.command';
+import {
+  clearCommand,
+  helpCommand,
+  nowCommand,
+  pauseCommand,
+  playCommand,
+  queueCommand,
+  resumeCommand,
+  searchCommand,
+  skipCommand,
+  startCommand,
+  stopCommand,
+  volumeCommand,
+} from './commands';
 
 const bot = new Bot(App.getOrThrow('TELEGRAM_BOT_TOKEN'));
 
-// Commands
+bot.use(async (ctx: Context, next) => {
+  if (ctx.message?.text?.startsWith('/')) {
+    await reactRandom(ctx);
+  }
+  await next();
+});
+
 bot.command('start', startCommand);
 bot.command('help', helpCommand);
 bot.command('play', playCommand);
@@ -38,7 +47,6 @@ bot.command('volume', volumeCommand);
 bot.command('clear', clearCommand);
 bot.command('suggest', suggestCommand);
 
-// Callbacks
 bot.callbackQuery(/^pause:-?\d+$/, playCallback);
 bot.callbackQuery(/^skip:-?\d+$/, playCallback);
 bot.callbackQuery(/^stop:-?\d+$/, playCallback);
@@ -50,7 +58,6 @@ bot.callbackQuery(/^sgp:/, suggestPlayCallback);
 bot.callbackQuery(/^sgback:/, suggestBackCallback);
 bot.callbackQuery('sgmain', suggestBackCallback);
 
-// Register commands for Telegram menu
 bot.api.setMyCommands([
   { command: 'play', description: 'Play a song' },
   { command: 'search', description: 'Search and select a song' },
