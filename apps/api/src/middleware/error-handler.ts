@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { HTTP_STATUS_CODE } from '../utils/http-status';
+import { HTTP_STATUS_CODE } from '../constants';
 import { AppError } from '../errors';
 
 export function errorHandler(

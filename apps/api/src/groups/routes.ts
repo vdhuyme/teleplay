@@ -3,7 +3,7 @@ import validate from 'express-zod-safe';
 import z from 'zod';
 import { playRequestSchema, volumeRequestSchema } from '../schemas/player';
 import { playerService } from '../players/index';
-import * as groupService from './service';
+import * as groupService from './services';
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from '../constants/pagination';
 
 const paginationQuery = z.object({

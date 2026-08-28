@@ -1,5 +1,5 @@
+import { HTTP_STATUS_CODE } from '../constants';
 import { AppError } from '../errors';
-import { HTTP_STATUS_CODE } from '../utils';
 
 export class PlayerLockError extends AppError {
   constructor(playerId: string) {

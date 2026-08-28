@@ -1,5 +1,5 @@
-export * as groupService from './service';
+export * as groupService from './services';
 export { default as groupRoutes } from './routes';
-export { GroupNotFoundError } from './error';
-export type { PlayerStatus } from './type';
-export { PLAYER_STATUS } from './type';
+export { GroupNotFoundError } from './errors';
+export type { PlayerStatus } from './types';
+export { PLAYER_STATUS } from './types';

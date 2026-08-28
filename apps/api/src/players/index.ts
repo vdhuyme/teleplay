@@ -1,3 +1,3 @@
-export * as playerService from './service';
+export * as playerService from './services';
 export { default as playerRoutes } from './routes';
-export { PlayerLockError } from './error';
+export { PlayerLockError } from './errors';

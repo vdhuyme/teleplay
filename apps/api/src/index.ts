@@ -1,14 +1,10 @@
 import { createServer } from 'http';
 import { app, logger } from './app';
 import { App } from '@teleplay/core';
-import { SocketIoServer } from './realtime';
+import { wss } from './realtime';
 
 const httpServer = createServer(app);
-
-export const sio = new SocketIoServer(httpServer);
-sio.onConnection((ws) =>
-  ws.on('join', async (playerId: string) => sio.joinRoom(ws.id, playerId)),
-);
+wss.attach(httpServer);
 
 const port = Number(App.get('PORT', '10000'));
 httpServer.listen(port, () =>

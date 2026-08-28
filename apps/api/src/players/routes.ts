@@ -7,7 +7,7 @@ import {
   searchRequestSchema,
   volumeRequestSchema,
 } from '../schemas/player';
-import * as playerService from './service';
+import * as playerService from './services';
 
 const router: RouterType = Router();
 

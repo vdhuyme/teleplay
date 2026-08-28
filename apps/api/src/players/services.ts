@@ -1,11 +1,17 @@
 import { db, queueItems, playHistory, groups } from '../database/index';
 import { eq, and, asc, desc, sql } from 'drizzle-orm';
 import { Youtube } from '@teleplay/youtube';
-import { NoVideoFoundError } from './error';
-import { sio } from '..';
-import { isNil } from '@teleplay/core';
-import { SOCKET_EVENTS } from '../realtime/event';
-import { App } from '@teleplay/core';
+import { NoVideoFoundError } from './errors';
+import { isNil, App } from '@teleplay/core';
+import {
+  PlayEvent,
+  PauseEvent,
+  ResumeEvent,
+  StopEvent,
+  QueueUpdatedEvent,
+  VolumeEvent,
+  GroupsUpdatedEvent,
+} from '../realtime/events';
 import { PLAYER_STATUS } from '../groups';
 
 const youtubeClient = new Youtube(App.getOrThrow('YOUTUBE_API_KEY'));
@@ -62,16 +68,15 @@ export async function play(
         },
       });
 
-    sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.PLAY, {
-      type: SOCKET_EVENTS.PLAY,
-      videoId: video.videoId,
-      title: video.title,
-      thumbnail: video.thumbnail,
-      duration: video.duration,
-      requestedBy: requestedBy ?? null,
-    });
+    new PlayEvent(
+      video.videoId,
+      video.title,
+      video.thumbnail,
+      video.duration,
+      requestedBy ?? null,
+    ).toRoom(groupId);
 
-    sio.broadcast(SOCKET_EVENTS.GROUPS_UPDATED, { groupId });
+    new GroupsUpdatedEvent(groupId).broadcast();
 
     return video;
   }
@@ -104,9 +109,7 @@ export async function play(
     });
   }
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.QUEUE_UPDATED, {
-    type: SOCKET_EVENTS.QUEUE_UPDATED,
-  });
+  new QueueUpdatedEvent().toRoom(groupId);
 
   return video;
 }
@@ -117,9 +120,7 @@ export async function pause(groupId: number) {
     .values({ id: groupId, status: PLAYER_STATUS.PAUSED })
     .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.PAUSED } });
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.PAUSE, {
-    type: SOCKET_EVENTS.PAUSE,
-  });
+  new PauseEvent().toRoom(groupId);
 }
 
 export async function resume(groupId: number) {
@@ -128,9 +129,7 @@ export async function resume(groupId: number) {
     .values({ id: groupId, status: PLAYER_STATUS.PLAYING })
     .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.PLAYING } });
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.RESUME, {
-    type: SOCKET_EVENTS.RESUME,
-  });
+  new ResumeEvent().toRoom(groupId);
 }
 
 export async function stop(groupId: number) {
@@ -139,9 +138,7 @@ export async function stop(groupId: number) {
     .values({ id: groupId, status: PLAYER_STATUS.STOPPED })
     .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.STOPPED } });
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.STOP, {
-    type: SOCKET_EVENTS.STOP,
-  });
+  new StopEvent().toRoom(groupId);
 }
 
 export async function skip(groupId: number) {
@@ -173,9 +170,7 @@ export async function skip(groupId: number) {
       .values({ id: groupId, status: PLAYER_STATUS.IDLE })
       .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.IDLE } });
 
-    sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.STOP, {
-      type: SOCKET_EVENTS.STOP,
-    });
+    new StopEvent().toRoom(groupId);
 
     return;
   }
@@ -205,14 +200,13 @@ export async function skip(groupId: number) {
 
   await db.delete(queueItems).where(eq(queueItems.id, next.id));
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.PLAY, {
-    type: SOCKET_EVENTS.PLAY,
-    videoId: next.videoId,
-    title: next.title,
-    thumbnail: next.thumbnail,
-    duration: next.duration,
-    requestedBy: next.requestedBy,
-  });
+  new PlayEvent(
+    next.videoId,
+    next.title,
+    next.thumbnail,
+    next.duration,
+    next.requestedBy,
+  ).toRoom(groupId);
 }
 
 export async function videoEnded(groupId: number) {
@@ -240,9 +234,7 @@ export async function videoEnded(groupId: number) {
       .values({ id: groupId, status: PLAYER_STATUS.IDLE })
       .onDuplicateKeyUpdate({ set: { status: PLAYER_STATUS.IDLE } });
 
-    sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.STOP, {
-      type: SOCKET_EVENTS.STOP,
-    });
+    new StopEvent().toRoom(groupId);
 
     return;
   }
@@ -272,14 +264,13 @@ export async function videoEnded(groupId: number) {
 
   await db.delete(queueItems).where(eq(queueItems.id, next.id));
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.PLAY, {
-    type: SOCKET_EVENTS.PLAY,
-    videoId: next.videoId,
-    title: next.title,
-    thumbnail: next.thumbnail,
-    duration: next.duration,
-    requestedBy: next.requestedBy,
-  });
+  new PlayEvent(
+    next.videoId,
+    next.title,
+    next.thumbnail,
+    next.duration,
+    next.requestedBy,
+  ).toRoom(groupId);
 }
 
 export async function playFromQueue(groupId: number, itemId: number) {
@@ -327,14 +318,13 @@ export async function playFromQueue(groupId: number, itemId: number) {
 
   await db.delete(queueItems).where(eq(queueItems.id, itemId));
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.PLAY, {
-    type: SOCKET_EVENTS.PLAY,
-    videoId: item.videoId,
-    title: item.title,
-    thumbnail: item.thumbnail,
-    duration: item.duration,
-    requestedBy: item.requestedBy,
-  });
+  new PlayEvent(
+    item.videoId,
+    item.title,
+    item.thumbnail,
+    item.duration,
+    item.requestedBy,
+  ).toRoom(groupId);
 }
 
 export async function setVolume(groupId: number, volume: number) {
@@ -343,10 +333,7 @@ export async function setVolume(groupId: number, volume: number) {
     .values({ id: groupId, volume })
     .onDuplicateKeyUpdate({ set: { volume } });
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.VOLUME, {
-    type: SOCKET_EVENTS.VOLUME,
-    volume,
-  });
+  new VolumeEvent(volume).toRoom(groupId);
 }
 
 export async function getQueue(groupId: number) {
@@ -384,9 +371,7 @@ export async function addToQueue(
     .values({ id: groupId, name: groupName ?? null })
     .onDuplicateKeyUpdate({ set: { name: groupName ?? null } });
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.QUEUE_UPDATED, {
-    type: SOCKET_EVENTS.QUEUE_UPDATED,
-  });
+  new QueueUpdatedEvent().toRoom(groupId);
 
   return video;
 }
@@ -396,15 +381,11 @@ export async function removeFromQueue(groupId: number, itemId: number) {
     .delete(queueItems)
     .where(and(eq(queueItems.id, itemId), eq(queueItems.groupId, groupId)));
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.QUEUE_UPDATED, {
-    type: SOCKET_EVENTS.QUEUE_UPDATED,
-  });
+  new QueueUpdatedEvent().toRoom(groupId);
 }
 
 export async function clearQueue(groupId: number) {
   await db.delete(queueItems).where(eq(queueItems.groupId, groupId));
 
-  sio.broadcastToRoom(String(groupId), SOCKET_EVENTS.QUEUE_UPDATED, {
-    type: SOCKET_EVENTS.QUEUE_UPDATED,
-  });
+  new QueueUpdatedEvent().toRoom(groupId);
 }

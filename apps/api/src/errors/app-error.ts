@@ -1,4 +1,4 @@
-import { HTTP_STATUS_CODE } from '../utils';
+import { HTTP_STATUS_CODE } from '../constants';
 
 export class AppError extends Error {
   constructor(
