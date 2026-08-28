@@ -20,7 +20,7 @@ export const search = (query: string) => youtubeClient.search(query);
 export const getTrending = () => youtubeClient.trending();
 export const getCategories = () => youtubeClient.categories();
 
-export async function getState(groupId: number) {
+export async function first(groupId: number) {
   return db.query.groups.findFirst({
     where: eq(groups.id, groupId),
   });
@@ -38,12 +38,12 @@ export async function play(
     throw new NoVideoFoundError(query);
   }
 
-  const state = await getState(groupId);
+  const group = await first(groupId);
 
   if (
-    isNil(state) ||
-    state.status === PLAYER_STATUS.IDLE ||
-    state.status === PLAYER_STATUS.STOPPED
+    isNil(group) ||
+    group.status === PLAYER_STATUS.IDLE ||
+    group.status === PLAYER_STATUS.STOPPED
   ) {
     await db
       .insert(groups)
@@ -143,18 +143,18 @@ export async function stop(groupId: number) {
 }
 
 export async function skip(groupId: number) {
-  const state = await getState(groupId);
+  const group = await first(groupId);
 
   if (
-    state?.videoId &&
-    (state.status === PLAYER_STATUS.PLAYING ||
-      state.status === PLAYER_STATUS.PAUSED)
+    group?.videoId &&
+    (group.status === PLAYER_STATUS.PLAYING ||
+      group.status === PLAYER_STATUS.PAUSED)
   ) {
     await db.insert(playHistory).values({
       groupId,
-      videoId: state.videoId,
-      title: state.title || 'Unknown',
-      requestedBy: state.requestedBy,
+      videoId: group.videoId,
+      title: group.title || 'Unknown',
+      requestedBy: group.requestedBy,
     });
   }
 
@@ -211,14 +211,14 @@ export async function skip(groupId: number) {
 }
 
 export async function videoEnded(groupId: number) {
-  const state = await getState(groupId);
+  const group = await first(groupId);
 
-  if (state?.videoId) {
+  if (group?.videoId) {
     await db.insert(playHistory).values({
       groupId,
-      videoId: state.videoId,
-      title: state.title ?? 'Unknown',
-      requestedBy: state.requestedBy,
+      videoId: group.videoId,
+      title: group.title ?? 'Unknown',
+      requestedBy: group.requestedBy,
     });
   }
 
@@ -285,13 +285,13 @@ export async function playFromQueue(groupId: number, itemId: number) {
 
   const item = items[0];
 
-  const state = await getState(groupId);
-  if (state?.videoId && state.status !== PLAYER_STATUS.IDLE) {
+  const group = await first(groupId);
+  if (group?.videoId && group.status !== PLAYER_STATUS.IDLE) {
     await db.insert(playHistory).values({
       groupId,
-      videoId: state.videoId,
-      title: state.title ?? 'Unknown',
-      requestedBy: state.requestedBy,
+      videoId: group.videoId,
+      title: group.title ?? 'Unknown',
+      requestedBy: group.requestedBy,
     });
   }
 

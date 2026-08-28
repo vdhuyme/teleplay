@@ -16,7 +16,7 @@ router.get(
   '/:playerId/state',
   validate({ params: { playerId: z.coerce.number().int() } }),
   async (req, res) => {
-    res.json(await playerService.getState(req.params.playerId));
+    res.json(await playerService.first(req.params.playerId));
   },
 );
 

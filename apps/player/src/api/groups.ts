@@ -1,4 +1,4 @@
-import { Paginated } from '@/types';
+import { DEFAULT_LIMIT, DEFAULT_PAGE, Paginated } from '@/types';
 import { http } from './client';
 
 export interface Group {
@@ -41,7 +41,7 @@ interface PlayBody {
   groupName?: string;
 }
 
-export const list = (page = 1, limit = 10) =>
+export const list = (page = DEFAULT_PAGE, limit = DEFAULT_LIMIT) =>
   http.get<Paginated<Group>>(`/groups`, { params: { page, limit } });
 
 export const getGroup = (groupId: number) =>
@@ -50,7 +50,11 @@ export const getGroup = (groupId: number) =>
 export const queue = (groupId: number) =>
   http.get<QueueItem[]>(`/groups/${groupId}/queue`);
 
-export const history = (groupId: number, page = 1, limit = 20) =>
+export const history = (
+  groupId: number,
+  page = DEFAULT_PAGE,
+  limit = DEFAULT_LIMIT,
+) =>
   http.get<Paginated<PlayHistory>>(`/groups/${groupId}/history`, {
     params: { page, limit },
   });
