@@ -1,4 +1,4 @@
-import { createHttpClient } from '@teleplay/core';
+import { httpClient } from '@teleplay/core';
 import { App } from '@teleplay/core';
 import {
   Paginated,
@@ -9,7 +9,7 @@ import {
   VolumeRequest,
 } from '../type';
 
-const http = createHttpClient({ baseUrl: App.getOrThrow('API_URL') });
+const http = httpClient({ baseUrl: App.getOrThrow('API_URL') });
 
 export const getState = (playerId: string) =>
   http.get<PlayerState | null>(`/players/${playerId}/state`);

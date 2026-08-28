@@ -54,7 +54,7 @@ function buildUrl(
   return query ? `${full}${full.includes('?') ? '&' : '?'}${query}` : full;
 }
 
-export function createHttpClient(config: HttpClientConfig = {}): HttpClient {
+export function httpClient(config: HttpClientConfig = {}): HttpClient {
   const baseUrl = config.baseUrl ?? App.get('API_URL') ?? '';
   const defaultHeaders = config.headers;
 
