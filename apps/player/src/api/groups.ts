@@ -35,12 +35,6 @@ export interface PlayHistory {
   playedAt: Date;
 }
 
-interface PlayBody {
-  query: string;
-  requestedBy?: string;
-  groupName?: string;
-}
-
 export const list = (page = DEFAULT_PAGE, limit = DEFAULT_LIMIT) =>
   http.get<Paginated<Group>>(`/groups`, { params: { page, limit } });
 
@@ -60,18 +54,3 @@ export const history = (
   });
 
 export const remove = (groupId: number) => http.delete(`/groups/${groupId}`);
-
-export const play = (groupId: number, data: PlayBody) =>
-  http.post(`/groups/${groupId}/play`, data);
-
-export const pause = (groupId: number) => http.post(`/groups/${groupId}/pause`);
-
-export const resume = (groupId: number) =>
-  http.post(`/groups/${groupId}/resume`);
-
-export const stop = (groupId: number) => http.post(`/groups/${groupId}/stop`);
-
-export const skip = (groupId: number) => http.post(`/groups/${groupId}/skip`);
-
-export const setVolume = (groupId: number, volume: number) =>
-  http.post(`/groups/${groupId}/volume`, { volume });

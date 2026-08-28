@@ -1,14 +1,9 @@
 import { Router, type Router as RouterType } from 'express';
 import validate from 'express-zod-safe';
 import z from 'zod';
-import { playerService } from '../players/index';
 import * as groupService from './services';
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from '../constants/pagination';
-import {
-  paginationQuerySchema,
-  playRequestSchema,
-  volumeRequestSchema,
-} from '../schemas';
+import { paginationQuerySchema } from '../schemas';
 
 const router: RouterType = Router();
 
@@ -63,83 +58,6 @@ router.delete(
   validate({ params: { groupId: z.coerce.number().int() } }),
   async (req, res) => {
     await groupService.remove(req.params.groupId);
-
-    res.json({ success: true });
-  },
-);
-
-router.post(
-  '/:groupId/play',
-  validate({
-    params: { groupId: z.coerce.number().int() },
-    body: playRequestSchema,
-  }),
-  async (req, res) => {
-    const { query, groupName, requestedBy } = req.body;
-    const { groupId } = req.params;
-
-    const video = await playerService.play(
-      groupId,
-      query,
-      requestedBy,
-      groupName,
-    );
-
-    res.json(video);
-  },
-);
-
-router.post(
-  '/:groupId/pause',
-  validate({ params: { groupId: z.coerce.number().int() } }),
-  async (req, res) => {
-    await playerService.pause(req.params.groupId);
-
-    res.json({ success: true });
-  },
-);
-
-router.post(
-  '/:groupId/resume',
-  validate({ params: { groupId: z.coerce.number().int() } }),
-  async (req, res) => {
-    await playerService.resume(req.params.groupId);
-
-    res.json({ success: true });
-  },
-);
-
-router.post(
-  '/:groupId/stop',
-  validate({ params: { groupId: z.coerce.number().int() } }),
-  async (req, res) => {
-    await playerService.stop(req.params.groupId);
-
-    res.json({ success: true });
-  },
-);
-
-router.post(
-  '/:groupId/skip',
-  validate({ params: { groupId: z.coerce.number().int() } }),
-  async (req, res) => {
-    await playerService.skip(req.params.groupId);
-
-    res.json({ success: true });
-  },
-);
-
-router.post(
-  '/:groupId/volume',
-  validate({
-    params: { groupId: z.coerce.number().int() },
-    body: volumeRequestSchema,
-  }),
-  async (req, res) => {
-    const { volume } = req.body;
-    const { groupId } = req.params;
-
-    await playerService.setVolume(groupId, volume);
 
     res.json({ success: true });
   },
