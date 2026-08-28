@@ -62,6 +62,7 @@ export function Player({ playerId }: PlayerProps) {
             <PlayerControls
               playerId={playerId}
               state={state}
+              hasQueue={queue.length > 0}
               onPause={handlePause}
               onResume={handleResume}
               onStop={handleStop}

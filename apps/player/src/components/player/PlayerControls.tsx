@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Play, Pause, Square, Volume2 } from 'lucide-react';
+import { Play, Pause, Square, SkipForward, Volume2 } from 'lucide-react';
 import * as api from '@/api';
 import { tryCatch } from '@teleplay/core';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -8,6 +8,7 @@ import type { PlayerState } from '@/hooks/usePlayerState';
 interface PlayerControlsProps {
   playerId: string;
   state: PlayerState;
+  hasQueue: boolean;
   onPause: () => void;
   onResume: () => void;
   onStop: () => void;
@@ -17,6 +18,7 @@ interface PlayerControlsProps {
 export function PlayerControls({
   playerId,
   state,
+  hasQueue,
   onPause,
   onResume,
   onStop,
@@ -46,6 +48,13 @@ export function PlayerControls({
       return;
     }
     onStop();
+  };
+
+  const handleSkip = async () => {
+    const [error] = await tryCatch(api.players.skip(Number(playerId)));
+    if (error) {
+      console.error('Failed to skip:', error);
+    }
   };
 
   const [localVolume, setLocalVolume] = useState(state.volume);
@@ -80,7 +89,7 @@ export function PlayerControls({
   };
 
   return (
-    <div className="flex items-center gap-4 mt-6">
+    <div className="flex flex-wrap items-center gap-3 mt-6">
       <button
         onClick={handlePauseResume}
         className="btn-spotify flex items-center gap-2"
@@ -104,7 +113,15 @@ export function PlayerControls({
         <Square className="w-4 h-4" />
         <span>Stop</span>
       </button>
-      <div className="flex items-center gap-3 ml-auto">
+      <button
+        onClick={handleSkip}
+        disabled={!hasQueue}
+        className="btn-spotify flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <SkipForward className="w-4 h-4" />
+        <span>Skip</span>
+      </button>
+      <div className="flex items-center gap-3 w-full sm:w-auto sm:ml-auto">
         <Volume2 className="w-4 h-4 text-text-secondary" />
         <input
           type="range"
