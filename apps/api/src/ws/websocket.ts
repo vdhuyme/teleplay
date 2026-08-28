@@ -1,8 +1,11 @@
 import type { Server as HttpServer } from 'http';
 import { Server as SocketServer, Socket } from 'socket.io';
+import type { ClientToServerEvents, ServerToClientEvents } from './types';
+
+type TypedSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 
 export class SocketIoServer {
-  private wss: SocketServer;
+  private wss: SocketServer<ClientToServerEvents, ServerToClientEvents>;
 
   constructor() {
     this.wss = new SocketServer({
@@ -17,32 +20,35 @@ export class SocketIoServer {
     this.wss.attach(httpServer);
   }
 
-  broadcast<TPayload = unknown>(event: string, data: TPayload): void {
-    this.wss.emit(event, data);
+  broadcast<E extends keyof ServerToClientEvents>(
+    event: E,
+    ...args: Parameters<ServerToClientEvents[E]>
+  ): void {
+    this.wss.emit(event, ...args);
   }
 
-  broadcastToRoom<TPayload = unknown>(
+  broadcastToRoom<E extends keyof ServerToClientEvents>(
     room: string,
-    event: string,
-    data: TPayload,
+    event: E,
+    ...args: Parameters<ServerToClientEvents[E]>
   ): void {
-    this.wss.to(room).emit(event, data);
+    this.wss.to(room).emit(event, ...args);
   }
 
-  broadcastToNamespace<TPayload = unknown>(
+  broadcastToNamespace<E extends keyof ServerToClientEvents>(
     namespace: string,
-    event: string,
-    data: TPayload,
+    event: E,
+    ...args: Parameters<ServerToClientEvents[E]>
   ): void {
-    this.wss.of(namespace).emit(event, data);
+    this.wss.of(namespace).emit(event, ...args);
   }
 
-  emitToClient<TPayload = unknown>(
+  emitToClient<E extends keyof ServerToClientEvents>(
     clientId: string,
-    event: string,
-    data: TPayload,
+    event: E,
+    ...args: Parameters<ServerToClientEvents[E]>
   ): void {
-    this.wss.to(clientId).emit(event, data);
+    this.wss.to(clientId).emit(event, ...args);
   }
 
   async joinRoom(clientId: string, room: string): Promise<void> {
@@ -68,7 +74,7 @@ export class SocketIoServer {
     return sockets.map((s) => s.id);
   }
 
-  onConnection(handler: (socket: Socket) => void): void {
+  onConnection(handler: (socket: TypedSocket) => void): void {
     this.wss.on('connection', handler);
   }
 }

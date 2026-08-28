@@ -70,7 +70,7 @@ export function usePlayerSocket(playerId: string): UseSocketReturn {
   useEffect(() => {
     if (!socket) return;
 
-    socket.emit('join', playerId);
+    socket.emit('joinPlayer', playerId);
 
     const handleStateSync = (state: StateSyncEvent['state']) => {
       setLastEvent({ type: 'STATE_SYNC', state });

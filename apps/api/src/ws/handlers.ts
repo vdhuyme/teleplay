@@ -1,16 +1,17 @@
 import type { Socket as SocketIoSocket } from 'socket.io';
 import type { SocketIoServer } from './websocket';
+import type { ClientToServerEvents, ServerToClientEvents } from './types';
 import { logger } from '../app';
 
 interface JoinParams {
   wss: SocketIoServer;
-  ws: SocketIoSocket;
+  ws: SocketIoSocket<ClientToServerEvents, ServerToClientEvents>;
   playerId: string;
 }
 
 interface LeaveParams {
   wss: SocketIoServer;
-  ws: SocketIoSocket;
+  ws: SocketIoSocket<ClientToServerEvents, ServerToClientEvents>;
   playerId: string;
 }
 
@@ -28,7 +29,11 @@ async function handleLeave({ wss, ws, playerId }: LeaveParams): Promise<void> {
 
 export function subscribeToPlayer(wss: SocketIoServer): void {
   wss.onConnection((ws) => {
-    ws.on('join', (playerId: string) => handleJoin({ wss, ws, playerId }));
-    ws.on('leave', (playerId: string) => handleLeave({ wss, ws, playerId }));
+    ws.on('joinPlayer', (playerId: string) =>
+      handleJoin({ wss, ws, playerId }),
+    );
+    ws.on('leavePlayer', (playerId: string) =>
+      handleLeave({ wss, ws, playerId }),
+    );
   });
 }
