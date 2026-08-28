@@ -26,5 +26,7 @@ export async function queueCommand(ctx: Context) {
 
   const [state, queue] = result;
 
-  await ctx.reply(formatQueue(state, queue), { parse_mode: 'Markdown' });
+  await ctx.reply(formatQueue(state.data, queue.data), {
+    parse_mode: 'Markdown',
+  });
 }

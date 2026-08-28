@@ -1,4 +1,4 @@
-import { DEFAULT_LIMIT, DEFAULT_PAGE, Paginated } from '@/types';
+import { ApiResponse, DEFAULT_LIMIT, DEFAULT_PAGE, Paginated } from '@/types';
 import { http } from './client';
 
 export interface Group {
@@ -36,21 +36,24 @@ export interface PlayHistory {
 }
 
 export const list = (page = DEFAULT_PAGE, limit = DEFAULT_LIMIT) =>
-  http.get<Paginated<Group>>(`/groups`, { params: { page, limit } });
+  http.get<ApiResponse<Paginated<Group>>>(`/groups`, {
+    params: { page, limit },
+  });
 
 export const getGroup = (groupId: number) =>
-  http.get<Group>(`/groups/${groupId}`);
+  http.get<ApiResponse<Group>>(`/groups/${groupId}`);
 
 export const queue = (groupId: number) =>
-  http.get<QueueItem[]>(`/groups/${groupId}/queue`);
+  http.get<ApiResponse<QueueItem[]>>(`/groups/${groupId}/queue`);
 
 export const history = (
   groupId: number,
   page = DEFAULT_PAGE,
   limit = DEFAULT_LIMIT,
 ) =>
-  http.get<Paginated<PlayHistory>>(`/groups/${groupId}/history`, {
+  http.get<ApiResponse<Paginated<PlayHistory>>>(`/groups/${groupId}/history`, {
     params: { page, limit },
   });
 
-export const remove = (groupId: number) => http.delete(`/groups/${groupId}`);
+export const remove = (groupId: number) =>
+  http.delete<ApiResponse<null>>(`/groups/${groupId}`);

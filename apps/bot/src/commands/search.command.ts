@@ -47,7 +47,7 @@ export async function searchCommand(ctx: Context) {
     return;
   }
 
-  if (!results.length) {
+  if (!results.data.length) {
     await ctx.reply('No results found.', { parse_mode: 'Markdown' });
 
     return;
@@ -55,7 +55,7 @@ export async function searchCommand(ctx: Context) {
 
   searchResults.set(
     playerId,
-    results.map((video) => ({
+    results.data.map((video) => ({
       ...video,
       requestedBy,
     })),
@@ -63,7 +63,7 @@ export async function searchCommand(ctx: Context) {
 
   const keyboard = new InlineKeyboard();
 
-  results.forEach((video, index) => {
+  results.data.forEach((video, index) => {
     const title =
       video.title.length > 40
         ? `${video.title.substring(0, 37)}...`

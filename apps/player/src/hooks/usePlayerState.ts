@@ -35,7 +35,7 @@ export function usePlayerState(playerId: string) {
         console.error('Failed to fetch initial state:', error);
         return;
       }
-      setState(data as PlayerState);
+      setState(data.data as PlayerState);
     };
 
     fetchInitialState();
@@ -97,7 +97,7 @@ export function usePlayerState(playerId: string) {
       console.error('Failed to fetch queue:', error);
       return;
     }
-    setQueue(data);
+    setQueue(data.data);
   };
 
   const handleVideoEnded = async () => {

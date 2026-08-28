@@ -80,7 +80,7 @@ async function searchAndShow(
     return;
   }
 
-  if (!results.length) {
+  if (!results.data.length) {
     await ctx.editMessageText('No results found.', {
       parse_mode: 'Markdown',
     });
@@ -89,12 +89,12 @@ async function searchAndShow(
 
   suggestResults.set(
     playerId,
-    results.map((video) => ({ ...video, requestedBy })),
+    results.data.map((video) => ({ ...video, requestedBy })),
   );
 
   await ctx.editMessageText(`Results for "*${query}*"`, {
     parse_mode: 'Markdown',
-    reply_markup: buildResultsKeyboard(playerId, results),
+    reply_markup: buildResultsKeyboard(playerId, results.data),
   });
 }
 
@@ -108,7 +108,7 @@ async function showTrending(ctx: Context, playerId: string) {
     return;
   }
 
-  if (!results.length) {
+  if (!results.data.length) {
     await ctx.editMessageText('No trending videos found.', {
       parse_mode: 'Markdown',
     });
@@ -119,12 +119,12 @@ async function showTrending(ctx: Context, playerId: string) {
 
   suggestResults.set(
     playerId,
-    results.map((video) => ({ ...video, requestedBy })),
+    results.data.map((video) => ({ ...video, requestedBy })),
   );
 
   await ctx.editMessageText('*Trending Now*', {
     parse_mode: 'Markdown',
-    reply_markup: buildResultsKeyboard(playerId, results),
+    reply_markup: buildResultsKeyboard(playerId, results.data),
   });
 }
 
@@ -213,9 +213,9 @@ export async function suggestCallback(ctx: Context) {
   }
 
   if (category === 'genre') {
-    const [error, categories] = await tryCatch(apiClient.getCategories());
+    const [error, results] = await tryCatch(apiClient.getCategories());
 
-    if (error || !categories?.length) {
+    if (error || !results?.data.length) {
       await ctx.editMessageText('Failed to load categories.', {
         parse_mode: 'Markdown',
       });
@@ -224,7 +224,7 @@ export async function suggestCallback(ctx: Context) {
 
     await ctx.editMessageText('Choose a genre:', {
       parse_mode: 'Markdown',
-      reply_markup: buildCategoriesKeyboard(categories),
+      reply_markup: buildCategoriesKeyboard(results.data),
     });
     return;
   }
@@ -244,8 +244,8 @@ export async function suggestCategoryCallback(ctx: Context) {
 
   await ctx.answerCallbackQuery();
 
-  const [error, categories] = await tryCatch(apiClient.getCategories());
-  const category = categories?.find((c) => c.id === categoryId);
+  const [error, results] = await tryCatch(apiClient.getCategories());
+  const category = results?.data.find((c) => c.id === categoryId);
 
   if (error || !category) {
     await ctx.editMessageText('Failed to load category.', {

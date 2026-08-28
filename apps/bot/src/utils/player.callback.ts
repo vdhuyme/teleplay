@@ -26,7 +26,7 @@ const actions = {
     ]);
 
     await ctx.answerCallbackQuery({
-      text: `Queue has ${queue.length} items`,
+      text: `Queue has ${queue.data.length} items`,
     });
   },
 

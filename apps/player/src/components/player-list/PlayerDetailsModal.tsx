@@ -35,10 +35,10 @@ export function PlayerDetailsModal({
         api.groups.history(playerId, historyPage, HISTORY_LIMIT),
       );
 
-      if (!queueErr) setQueue(queueData);
+      if (!queueErr) setQueue(queueData.data);
       if (!historyErr) {
-        setPlayerHistory(historyData.items);
-        setHistoryTotal(historyData.total);
+        setPlayerHistory(historyData.data.items);
+        setHistoryTotal(historyData.data.total);
       }
       setLoading(false);
     };

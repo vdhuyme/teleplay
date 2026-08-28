@@ -34,7 +34,7 @@ export async function playCommand(ctx: Context) {
 
   await ctx.reply('Searching for your song...', { parse_mode: 'Markdown' });
 
-  const [error, video] = await tryCatch(
+  const [error, result] = await tryCatch(
     apiClient.play(String(chatId), {
       query,
       requestedBy,
@@ -47,5 +47,5 @@ export async function playCommand(ctx: Context) {
     return;
   }
 
-  await ctx.reply(`Added: ${video.title}`, { parse_mode: 'Markdown' });
+  await ctx.reply(`Added: ${result.data.title}`, { parse_mode: 'Markdown' });
 }

@@ -1,3 +1,4 @@
+import { ApiResponse } from '@/types';
 import { http } from './client';
 
 export interface PlayerState {
@@ -39,51 +40,56 @@ export interface SearchResult {
 }
 
 export const getState = (playerId: number) =>
-  http.get<PlayerState>(`/players/${playerId}/state`);
+  http.get<ApiResponse<PlayerState>>(`/players/${playerId}/state`);
 
 export const play = (playerId: number, data: PlayBody) =>
-  http.post(`/players/${playerId}/play`, data);
+  http.post<ApiResponse<null>>(`/players/${playerId}/play`, data);
 
 export const pause = (playerId: number) =>
-  http.post(`/players/${playerId}/pause`);
+  http.post<ApiResponse<null>>(`/players/${playerId}/pause`);
 
 export const resume = (playerId: number) =>
-  http.post(`/players/${playerId}/resume`);
+  http.post<ApiResponse<null>>(`/players/${playerId}/resume`);
 
 export const stop = (playerId: number) =>
-  http.post(`/players/${playerId}/stop`);
+  http.post<ApiResponse<null>>(`/players/${playerId}/stop`);
 
 export const skip = (playerId: number) =>
-  http.post(`/players/${playerId}/skip`);
+  http.post<ApiResponse<null>>(`/players/${playerId}/skip`);
 
 export const setVolume = (playerId: number, volume: number) =>
-  http.post(`/players/${playerId}/volume`, { volume });
+  http.post<ApiResponse<null>>(`/players/${playerId}/volume`, { volume });
 
 export const setPosition = (playerId: number, position: number) =>
-  http.post(`/players/${playerId}/position`, { position });
+  http.post<ApiResponse<null>>(`/players/${playerId}/position`, { position });
 
 export const getQueue = (playerId: number) =>
-  http.get<QueueItem[]>(`/players/${playerId}/queue`);
+  http.get<ApiResponse<QueueItem[]>>(`/players/${playerId}/queue`);
 
 export const addToQueue = (playerId: number, data: PlayBody) =>
-  http.post(`/players/${playerId}/queue`, data);
+  http.post<ApiResponse<null>>(`/players/${playerId}/queue`, data);
 
 export const removeFromQueue = (playerId: number, itemId: number) =>
-  http.delete(`/players/${playerId}/queue/${itemId}`);
+  http.delete<ApiResponse<null>>(`/players/${playerId}/queue/${itemId}`);
 
 export const clearQueue = (playerId: number) =>
-  http.delete(`/players/${playerId}/queue`);
+  http.delete<ApiResponse<null>>(`/players/${playerId}/queue`);
 
 export const videoEnded = (playerId: number) =>
-  http.post(`/players/${playerId}/events/ended`);
+  http.post<ApiResponse<null>>(`/players/${playerId}/events/ended`);
 
 export const playFromQueue = (playerId: number, itemId: number) =>
-  http.post(`/players/${playerId}/play-from-queue`, { itemId });
+  http.post<ApiResponse<null>>(`/players/${playerId}/play-from-queue`, {
+    itemId,
+  });
 
 export const search = (playerId: number, query: string) =>
-  http.post<SearchResult[]>(`/players/${playerId}/search`, { query });
+  http.post<ApiResponse<SearchResult[]>>(`/players/${playerId}/search`, {
+    query,
+  });
 
-export const getTrending = () => http.get<SearchResult[]>('/players/trending');
+export const getTrending = () =>
+  http.get<ApiResponse<SearchResult[]>>('/players/trending');
 
 export const getCategories = () =>
-  http.get<{ id: string; name: string }[]>('/players/categories');
+  http.get<ApiResponse<{ id: string; name: string }[]>>('/players/categories');

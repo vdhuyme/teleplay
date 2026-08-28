@@ -25,7 +25,7 @@ export async function nowCommand(ctx: Context) {
     return;
   }
 
-  const text = formatNowPlaying(state);
+  const text = formatNowPlaying(state.data);
   const keyboard = formatNowPlayingKeyboard(playerId);
 
   await ctx.reply(text, {

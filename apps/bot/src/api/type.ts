@@ -1,6 +1,3 @@
-export const DEFAULT_PAGE = 1;
-export const DEFAULT_LIMIT = 10;
-
 export const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
@@ -26,9 +23,11 @@ export interface ApiResponse<T> {
   timestamp?: string;
 }
 
-export interface Paginated<T> {
-  items: T[];
-  total: number;
-  page: number;
-  limit: number;
+export interface HistoryItem {
+  id: number;
+  groupId: number;
+  videoId: string;
+  title: string;
+  requestedBy: string | null;
+  playedAt: Date;
 }

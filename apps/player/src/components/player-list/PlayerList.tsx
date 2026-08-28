@@ -30,8 +30,8 @@ export function PlayerList() {
     if (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } else {
-      setGroups(data.items);
-      setTotal(data.total);
+      setGroups(data.data.items);
+      setTotal(data.data.total);
     }
     setLoading(false);
   }, [page]);
@@ -53,8 +53,8 @@ export function PlayerList() {
         api.groups.list(page, PAGE_LIMIT),
       );
       if (!fetchErr) {
-        setGroups(data.items);
-        setTotal(data.total);
+        setGroups(data.data.items);
+        setTotal(data.data.total);
       }
     }
     setDeleting(false);
