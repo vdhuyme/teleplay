@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
 import { Play, Pause, Square, Volume2 } from 'lucide-react';
 import * as api from '@/api';
 import { tryCatch } from '@teleplay/core';
+import { useDebounce } from '@/hooks/use-debounce';
 import type { PlayerState } from '@/hooks/usePlayerState';
 
 interface PlayerControlsProps {
@@ -46,15 +48,35 @@ export function PlayerControls({
     onStop();
   };
 
-  const handleVolumeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const volume = parseInt(e.target.value, 10);
-    onVolumeChange(volume);
-    const [error] = await tryCatch(
-      api.players.setVolume(Number(playerId), volume),
+  const [localVolume, setLocalVolume] = useState(state.volume);
+  const debouncedVolume = useDebounce(localVolume, 500);
+  const lastLocalChangeRef = useRef(0);
+  const lastSentRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (Date.now() - lastLocalChangeRef.current < 600) return;
+    setLocalVolume(state.volume);
+  }, [state.volume]);
+
+  useEffect(() => {
+    if (lastSentRef.current === debouncedVolume) return;
+    lastSentRef.current = debouncedVolume;
+    let cancelled = false;
+    tryCatch(api.players.setVolume(Number(playerId), debouncedVolume)).then(
+      ([error]) => {
+        if (!cancelled && error) console.error('Failed to set volume:', error);
+      },
     );
-    if (error) {
-      console.error('Failed to set volume:', error);
-    }
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedVolume, playerId]);
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const volume = parseInt(e.target.value, 10);
+    lastLocalChangeRef.current = Date.now();
+    setLocalVolume(volume);
+    onVolumeChange(volume);
   };
 
   return (
@@ -88,12 +110,12 @@ export function PlayerControls({
           type="range"
           min="0"
           max="100"
-          value={state.volume}
+          value={localVolume}
           onChange={handleVolumeChange}
           className="w-24 accent-spotify-green"
         />
         <span className="text-caption text-text-secondary w-8">
-          {state.volume}
+          {localVolume}
         </span>
       </div>
     </div>
