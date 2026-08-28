@@ -14,6 +14,7 @@ export const SOCKET_REQUESTS = {
   LEAVE_PLAYER: 'leavePlayer',
 } as const;
 
-export type SocketEventName = (typeof SOCKET_EVENTS)[keyof typeof SOCKET_EVENTS];
+export type SocketEventName =
+  (typeof SOCKET_EVENTS)[keyof typeof SOCKET_EVENTS];
 export type SocketRequestName =
   (typeof SOCKET_REQUESTS)[keyof typeof SOCKET_REQUESTS];

@@ -1,4 +1,4 @@
-import { request } from './client';
+import { http } from './client';
 
 export interface PlayerState {
   id: number;
@@ -24,80 +24,47 @@ export interface QueueItem {
   requestedBy: string | null;
 }
 
-export function getState(playerId: number) {
-  return request<PlayerState>(`/players/${playerId}/state`);
+interface PlayBody {
+  query: string;
+  requestedBy?: string;
+  groupName?: string;
 }
 
-export function play(
-  playerId: number,
-  data: {
-    query: string;
-    requestedBy?: string;
-    groupName?: string;
-  },
-) {
-  return request(`/players/${playerId}/play`, {
-    method: 'POST',
-    body: data,
-  });
-}
+export const getState = (playerId: number) =>
+  http.get<PlayerState>(`/players/${playerId}/state`);
 
-export function pause(playerId: number) {
-  return request(`/players/${playerId}/pause`, { method: 'POST' });
-}
+export const play = (playerId: number, data: PlayBody) =>
+  http.post(`/players/${playerId}/play`, data);
 
-export function resume(playerId: number) {
-  return request(`/players/${playerId}/resume`, { method: 'POST' });
-}
+export const pause = (playerId: number) =>
+  http.post(`/players/${playerId}/pause`);
 
-export function stop(playerId: number) {
-  return request(`/players/${playerId}/stop`, { method: 'POST' });
-}
+export const resume = (playerId: number) =>
+  http.post(`/players/${playerId}/resume`);
 
-export function skip(playerId: number) {
-  return request(`/players/${playerId}/skip`, { method: 'POST' });
-}
+export const stop = (playerId: number) =>
+  http.post(`/players/${playerId}/stop`);
 
-export function setVolume(playerId: number, volume: number) {
-  return request(`/players/${playerId}/volume`, {
-    method: 'POST',
-    body: { volume },
-  });
-}
+export const skip = (playerId: number) =>
+  http.post(`/players/${playerId}/skip`);
 
-export function getQueue(playerId: number) {
-  return request<QueueItem[]>(`/players/${playerId}/queue`);
-}
+export const setVolume = (playerId: number, volume: number) =>
+  http.post(`/players/${playerId}/volume`, { volume });
 
-export function addToQueue(
-  playerId: number,
-  data: {
-    query: string;
-    requestedBy?: string;
-    groupName?: string;
-  },
-) {
-  return request(`/players/${playerId}/queue`, {
-    method: 'POST',
-    body: data,
-  });
-}
+export const getQueue = (playerId: number) =>
+  http.get<QueueItem[]>(`/players/${playerId}/queue`);
 
-export function removeFromQueue(playerId: number, itemId: number) {
-  return request(`/players/${playerId}/queue/${itemId}`, { method: 'DELETE' });
-}
+export const addToQueue = (playerId: number, data: PlayBody) =>
+  http.post(`/players/${playerId}/queue`, data);
 
-export function clearQueue(playerId: number) {
-  return request(`/players/${playerId}/queue`, { method: 'DELETE' });
-}
+export const removeFromQueue = (playerId: number, itemId: number) =>
+  http.delete(`/players/${playerId}/queue/${itemId}`);
 
-export function videoEnded(playerId: number) {
-  return request(`/players/${playerId}/events/ended`, { method: 'POST' });
-}
+export const clearQueue = (playerId: number) =>
+  http.delete(`/players/${playerId}/queue`);
 
-export function playFromQueue(playerId: number, itemId: number) {
-  return request(`/players/${playerId}/play-from-queue`, {
-    method: 'POST',
-    body: { itemId },
-  });
-}
+export const videoEnded = (playerId: number) =>
+  http.post(`/players/${playerId}/events/ended`);
+
+export const playFromQueue = (playerId: number, itemId: number) =>
+  http.post(`/players/${playerId}/play-from-queue`, { itemId });

@@ -1,4 +1,5 @@
-import { request } from './client';
+import { Paginated } from '@/types';
+import { http } from './client';
 
 export interface Group {
   id: number;
@@ -34,70 +35,39 @@ export interface PlayHistory {
   playedAt: Date;
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
+interface PlayBody {
+  query: string;
+  requestedBy?: string;
+  groupName?: string;
 }
 
-export function list(page = 1, limit = 10) {
-  return request<PaginatedResponse<Group>>(
-    `/groups?page=${page}&limit=${limit}`,
-  );
-}
+export const list = (page = 1, limit = 10) =>
+  http.get<Paginated<Group>>(`/groups`, { params: { page, limit } });
 
-export function get(groupId: number) {
-  return request<Group>(`/groups/${groupId}`);
-}
+export const getGroup = (groupId: number) =>
+  http.get<Group>(`/groups/${groupId}`);
 
-export function queue(groupId: number) {
-  return request<QueueItem[]>(`/groups/${groupId}/queue`);
-}
+export const queue = (groupId: number) =>
+  http.get<QueueItem[]>(`/groups/${groupId}/queue`);
 
-export function history(groupId: number, page = 1, limit = 20) {
-  return request<PaginatedResponse<PlayHistory>>(
-    `/groups/${groupId}/history?page=${page}&limit=${limit}`,
-  );
-}
-
-export function remove(groupId: number) {
-  return request(`/groups/${groupId}`, { method: 'DELETE' });
-}
-
-export function play(
-  groupId: number,
-  data: {
-    query: string;
-    requestedBy?: string;
-    groupName?: string;
-  },
-) {
-  return request(`/groups/${groupId}/play`, {
-    method: 'POST',
-    body: data,
+export const history = (groupId: number, page = 1, limit = 20) =>
+  http.get<Paginated<PlayHistory>>(`/groups/${groupId}/history`, {
+    params: { page, limit },
   });
-}
 
-export function pause(groupId: number) {
-  return request(`/groups/${groupId}/pause`, { method: 'POST' });
-}
+export const remove = (groupId: number) => http.delete(`/groups/${groupId}`);
 
-export function resume(groupId: number) {
-  return request(`/groups/${groupId}/resume`, { method: 'POST' });
-}
+export const play = (groupId: number, data: PlayBody) =>
+  http.post(`/groups/${groupId}/play`, data);
 
-export function stop(groupId: number) {
-  return request(`/groups/${groupId}/stop`, { method: 'POST' });
-}
+export const pause = (groupId: number) => http.post(`/groups/${groupId}/pause`);
 
-export function skip(groupId: number) {
-  return request(`/groups/${groupId}/skip`, { method: 'POST' });
-}
+export const resume = (groupId: number) =>
+  http.post(`/groups/${groupId}/resume`);
 
-export function setVolume(groupId: number, volume: number) {
-  return request(`/groups/${groupId}/volume`, {
-    method: 'POST',
-    body: { volume },
-  });
-}
+export const stop = (groupId: number) => http.post(`/groups/${groupId}/stop`);
+
+export const skip = (groupId: number) => http.post(`/groups/${groupId}/skip`);
+
+export const setVolume = (groupId: number, volume: number) =>
+  http.post(`/groups/${groupId}/volume`, { volume });

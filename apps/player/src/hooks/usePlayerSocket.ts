@@ -3,11 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useSocketContext } from '../contexts/SocketContext';
 import { SOCKET_EVENTS, SOCKET_REQUESTS } from '../socket/events';
-import type {
-  SocketEvent,
-  StateSyncEvent,
-  PlayEvent,
-} from '../socket/types';
+import type { SocketEvent, StateSyncEvent, PlayEvent } from '../socket/types';
 
 interface UseSocketReturn {
   connected: boolean;
