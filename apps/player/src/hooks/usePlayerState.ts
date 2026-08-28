@@ -4,17 +4,10 @@ import { useEffect, useState } from 'react';
 import { usePlayerSocket } from './usePlayerSocket';
 import * as api from '@/api';
 import { tryCatch } from '@teleplay/core';
+import { SOCKET_EVENTS } from '@/socket/events';
+import type { PlayerState } from '@/socket/types';
 
-export interface PlayerState {
-  status: 'idle' | 'playing' | 'paused' | 'stopped';
-  videoId: string | null;
-  title: string | null;
-  thumbnail: string | null;
-  duration: number | null;
-  position: number;
-  volume: number;
-  requestedBy: string | null;
-}
+export type { PlayerState } from '@/socket/types';
 
 const initialState: PlayerState = {
   status: 'idle',
@@ -33,7 +26,6 @@ export function usePlayerState(playerId: string) {
 
   const { connected, lastEvent } = usePlayerSocket(playerId);
 
-  // Fetch initial state via REST API on mount
   useEffect(() => {
     const fetchInitialState = async () => {
       const [error, data] = await tryCatch(
@@ -49,15 +41,14 @@ export function usePlayerState(playerId: string) {
     fetchInitialState();
   }, [playerId]);
 
-  // Handle Socket.IO events
   useEffect(() => {
     if (!lastEvent) return;
 
     switch (lastEvent.type) {
-      case 'STATE_SYNC':
+      case SOCKET_EVENTS.STATE_SYNC:
         setState(lastEvent.state);
         break;
-      case 'PLAY':
+      case SOCKET_EVENTS.PLAY:
         setState((prev) => ({
           ...prev,
           status: 'playing',
@@ -65,17 +56,16 @@ export function usePlayerState(playerId: string) {
           title: lastEvent.title,
           thumbnail: lastEvent.thumbnail,
           duration: lastEvent.duration,
-          position: lastEvent.position,
           requestedBy: lastEvent.requestedBy,
         }));
         break;
-      case 'PAUSE':
+      case SOCKET_EVENTS.PAUSE:
         setState((prev) => ({ ...prev, status: 'paused' }));
         break;
-      case 'RESUME':
+      case SOCKET_EVENTS.RESUME:
         setState((prev) => ({ ...prev, status: 'playing' }));
         break;
-      case 'STOP':
+      case SOCKET_EVENTS.STOP:
         setState((prev) => ({
           ...prev,
           status: 'idle',
@@ -87,16 +77,15 @@ export function usePlayerState(playerId: string) {
           requestedBy: null,
         }));
         break;
-      case 'VOLUME':
+      case SOCKET_EVENTS.VOLUME:
         setState((prev) => ({ ...prev, volume: lastEvent.volume }));
         break;
-      case 'QUEUE_UPDATED':
+      case SOCKET_EVENTS.QUEUE_UPDATED:
         fetchQueue();
         break;
     }
   }, [lastEvent]);
 
-  // Fetch queue
   const fetchQueue = async () => {
     const [error, data] = await tryCatch(
       api.players.getQueue(Number(playerId)),
@@ -108,7 +97,6 @@ export function usePlayerState(playerId: string) {
     setQueue(data);
   };
 
-  // Handle video ended
   const handleVideoEnded = async () => {
     const [error] = await tryCatch(api.players.videoEnded(Number(playerId)));
     if (error) {
@@ -116,7 +104,6 @@ export function usePlayerState(playerId: string) {
     }
   };
 
-  // Fetch queue on mount
   useEffect(() => {
     fetchQueue();
   }, [playerId]);

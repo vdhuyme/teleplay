@@ -2,60 +2,12 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useSocketContext } from '../contexts/SocketContext';
-
-interface StateSyncEvent {
-  type: 'STATE_SYNC';
-  state: {
-    status: 'idle' | 'playing' | 'paused' | 'stopped';
-    videoId: string | null;
-    title: string | null;
-    thumbnail: string | null;
-    duration: number | null;
-    position: number;
-    volume: number;
-    requestedBy: string | null;
-  };
-}
-
-interface PlayEvent {
-  type: 'PLAY';
-  videoId: string;
-  title: string;
-  thumbnail: string;
-  duration: number;
-  position: number;
-  requestedBy: string | null;
-}
-
-interface PauseEvent {
-  type: 'PAUSE';
-}
-
-interface ResumeEvent {
-  type: 'RESUME';
-}
-
-interface StopEvent {
-  type: 'STOP';
-}
-
-interface VolumeEvent {
-  type: 'VOLUME';
-  volume: number;
-}
-
-interface QueueUpdatedEvent {
-  type: 'QUEUE_UPDATED';
-}
-
-type SocketEvent =
-  | StateSyncEvent
-  | PlayEvent
-  | PauseEvent
-  | ResumeEvent
-  | StopEvent
-  | VolumeEvent
-  | QueueUpdatedEvent;
+import { SOCKET_EVENTS, SOCKET_REQUESTS } from '../socket/events';
+import type {
+  SocketEvent,
+  StateSyncEvent,
+  PlayEvent,
+} from '../socket/types';
 
 interface UseSocketReturn {
   connected: boolean;
@@ -70,52 +22,52 @@ export function usePlayerSocket(playerId: string): UseSocketReturn {
   useEffect(() => {
     if (!socket) return;
 
-    socket.emit('joinPlayer', playerId);
+    socket.emit(SOCKET_REQUESTS.JOIN_PLAYER, playerId);
 
     const handleStateSync = (state: StateSyncEvent['state']) => {
-      setLastEvent({ type: 'STATE_SYNC', state });
+      setLastEvent({ type: SOCKET_EVENTS.STATE_SYNC, state });
     };
 
     const handlePlay = (data: Omit<PlayEvent, 'type'>) => {
-      setLastEvent({ type: 'PLAY', ...data });
+      setLastEvent({ type: SOCKET_EVENTS.PLAY, ...data });
     };
 
     const handlePause = () => {
-      setLastEvent({ type: 'PAUSE' });
+      setLastEvent({ type: SOCKET_EVENTS.PAUSE });
     };
 
     const handleResume = () => {
-      setLastEvent({ type: 'RESUME' });
+      setLastEvent({ type: SOCKET_EVENTS.RESUME });
     };
 
     const handleStop = () => {
-      setLastEvent({ type: 'STOP' });
+      setLastEvent({ type: SOCKET_EVENTS.STOP });
     };
 
     const handleVolume = (data: { volume: number }) => {
-      setLastEvent({ type: 'VOLUME', ...data });
+      setLastEvent({ type: SOCKET_EVENTS.VOLUME, ...data });
     };
 
     const handleQueueUpdated = () => {
-      setLastEvent({ type: 'QUEUE_UPDATED' });
+      setLastEvent({ type: SOCKET_EVENTS.QUEUE_UPDATED });
     };
 
-    socket.on('STATE_SYNC', handleStateSync);
-    socket.on('PLAY', handlePlay);
-    socket.on('PAUSE', handlePause);
-    socket.on('RESUME', handleResume);
-    socket.on('STOP', handleStop);
-    socket.on('VOLUME', handleVolume);
-    socket.on('QUEUE_UPDATED', handleQueueUpdated);
+    socket.on(SOCKET_EVENTS.STATE_SYNC, handleStateSync);
+    socket.on(SOCKET_EVENTS.PLAY, handlePlay);
+    socket.on(SOCKET_EVENTS.PAUSE, handlePause);
+    socket.on(SOCKET_EVENTS.RESUME, handleResume);
+    socket.on(SOCKET_EVENTS.STOP, handleStop);
+    socket.on(SOCKET_EVENTS.VOLUME, handleVolume);
+    socket.on(SOCKET_EVENTS.QUEUE_UPDATED, handleQueueUpdated);
 
     return () => {
-      socket.off('STATE_SYNC', handleStateSync);
-      socket.off('PLAY', handlePlay);
-      socket.off('PAUSE', handlePause);
-      socket.off('RESUME', handleResume);
-      socket.off('STOP', handleStop);
-      socket.off('VOLUME', handleVolume);
-      socket.off('QUEUE_UPDATED', handleQueueUpdated);
+      socket.off(SOCKET_EVENTS.STATE_SYNC, handleStateSync);
+      socket.off(SOCKET_EVENTS.PLAY, handlePlay);
+      socket.off(SOCKET_EVENTS.PAUSE, handlePause);
+      socket.off(SOCKET_EVENTS.RESUME, handleResume);
+      socket.off(SOCKET_EVENTS.STOP, handleStop);
+      socket.off(SOCKET_EVENTS.VOLUME, handleVolume);
+      socket.off(SOCKET_EVENTS.QUEUE_UPDATED, handleQueueUpdated);
     };
   }, [socket, playerId]);
 
