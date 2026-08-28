@@ -1,7 +1,7 @@
 import { db, queueItems, playHistory, groups } from '../database/index';
 import { eq, desc, asc, count } from 'drizzle-orm';
 import { GroupNotFoundError } from './errors';
-import { PaginatedResult } from '../constants';
+import { Paginated } from '../constants';
 
 export async function get(groupId: number) {
   const result = await db.query.groups.findFirst({
@@ -25,7 +25,7 @@ export async function get(groupId: number) {
 export async function list(
   page = 1,
   limit = 10,
-): Promise<PaginatedResult<typeof groups.$inferSelect>> {
+): Promise<Paginated<typeof groups.$inferSelect>> {
   const offset = (page - 1) * limit;
 
   const [data, countResult] = await Promise.all([
@@ -63,7 +63,7 @@ export async function history(
   groupId: number,
   page = 1,
   limit = 20,
-): Promise<PaginatedResult<typeof playHistory.$inferSelect>> {
+): Promise<Paginated<typeof playHistory.$inferSelect>> {
   const offset = (page - 1) * limit;
 
   const [data, countResult] = await Promise.all([
