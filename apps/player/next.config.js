@@ -1,8 +1,9 @@
 const isProduction = process.env.NODE_ENV === 'production';
+const isVercel = !!process.env.VERCEL;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  ...(isProduction && { output: 'standalone' }),
+  ...(!isVercel && isProduction && { output: 'standalone' }),
   reactStrictMode: true,
   compiler: {
     removeConsole: isProduction,
