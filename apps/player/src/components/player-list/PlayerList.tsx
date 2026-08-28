@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { Music } from 'lucide-react';
+import { Music, AlertCircle } from 'lucide-react';
 import * as api from '@/api';
 import { tryCatch } from '@teleplay/core';
 import { useGroupsSocket } from '@/hooks/useGroupsSocket';
 import { EmptyState } from '../EmptyState';
+import { ErrorState } from '../ErrorState';
 import { LoadingOverlay } from '../LoadingOverlay';
 import { Pagination } from '../Pagination';
 import { PlayerCard } from './PlayerCard';
@@ -75,18 +76,25 @@ export function PlayerList() {
     );
   }
 
+  if (error) {
+    return (
+      <main className="min-h-screen bg-bg-base text-text-base p-6">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-section-title font-title font-bold mb-8">
+            Players
+          </h1>
+          <ErrorState icon={AlertCircle} message={error} />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-bg-base text-text-base p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-section-title font-title font-bold">Players</h1>
         </div>
-
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
-            <p className="text-body-medium text-red-500">{error}</p>
-          </div>
-        )}
 
         {groups.length === 0 ? (
           <EmptyState
