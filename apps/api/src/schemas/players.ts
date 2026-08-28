@@ -6,10 +6,6 @@ export const playRequestSchema = z.object({
   groupName: z.string().max(255).optional(),
 });
 
-export const searchRequestSchema = z.object({
-  query: z.string().min(1).max(200),
-});
-
 export const playFromQueueSchema = z.object({
   itemId: z.number().int().positive(),
 });

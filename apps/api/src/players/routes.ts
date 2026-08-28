@@ -5,10 +5,10 @@ import {
   playFromQueueSchema,
   playRequestSchema,
   positionRequestSchema,
-  searchRequestSchema,
   volumeRequestSchema,
 } from '../schemas/players';
 import * as playerService from './services';
+import { searchQuerySchema } from '../schemas';
 
 const router: RouterType = Router();
 
@@ -141,7 +141,7 @@ router.post(
   '/:playerId/search',
   validate({
     params: { playerId: z.coerce.number().int() },
-    body: searchRequestSchema,
+    body: searchQuerySchema,
   }),
   async (req, res) => {
     res.json(await playerService.search(req.body.query));
