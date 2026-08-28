@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import { app, logger } from './app';
 import { App } from '@teleplay/core';
-import { wss } from './realtime';
+import { wss } from './ws';
 
 const httpServer = createServer(app);
 wss.attach(httpServer);

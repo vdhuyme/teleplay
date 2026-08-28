@@ -11,7 +11,7 @@ import {
   QueueUpdatedEvent,
   VolumeEvent,
   GroupsUpdatedEvent,
-} from '../realtime/events';
+} from '../ws/events';
 import { PLAYER_STATUS } from '../groups';
 
 const youtubeClient = new Youtube(App.getOrThrow('YOUTUBE_API_KEY'));
