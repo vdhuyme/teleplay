@@ -44,6 +44,11 @@ export interface VolumeEvent {
   volume: number;
 }
 
+export interface PositionEvent {
+  type: typeof SOCKET_EVENTS.POSITION;
+  position: number;
+}
+
 export interface QueueUpdatedEvent {
   type: typeof SOCKET_EVENTS.QUEUE_UPDATED;
 }
@@ -55,6 +60,7 @@ export type SocketEvent =
   | ResumeEvent
   | StopEvent
   | VolumeEvent
+  | PositionEvent
   | QueueUpdatedEvent;
 
 export interface GroupsUpdatedPayload {

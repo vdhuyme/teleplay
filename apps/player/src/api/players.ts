@@ -51,6 +51,9 @@ export const skip = (playerId: number) =>
 export const setVolume = (playerId: number, volume: number) =>
   http.post(`/players/${playerId}/volume`, { volume });
 
+export const setPosition = (playerId: number, position: number) =>
+  http.post(`/players/${playerId}/position`, { position });
+
 export const getQueue = (playerId: number) =>
   http.get<QueueItem[]>(`/players/${playerId}/queue`);
 

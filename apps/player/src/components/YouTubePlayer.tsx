@@ -2,14 +2,16 @@
 
 import { useEffect, useRef } from 'react';
 import { tryCatch } from '@teleplay/core';
+import * as api from '@/api';
+import { PlayerStatus } from '@/socket/types';
 
 interface YouTubePlayerProps {
   playerId: string;
   videoId: string;
-  status: 'idle' | 'playing' | 'paused' | 'stopped';
+  status: PlayerStatus;
   volume: number;
   position: number;
-  onStateChange: (status: 'idle' | 'playing' | 'paused' | 'stopped') => void;
+  onStateChange: (status: PlayerStatus) => void;
   onEnded: () => void;
 }
 
@@ -186,16 +188,18 @@ export function YouTubePlayer({
     const save = () => {
       if (!playerRef.current?.getCurrentTime) return;
       const t = playerRef.current.getCurrentTime();
-      if (t > 0) {
-        localStorage.setItem(
-          STORAGE_KEY(playerId),
-          JSON.stringify({
-            videoId,
-            position: t,
-            savedAt: Date.now(),
-          } satisfies SavedPosition),
-        );
-      }
+      if (t <= 0) return;
+      localStorage.setItem(
+        STORAGE_KEY(playerId),
+        JSON.stringify({
+          videoId,
+          position: t,
+          savedAt: Date.now(),
+        } satisfies SavedPosition),
+      );
+      api.players.setPosition(Number(playerId), t).catch(() => {
+        // best-effort sync to BE
+      });
     };
 
     const id = window.setInterval(save, 3000);

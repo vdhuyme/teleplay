@@ -44,6 +44,10 @@ export function usePlayerSocket(playerId: string): UseSocketReturn {
       setLastEvent({ type: SOCKET_EVENTS.VOLUME, ...data });
     };
 
+    const handlePosition = (data: { position: number }) => {
+      setLastEvent({ type: SOCKET_EVENTS.POSITION, ...data });
+    };
+
     const handleQueueUpdated = () => {
       setLastEvent({ type: SOCKET_EVENTS.QUEUE_UPDATED });
     };
@@ -54,6 +58,7 @@ export function usePlayerSocket(playerId: string): UseSocketReturn {
     socket.on(SOCKET_EVENTS.RESUME, handleResume);
     socket.on(SOCKET_EVENTS.STOP, handleStop);
     socket.on(SOCKET_EVENTS.VOLUME, handleVolume);
+    socket.on(SOCKET_EVENTS.POSITION, handlePosition);
     socket.on(SOCKET_EVENTS.QUEUE_UPDATED, handleQueueUpdated);
 
     return () => {
@@ -63,6 +68,7 @@ export function usePlayerSocket(playerId: string): UseSocketReturn {
       socket.off(SOCKET_EVENTS.RESUME, handleResume);
       socket.off(SOCKET_EVENTS.STOP, handleStop);
       socket.off(SOCKET_EVENTS.VOLUME, handleVolume);
+      socket.off(SOCKET_EVENTS.POSITION, handlePosition);
       socket.off(SOCKET_EVENTS.QUEUE_UPDATED, handleQueueUpdated);
     };
   }, [socket, playerId]);

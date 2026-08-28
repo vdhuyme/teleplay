@@ -80,6 +80,9 @@ export function usePlayerState(playerId: string) {
       case SOCKET_EVENTS.VOLUME:
         setState((prev) => ({ ...prev, volume: lastEvent.volume }));
         break;
+      case SOCKET_EVENTS.POSITION:
+        setState((prev) => ({ ...prev, position: lastEvent.position }));
+        break;
       case SOCKET_EVENTS.QUEUE_UPDATED:
         fetchQueue();
         break;
