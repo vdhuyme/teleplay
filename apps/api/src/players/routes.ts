@@ -4,6 +4,7 @@ import z from 'zod';
 import {
   playFromQueueSchema,
   playRequestSchema,
+  positionRequestSchema,
   searchRequestSchema,
   volumeRequestSchema,
 } from '../schemas/players';
@@ -107,6 +108,22 @@ router.post(
     const { playerId } = req.params;
 
     await playerService.setVolume(playerId, volume);
+
+    res.json({ success: true });
+  },
+);
+
+router.post(
+  '/:playerId/position',
+  validate({
+    params: { playerId: z.coerce.number().int() },
+    body: positionRequestSchema,
+  }),
+  async (req, res) => {
+    const { position } = req.body;
+    const { playerId } = req.params;
+
+    await playerService.setPosition(playerId, position);
 
     res.json({ success: true });
   },

@@ -5,6 +5,7 @@ const SOCKET_EVENTS = {
   PAUSE: 'PAUSE',
   RESUME: 'RESUME',
   STOP: 'STOP',
+  POSITION: 'POSITION',
   QUEUE_UPDATED: 'QUEUE_UPDATED',
   VOLUME: 'VOLUME',
   GROUPS_UPDATED: 'GROUPS_UPDATED',
@@ -42,6 +43,13 @@ export class QueueUpdatedEvent extends SocketEvent {
 export class VolumeEvent extends SocketEvent {
   readonly name = SOCKET_EVENTS.VOLUME;
   constructor(public readonly volume: number) {
+    super();
+  }
+}
+
+export class PositionEvent extends SocketEvent {
+  readonly name = SOCKET_EVENTS.POSITION;
+  constructor(public readonly position: number) {
     super();
   }
 }

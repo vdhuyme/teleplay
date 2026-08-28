@@ -17,3 +17,7 @@ export const playFromQueueSchema = z.object({
 export const volumeRequestSchema = z.object({
   volume: z.number().int().min(0).max(100),
 });
+
+export const positionRequestSchema = z.object({
+  position: z.number().int().min(0),
+});

@@ -12,6 +12,7 @@ export interface ServerToClientEvents {
   RESUME: () => void;
   STOP: () => void;
   VOLUME: (data: { volume: number }) => void;
+  POSITION: (data: { position: number }) => void;
   QUEUE_UPDATED: () => void;
 }
 

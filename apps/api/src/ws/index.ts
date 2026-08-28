@@ -9,5 +9,6 @@ export {
   StopEvent,
   QueueUpdatedEvent,
   VolumeEvent,
+  PositionEvent,
   GroupsUpdatedEvent,
 } from './events';

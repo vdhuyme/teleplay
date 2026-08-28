@@ -10,6 +10,7 @@ import {
   StopEvent,
   QueueUpdatedEvent,
   VolumeEvent,
+  PositionEvent,
   GroupsUpdatedEvent,
 } from '../ws/events';
 import { PLAYER_STATUS } from '../groups';
@@ -334,6 +335,15 @@ export async function setVolume(groupId: number, volume: number) {
     .onDuplicateKeyUpdate({ set: { volume } });
 
   new VolumeEvent(volume).toRoom(groupId);
+}
+
+export async function setPosition(groupId: number, position: number) {
+  await db
+    .insert(groups)
+    .values({ id: groupId, position })
+    .onDuplicateKeyUpdate({ set: { position } });
+
+  new PositionEvent(position).toRoom(groupId);
 }
 
 export async function getQueue(groupId: number) {
