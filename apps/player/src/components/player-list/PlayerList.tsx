@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { Music, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import * as api from '@/api';
 import { tryCatch } from '@teleplay/core';
 import { useGroupsSocket } from '@/hooks/useGroupsSocket';
@@ -26,12 +27,12 @@ export function PlayerList() {
 
   const fetchGroups = useCallback(async () => {
     setLoading(true);
-    const [err, data] = await tryCatch(api.groups.list(page, PAGE_LIMIT));
+    const [err, result] = await tryCatch(api.groups.list(page, PAGE_LIMIT));
     if (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err.message ?? 'Failed to fetch players');
     } else {
-      setGroups(data.data.items);
-      setTotal(data.data.total);
+      setGroups(result.data.items);
+      setTotal(result.data.total);
     }
     setLoading(false);
   }, [page]);
@@ -46,15 +47,16 @@ export function PlayerList() {
     setDeleting(true);
     const [err] = await tryCatch(api.groups.remove(groupId));
     if (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete');
+      toast.error('Failed to delete player');
     } else {
+      toast.success('Player deleted');
       setDeleteConfirm(null);
-      const [fetchErr, data] = await tryCatch(
+      const [fetchErr, result] = await tryCatch(
         api.groups.list(page, PAGE_LIMIT),
       );
       if (!fetchErr) {
-        setGroups(data.data.items);
-        setTotal(data.data.total);
+        setGroups(result.data.items);
+        setTotal(result.data.total);
       }
     }
     setDeleting(false);

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Play, Pause, Square, SkipForward, Volume2 } from 'lucide-react';
+import { toast } from 'sonner';
 import * as api from '@/api';
 import { tryCatch } from '@teleplay/core';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -27,13 +28,14 @@ export function PlayerControls({
   const handlePauseResume = async () => {
     const id = Number(playerId);
     const action = state.status === 'paused' ? 'resume' : 'pause';
-    const [error] = await tryCatch(
+    const [err] = await tryCatch(
       action === 'pause' ? api.players.pause(id) : api.players.resume(id),
     );
-    if (error) {
-      console.error(`Failed to ${action}:`, error);
+    if (err) {
+      toast.error(`Failed to ${action}`);
       return;
     }
+    toast.success(action === 'pause' ? 'Paused' : 'Resumed');
     if (action === 'pause') {
       onPause();
     } else {
@@ -42,19 +44,22 @@ export function PlayerControls({
   };
 
   const handleStop = async () => {
-    const [error] = await tryCatch(api.players.stop(Number(playerId)));
-    if (error) {
-      console.error('Failed to stop:', error);
+    const [err] = await tryCatch(api.players.stop(Number(playerId)));
+    if (err) {
+      toast.error('Failed to stop');
       return;
     }
+    toast.success('Stopped');
     onStop();
   };
 
   const handleSkip = async () => {
-    const [error] = await tryCatch(api.players.skip(Number(playerId)));
-    if (error) {
-      console.error('Failed to skip:', error);
+    const [err] = await tryCatch(api.players.skip(Number(playerId)));
+    if (err) {
+      toast.error('Failed to skip');
+      return;
     }
+    toast.success('Skipped');
   };
 
   const [localVolume, setLocalVolume] = useState(state.volume);

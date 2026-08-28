@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Search, Play, Plus, Music, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { tryCatch } from '@teleplay/core';
 import * as api from '@/api';
 import type { SearchResult } from '@/api/players';
@@ -27,11 +28,11 @@ export function SearchPanel({ playerId }: SearchPanelProps) {
       }
 
       setLoading(true);
-      const [error, data] = await tryCatch(
+      const [error, result] = await tryCatch(
         api.players.search(Number(playerId), searchQuery.trim()),
       );
       if (!error) {
-        setResults(data.data);
+        setResults(result.data);
       }
       setLoading(false);
     },
@@ -49,21 +50,25 @@ export function SearchPanel({ playerId }: SearchPanelProps) {
   }, [query, handleSearch]);
 
   const handlePlay = async (result: SearchResult) => {
-    const [error] = await tryCatch(
+    const [err] = await tryCatch(
       api.players.play(Number(playerId), { query: result.title }),
     );
-    if (error) {
-      console.error('Failed to play:', error);
+    if (err) {
+      toast.error('Failed to play');
+      return;
     }
+    toast.success(`Now playing: ${result.title}`);
   };
 
   const handleAddToQueue = async (result: SearchResult) => {
     setAddingId(result.videoId);
-    const [error] = await tryCatch(
+    const [err] = await tryCatch(
       api.players.addToQueue(Number(playerId), { query: result.title }),
     );
-    if (error) {
-      console.error('Failed to add to queue:', error);
+    if (err) {
+      toast.error('Failed to add to queue');
+    } else {
+      toast.success('Added to queue');
     }
     setAddingId(null);
   };

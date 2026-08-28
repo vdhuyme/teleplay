@@ -28,14 +28,14 @@ export function usePlayerState(playerId: string) {
 
   useEffect(() => {
     const fetchInitialState = async () => {
-      const [error, data] = await tryCatch(
+      const [err, result] = await tryCatch(
         api.players.getState(Number(playerId)),
       );
-      if (error) {
-        console.error('Failed to fetch initial state:', error);
+      if (err) {
+        console.error('Failed to fetch initial state:', err);
         return;
       }
-      setState(data.data as PlayerState);
+      setState(result.data as PlayerState);
     };
 
     fetchInitialState();

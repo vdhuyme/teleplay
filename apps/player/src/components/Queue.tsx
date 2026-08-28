@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Music, ListMusic } from 'lucide-react';
+import { toast } from 'sonner';
 import { tryCatch } from '@teleplay/core';
 import * as api from '@/api';
 import type { QueueItem as ApiQueueItem } from '@/api/players';
@@ -22,11 +23,13 @@ export function Queue({ items, playerId }: QueueProps) {
 
   const handlePlay = async (itemId: number) => {
     setPlayingId(itemId);
-    const [error] = await tryCatch(
+    const [err] = await tryCatch(
       api.players.playFromQueue(Number(playerId), itemId),
     );
-    if (error) {
-      console.error('Failed to play from queue:', error);
+    if (err) {
+      toast.error('Failed to play from queue');
+    } else {
+      toast.success('Now playing from queue');
     }
     setPlayingId(null);
   };
