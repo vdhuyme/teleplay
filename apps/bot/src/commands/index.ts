@@ -11,3 +11,5 @@ export * from './help.command';
 export * from './start.command';
 export * from './now.command';
 export * from './suggest.command';
+export * from './remove.command';
+export * from './playfromqueue.command';

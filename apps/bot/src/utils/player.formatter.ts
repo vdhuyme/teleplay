@@ -68,6 +68,8 @@ export function formatHelp() {
     ``,
     `*Queue*`,
     `  /queue \\- View the queue`,
+    `  /remove \\- Remove a song by number`,
+    `  /playfromqueue \\- Play a song from queue`,
     `  /clear \\- Clear the queue`,
     ``,
     `*Other*`,

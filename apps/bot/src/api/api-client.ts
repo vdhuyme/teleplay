@@ -50,6 +50,11 @@ export const addToQueue = (playerId: string, data: PlayRequest) =>
 export const removeFromQueue = (playerId: string, itemId: number) =>
   http.delete<ApiResponse<null>>(`/players/${playerId}/queue/${itemId}`);
 
+export const playFromQueue = (playerId: string, itemId: number) =>
+  http.post<ApiResponse<null>>(`/players/${playerId}/play-from-queue`, {
+    itemId,
+  });
+
 export const clearQueue = (playerId: string) =>
   http.delete<ApiResponse<null>>(`/players/${playerId}/queue`);
 

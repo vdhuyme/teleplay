@@ -22,6 +22,8 @@ import {
   startCommand,
   stopCommand,
   volumeCommand,
+  removeCommand,
+  playFromQueueCommand,
 } from './commands';
 
 const bot = new Bot(App.getOrThrow('TELEGRAM_BOT_TOKEN'));
@@ -46,6 +48,8 @@ bot.command('now', nowCommand);
 bot.command('volume', volumeCommand);
 bot.command('clear', clearCommand);
 bot.command('suggest', suggestCommand);
+bot.command('remove', removeCommand);
+bot.command('playfromqueue', playFromQueueCommand);
 
 bot.callbackQuery(/^pause:-?\d+$/, playCallback);
 bot.callbackQuery(/^skip:-?\d+$/, playCallback);
@@ -70,6 +74,8 @@ bot.api.setMyCommands([
   { command: 'now', description: 'View current song' },
   { command: 'volume', description: 'Set volume 0-100' },
   { command: 'clear', description: 'Clear the queue' },
+  { command: 'remove', description: 'Remove a song from queue by number' },
+  { command: 'playfromqueue', description: 'Play a specific song from queue' },
   { command: 'help', description: 'Show help' },
 ]);
 
