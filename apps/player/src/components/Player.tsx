@@ -54,6 +54,7 @@ export function Player({ playerId }: PlayerProps) {
         <div className="lg:col-span-2">
           <div className="card-spotify">
             <NowPlaying
+              playerId={playerId}
               state={state}
               onStateChange={handleStateChange}
               onEnded={handleVideoEnded}

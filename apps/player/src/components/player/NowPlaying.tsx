@@ -4,16 +4,23 @@ import { isNotNil } from '@teleplay/core';
 import type { PlayerState } from '@/hooks/usePlayerState';
 
 interface NowPlayingProps {
+  playerId: string;
   state: PlayerState;
   onStateChange: (status: PlayerState['status']) => void;
   onEnded: () => void;
 }
 
-export function NowPlaying({ state, onStateChange, onEnded }: NowPlayingProps) {
+export function NowPlaying({
+  playerId,
+  state,
+  onStateChange,
+  onEnded,
+}: NowPlayingProps) {
   return (
     <div className="card-spotify">
       {isNotNil(state.videoId) ? (
         <YouTubePlayer
+          playerId={playerId}
           videoId={state.videoId}
           status={state.status}
           volume={state.volume}

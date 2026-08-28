@@ -1,14 +1,22 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { tryCatch } from '@teleplay/core';
 
 interface YouTubePlayerProps {
+  playerId: string;
   videoId: string;
   status: 'idle' | 'playing' | 'paused' | 'stopped';
   volume: number;
   position: number;
   onStateChange: (status: 'idle' | 'playing' | 'paused' | 'stopped') => void;
   onEnded: () => void;
+}
+
+interface SavedPosition {
+  videoId: string;
+  position: number;
+  savedAt: number;
 }
 
 declare global {
@@ -18,7 +26,11 @@ declare global {
   }
 }
 
+const STORAGE_KEY = (playerId: string) =>
+  `teleplay:player:${playerId}:position`;
+
 export function YouTubePlayer({
+  playerId,
   videoId,
   status,
   volume,
@@ -30,20 +42,41 @@ export function YouTubePlayer({
   const playerRef = useRef<any>(null);
   const isReadyRef = useRef(false);
   const pendingVideoRef = useRef<string | null>(null);
+  const localPositionRef = useRef<number | null>(null);
 
-  // Store props in refs for use in callbacks
-  const propsRef = useRef({ volume, status, onEnded, onStateChange });
-  propsRef.current = { volume, status, onEnded, onStateChange };
+  const propsRef = useRef({
+    videoId,
+    volume,
+    status,
+    position,
+    onEnded,
+    onStateChange,
+  });
+  propsRef.current = {
+    videoId,
+    volume,
+    status,
+    position,
+    onEnded,
+    onStateChange,
+  };
 
-  // Load YouTube IFrame API
   useEffect(() => {
-    // Check if API is already loaded
+    const raw = localStorage.getItem(STORAGE_KEY(playerId));
+    if (!raw) return;
+    const [error, saved] = tryCatch(() => JSON.parse(raw) as SavedPosition);
+    if (error) return;
+    if (saved.videoId === videoId && saved.position > 0) {
+      localPositionRef.current = saved.position;
+    }
+  }, [playerId, videoId]);
+
+  useEffect(() => {
     if (window.YT && window.YT.Player) {
       initPlayer();
       return;
     }
 
-    // Load the IFrame Player API code asynchronously
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     const firstScriptTag = document.getElementsByTagName('script')[0];
@@ -60,7 +93,6 @@ export function YouTubePlayer({
     };
   }, []);
 
-  // Initialize player
   const initPlayer = () => {
     if (!containerRef.current || playerRef.current) return;
 
@@ -88,12 +120,17 @@ export function YouTubePlayer({
     isReadyRef.current = true;
     event.target.setVolume(propsRef.current.volume);
 
-    // Play if there's a pending video or status is playing
-    if (pendingVideoRef.current) {
-      event.target.loadVideoById(pendingVideoRef.current);
-      pendingVideoRef.current = null;
-    } else if (propsRef.current.status === 'playing') {
-      event.target.playVideo();
+    const { status, position } = propsRef.current;
+    const vid = pendingVideoRef.current ?? propsRef.current.videoId;
+    pendingVideoRef.current = null;
+
+    if (!vid) return;
+
+    const startAt = position || localPositionRef.current || 0;
+    if (status === 'playing') {
+      event.target.loadVideoById(vid, startAt);
+    } else {
+      event.target.cueVideoById(vid, startAt);
     }
   };
 
@@ -114,24 +151,20 @@ export function YouTubePlayer({
     }
   };
 
-  // Update video when videoId changes
   useEffect(() => {
     if (playerRef.current && isReadyRef.current) {
       playerRef.current.loadVideoById(videoId);
     } else if (videoId) {
-      // Store pending video to load when player is ready
       pendingVideoRef.current = videoId;
     }
   }, [videoId]);
 
-  // Update volume
   useEffect(() => {
     if (playerRef.current && isReadyRef.current) {
       playerRef.current.setVolume(volume);
     }
   }, [volume]);
 
-  // Update play/pause status
   useEffect(() => {
     if (!playerRef.current || !isReadyRef.current) return;
 
@@ -146,6 +179,31 @@ export function YouTubePlayer({
       playerRef.current.pauseVideo();
     }
   }, [status]);
+
+  useEffect(() => {
+    if (status !== 'playing' || !videoId) return;
+
+    const save = () => {
+      if (!playerRef.current?.getCurrentTime) return;
+      const t = playerRef.current.getCurrentTime();
+      if (t > 0) {
+        localStorage.setItem(
+          STORAGE_KEY(playerId),
+          JSON.stringify({
+            videoId,
+            position: t,
+            savedAt: Date.now(),
+          } satisfies SavedPosition),
+        );
+      }
+    };
+
+    const id = window.setInterval(save, 3000);
+    return () => {
+      clearInterval(id);
+      save();
+    };
+  }, [status, videoId, playerId]);
 
   return (
     <div className="aspect-video bg-black rounded-lg overflow-hidden">
