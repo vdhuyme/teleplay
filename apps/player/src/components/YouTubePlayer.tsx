@@ -6,7 +6,7 @@ import * as api from '@/api';
 import { PlayerStatus } from '@/socket/types';
 
 interface YouTubePlayerProps {
-  playerId: string;
+  playerId: number;
   videoId: string;
   status: PlayerStatus;
   volume: number;
@@ -21,14 +21,41 @@ interface SavedPosition {
   savedAt: number;
 }
 
+interface YTPlayer {
+  destroy(): void;
+  loadVideoById(videoId: string, startSeconds?: number): void;
+  cueVideoById(videoId: string, startSeconds?: number): void;
+  setVolume(volume: number): void;
+  playVideo(): void;
+  pauseVideo(): void;
+  getPlayerState(): number;
+  getCurrentTime(): number;
+}
+
+interface YTNamespace {
+  Player: new (
+    container: HTMLElement,
+    options: {
+      videoId?: string;
+      playerVars?: Record<string, number>;
+      events?: {
+        onReady?: (event: { target: YTPlayer }) => void;
+        onStateChange?: (event: { data: number }) => void;
+        onEnd?: () => void;
+      };
+    },
+  ) => YTPlayer;
+  PlayerState: { PLAYING: number; PAUSED: number; ENDED: number };
+}
+
 declare global {
   interface Window {
-    YT: any;
+    YT: YTNamespace;
     onYouTubeIframeAPIReady: () => void;
   }
 }
 
-const STORAGE_KEY = (playerId: string) =>
+const STORAGE_KEY = (playerId: number) =>
   `teleplay:player:${playerId}:position`;
 
 export function YouTubePlayer({
@@ -41,7 +68,7 @@ export function YouTubePlayer({
   onEnded,
 }: YouTubePlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<YTPlayer | null>(null);
   const isReadyRef = useRef(false);
   const pendingVideoRef = useRef<string | null>(null);
   const localPositionRef = useRef<number | null>(null);
@@ -118,7 +145,7 @@ export function YouTubePlayer({
     });
   };
 
-  const onPlayerReady = (event: any) => {
+  const onPlayerReady = (event: { target: YTPlayer }) => {
     isReadyRef.current = true;
     event.target.setVolume(propsRef.current.volume);
 
@@ -136,7 +163,7 @@ export function YouTubePlayer({
     }
   };
 
-  const onPlayerStateChange = (event: any) => {
+  const onPlayerStateChange = (event: { data: number }) => {
     const YT = window.YT;
     if (!YT) return;
 
@@ -197,9 +224,7 @@ export function YouTubePlayer({
           savedAt: Date.now(),
         } satisfies SavedPosition),
       );
-      api.players.setPosition(Number(playerId), t).catch(() => {
-        // best-effort sync to BE
-      });
+      api.players.setPosition(playerId, Math.round(t));
     };
 
     const id = window.setInterval(save, 3000);

@@ -20,7 +20,7 @@ export function NowPlaying({
     <div className="card-spotify">
       {isNotNil(state.videoId) ? (
         <YouTubePlayer
-          playerId={playerId}
+          playerId={Number(playerId)}
           videoId={state.videoId}
           status={state.status}
           volume={state.volume}
