@@ -31,8 +31,8 @@ export function PlayerList() {
     if (err) {
       setError(err.message ?? 'Failed to fetch players');
     } else {
-      setGroups(result.data.items);
-      setTotal(result.data.total);
+      setGroups(result.data?.items ?? []);
+      setTotal(result.data?.total ?? 0);
     }
     setLoading(false);
   }, [page]);
@@ -55,8 +55,8 @@ export function PlayerList() {
         api.groups.list(page, PAGE_LIMIT),
       );
       if (!fetchErr) {
-        setGroups(result.data.items);
-        setTotal(result.data.total);
+        setGroups(result.data?.items ?? []);
+        setTotal(result.data?.total ?? 0);
       }
     }
     setDeleting(false);

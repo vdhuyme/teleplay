@@ -90,20 +90,20 @@ export function usePlayerState(playerId: string) {
   }, [lastEvent]);
 
   const fetchQueue = async () => {
-    const [error, data] = await tryCatch(
+    const [err, result] = await tryCatch(
       api.players.getQueue(Number(playerId)),
     );
-    if (error) {
-      console.error('Failed to fetch queue:', error);
+    if (err) {
+      console.error('Failed to fetch queue:', err);
       return;
     }
-    setQueue(data.data);
+    setQueue(result.data ?? []);
   };
 
   const handleVideoEnded = async () => {
-    const [error] = await tryCatch(api.players.videoEnded(Number(playerId)));
-    if (error) {
-      console.error('Failed to report video ended:', error);
+    const [err] = await tryCatch(api.players.videoEnded(Number(playerId)));
+    if (err) {
+      console.error('Failed to report video ended:', err);
     }
   };
 
