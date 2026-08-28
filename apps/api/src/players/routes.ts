@@ -17,7 +17,9 @@ const router: RouterType = Router();
 router.get(
   '/:playerId/state',
   validate({ params: { playerId: z.coerce.number().int() } }),
-  asyncHandler(async (req) => ok(await playerService.first(req.params.playerId))),
+  asyncHandler(async (req) =>
+    ok(await playerService.first(req.params.playerId)),
+  ),
 );
 
 router.post(
@@ -30,7 +32,9 @@ router.post(
     const { playerId } = req.params;
     const { query, requestedBy, groupName } = req.body;
 
-    return ok(await playerService.play(playerId, query, requestedBy, groupName));
+    return ok(
+      await playerService.play(playerId, query, requestedBy, groupName),
+    );
   }),
 );
 
