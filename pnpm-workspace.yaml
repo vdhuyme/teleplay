@@ -1,5 +1,26 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+catalog:
+  typescript: ^5.9.3
+  tsx: ^4.23.12
+  "@types/node": ^26.3.0
+  zod: ^4.4.3
+
+catalogs:
+  react19:
+    react: ^19.2.8
+    react-dom: ^19.2.8
+    "@types/react": ^19.2.18
+    "@types/react-dom": ^19.2.5
+  db:
+    drizzle-orm: ^0.45.2
+    drizzle-kit: ^0.31.10
+    mysql2: ^3.24.2
+  realtime:
+    socket.io: ^4.8.3
+    socket.io-client: ^4.7.5
+
 allowBuilds:
   esbuild: true

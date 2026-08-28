@@ -18,21 +18,21 @@
     "@teleplay/core": "workspace:*",
     "@teleplay/youtube": "workspace:*",
     "cors": "^2.8.6",
-    "drizzle-orm": "^0.45.2",
+    "drizzle-orm": "catalog:db",
     "express": "^5.2.1",
     "express-zod-safe": "^3.2.1",
-    "mysql2": "^3.24.2",
+    "mysql2": "catalog:db",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
-    "socket.io": "^4.8.3",
-    "zod": "^4.4.3"
+    "socket.io": "catalog:realtime",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.6",
-    "@types/node": "^26.3.0",
-    "drizzle-kit": "^0.31.10",
-    "tsx": "^4.23.12",
-    "typescript": "^5.9.3"
+    "@types/node": "catalog:",
+    "drizzle-kit": "catalog:db",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
   }
 }
