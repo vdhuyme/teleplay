@@ -4,38 +4,40 @@ import z from 'zod';
 import * as groupService from './services';
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from '../constants/pagination';
 import { paginationQuerySchema } from '../schemas';
+import { asyncHandler } from '../middleware/async-handler';
+import { noContent, ok } from '../core';
 
 const router: RouterType = Router();
 
 router.get(
   '/',
   validate({ query: paginationQuerySchema }),
-  async (req, res) => {
-    const page = req.query.page ?? DEFAULT_PAGE;
-    const limit = req.query.limit ?? DEFAULT_LIMIT;
+  asyncHandler(async (req) => {
+    const page = Number(req.query.page ?? DEFAULT_PAGE);
+    const limit = Number(req.query.limit ?? DEFAULT_LIMIT);
 
-    res.json(await groupService.list(page, limit));
-  },
+    return ok(await groupService.list(page, limit));
+  }),
 );
 
 router.get(
   '/:groupId',
   validate({ params: { groupId: z.coerce.number().int() } }),
-  async (req, res) => {
+  asyncHandler(async (req) => {
     const { groupId } = req.params;
 
-    res.json(await groupService.get(groupId));
-  },
+    return ok(await groupService.get(groupId));
+  }),
 );
 
 router.get(
   '/:groupId/queue',
   validate({ params: { groupId: z.coerce.number().int() } }),
-  async (req, res) => {
+  asyncHandler(async (req) => {
     const { groupId } = req.params;
 
-    res.json(await groupService.queue(groupId));
-  },
+    return ok(await groupService.queue(groupId));
+  }),
 );
 
 router.get(
@@ -44,23 +46,23 @@ router.get(
     params: { groupId: z.coerce.number().int() },
     query: paginationQuerySchema,
   }),
-  async (req, res) => {
+  asyncHandler(async (req) => {
     const { groupId } = req.params;
-    const page = req.query.page ?? DEFAULT_PAGE;
-    const limit = req.query.limit ?? DEFAULT_LIMIT;
+    const page = Number(req.query.page ?? DEFAULT_PAGE);
+    const limit = Number(req.query.limit ?? DEFAULT_LIMIT);
 
-    res.json(await groupService.history(groupId, page, limit));
-  },
+    return ok(await groupService.history(groupId, page, limit));
+  }),
 );
 
 router.delete(
   '/:groupId',
   validate({ params: { groupId: z.coerce.number().int() } }),
-  async (req, res) => {
+  asyncHandler(async (req) => {
     await groupService.remove(req.params.groupId);
 
-    res.json({ success: true });
-  },
+    return noContent();
+  }),
 );
 
 export default router;

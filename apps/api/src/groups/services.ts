@@ -28,7 +28,7 @@ export async function list(
 ): Promise<Paginated<typeof groups.$inferSelect>> {
   const offset = (page - 1) * limit;
 
-  const [data, countResult] = await Promise.all([
+  const [items, countResult] = await Promise.all([
     db.query.groups.findMany({
       with: {
         queueItems: true,
@@ -44,7 +44,7 @@ export async function list(
   ]);
 
   return {
-    data,
+    items,
     total: countResult[0].count,
     page,
     limit,
@@ -66,7 +66,7 @@ export async function history(
 ): Promise<Paginated<typeof playHistory.$inferSelect>> {
   const offset = (page - 1) * limit;
 
-  const [data, countResult] = await Promise.all([
+  const [items, countResult] = await Promise.all([
     db
       .select()
       .from(playHistory)
@@ -81,7 +81,7 @@ export async function history(
   ]);
 
   return {
-    data,
+    items,
     total: countResult[0].count,
     page,
     limit,

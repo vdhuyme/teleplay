@@ -1,4 +1,4 @@
-import { HTTP_STATUS_CODE } from '../constants';
+import { HTTP_STATUS } from '../core';
 import { AppError } from '../errors';
 
 export class GroupNotFoundError extends AppError {
@@ -6,7 +6,7 @@ export class GroupNotFoundError extends AppError {
     super(
       GroupNotFoundError.name,
       `Group ${groupId} not found`,
-      HTTP_STATUS_CODE.NOT_FOUND,
+      HTTP_STATUS.NOT_FOUND,
     );
   }
 }

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { HTTP_STATUS_CODE } from '../constants';
 import { AppError } from '../errors';
+import { HTTP_STATUS } from '../core';
 
 export function errorHandler(
   err: Error,
@@ -22,7 +22,7 @@ export function errorHandler(
     return;
   }
 
-  res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+  res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     error: {
       code: 'INTERNAL_ERROR',
       message: 'An unexpected error occurred',

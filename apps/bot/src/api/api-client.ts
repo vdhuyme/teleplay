@@ -63,5 +63,5 @@ export const getGroupHistory = async (
     }>
   >(`/groups/${groupId}/history`, { params: { limit } });
 
-  return result.data;
+  return result.items;
 };

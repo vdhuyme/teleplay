@@ -30,7 +30,7 @@ export function PlayerList() {
     if (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } else {
-      setGroups(data.data);
+      setGroups(data.items);
       setTotal(data.total);
     }
     setLoading(false);
@@ -53,7 +53,7 @@ export function PlayerList() {
         api.groups.list(page, PAGE_LIMIT),
       );
       if (!fetchErr) {
-        setGroups(data.data);
+        setGroups(data.items);
         setTotal(data.total);
       }
     }

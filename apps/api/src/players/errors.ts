@@ -1,4 +1,4 @@
-import { HTTP_STATUS_CODE } from '../constants';
+import { HTTP_STATUS } from '../core';
 import { AppError } from '../errors';
 
 export class PlayerLockError extends AppError {
@@ -6,7 +6,7 @@ export class PlayerLockError extends AppError {
     super(
       PlayerLockError.name,
       `Could not acquire lock for player ${playerId}`,
-      HTTP_STATUS_CODE.SERVICE_UNAVAILABLE,
+      HTTP_STATUS.SERVICE_UNAVAILABLE,
     );
   }
 }
@@ -16,7 +16,7 @@ export class PlayerNotFoundError extends AppError {
     super(
       PlayerNotFoundError.name,
       `Player ${playerId} not found`,
-      HTTP_STATUS_CODE.NOT_FOUND,
+      HTTP_STATUS.NOT_FOUND,
     );
   }
 }
@@ -26,7 +26,7 @@ export class NoVideoFoundError extends AppError {
     super(
       NoVideoFoundError.name,
       `No video found for query: ${query}`,
-      HTTP_STATUS_CODE.NOT_FOUND,
+      HTTP_STATUS.NOT_FOUND,
     );
   }
 }

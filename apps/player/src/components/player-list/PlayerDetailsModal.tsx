@@ -37,7 +37,7 @@ export function PlayerDetailsModal({
 
       if (!queueErr) setQueue(queueData);
       if (!historyErr) {
-        setPlayerHistory(historyData.data);
+        setPlayerHistory(historyData.items);
         setHistoryTotal(historyData.total);
       }
       setLoading(false);

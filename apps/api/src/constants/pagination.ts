@@ -2,7 +2,7 @@ export const DEFAULT_PAGE = 1;
 export const DEFAULT_LIMIT = 10;
 
 export interface Paginated<T> {
-  data: T[];
+  items: T[];
   total: number;
   page: number;
   limit: number;
