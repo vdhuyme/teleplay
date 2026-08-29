@@ -8,8 +8,7 @@ import { LoadingOverlay } from '../LoadingOverlay';
 import { Pagination } from '../Pagination';
 import * as api from '@/api';
 import { tryCatch } from '@teleplay/core';
-
-const HISTORY_LIMIT = 20;
+import { DEFAULT_LIMIT } from '@/types';
 
 interface PlayerDetailsModalProps {
   playerId: number;
@@ -32,7 +31,7 @@ export function PlayerDetailsModal({
       setLoading(true);
       const [queueErr, queueData] = await tryCatch(api.groups.queue(playerId));
       const [historyErr, historyData] = await tryCatch(
-        api.groups.history(playerId, historyPage, HISTORY_LIMIT),
+        api.groups.history(playerId, historyPage, DEFAULT_LIMIT),
       );
 
       if (!queueErr) setQueue(queueData.data);
@@ -170,7 +169,7 @@ export function PlayerDetailsModal({
               <Pagination
                 page={historyPage}
                 total={historyTotal}
-                limit={HISTORY_LIMIT}
+                limit={DEFAULT_LIMIT}
                 onPageChange={setHistoryPage}
                 className="mt-4"
               />

@@ -12,8 +12,7 @@ import { LoadingOverlay } from '../LoadingOverlay';
 import { Pagination } from '../Pagination';
 import { PlayerCard } from './PlayerCard';
 import { PlayerDetailsModal } from './PlayerDetailsModal';
-
-const PAGE_LIMIT = 20;
+import { DEFAULT_LIMIT } from '@/types';
 
 export function PlayerList() {
   const [groups, setGroups] = useState<api.groups.Group[]>([]);
@@ -27,7 +26,7 @@ export function PlayerList() {
 
   const fetchGroups = useCallback(async () => {
     setLoading(true);
-    const [err, result] = await tryCatch(api.groups.list(page, PAGE_LIMIT));
+    const [err, result] = await tryCatch(api.groups.list(page, DEFAULT_LIMIT));
     if (err) {
       setError(err.message ?? 'Failed to fetch players');
     } else {
@@ -52,7 +51,7 @@ export function PlayerList() {
       toast.success('Player deleted');
       setDeleteConfirm(null);
       const [fetchErr, result] = await tryCatch(
-        api.groups.list(page, PAGE_LIMIT),
+        api.groups.list(page, DEFAULT_LIMIT),
       );
       if (!fetchErr) {
         setGroups(result.data?.items ?? []);
@@ -120,7 +119,7 @@ export function PlayerList() {
             <Pagination
               page={page}
               total={total}
-              limit={PAGE_LIMIT}
+              limit={DEFAULT_LIMIT}
               onPageChange={setPage}
               className="mt-6"
             />

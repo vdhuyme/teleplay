@@ -15,11 +15,26 @@ interface PlayerPageProps {
 export default async function PlayerPage({ params }: PlayerPageProps) {
   const { playerId } = await params;
 
-  const [err, result] = await tryCatch(api.players.getState(Number(playerId)));
+  const [err, result] = await tryCatch(api.groups.getGroup(Number(playerId)));
 
-  if (err) {
+  if (err || !result.data) {
     notFound();
   }
 
-  return <Player player={result.data} />;
+  const group = result.data;
+
+  const playerState: api.players.PlayerState = {
+    id: group.id,
+    name: group.name,
+    status: group.status,
+    videoId: group.videoId,
+    title: group.title,
+    thumbnail: group.thumbnail,
+    duration: group.duration,
+    position: group.position,
+    volume: group.volume,
+    requestedBy: group.requestedBy,
+  };
+
+  return <Player player={playerState} />;
 }
