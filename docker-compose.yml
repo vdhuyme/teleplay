@@ -35,6 +35,7 @@ services:
     image: teleplay-bot:latest
     container_name: teleplay-bot
     restart: unless-stopped
+    network_mode: host
     env_file:
       - .env
     environment:
