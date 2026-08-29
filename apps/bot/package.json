@@ -14,7 +14,7 @@
   "dependencies": {
     "@teleplay/core": "workspace:*",
     "@teleplay/youtube": "workspace:*",
-    "grammy": "^1.45.1"
+    "grammy": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

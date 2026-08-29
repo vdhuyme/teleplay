@@ -1,8 +1,9 @@
 import { db, queueItems, playHistory, groups } from '../database/index';
 import { eq, and, asc, desc, sql } from 'drizzle-orm';
 import { Youtube } from '@teleplay/youtube';
-import { NoVideoFoundError } from './errors';
-import { isNil, App } from '@teleplay/core';
+import { NoVideoFoundError, BotNotInGroupError } from './errors';
+import { isNil, App, tryCatch } from '@teleplay/core';
+import { Bot } from 'grammy';
 import {
   PlayEvent,
   PauseEvent,
@@ -16,11 +17,30 @@ import {
 import { PLAYER_STATUS } from '../groups';
 
 const youtubeClient = new Youtube(App.getOrThrow('YOUTUBE_API_KEY'));
+const bot = new Bot(App.getOrThrow('TELEGRAM_BOT_TOKEN'));
+const INACTIVE_STATUSES: string[] = ['left', 'kicked'];
+
 export const search = (query: string) => youtubeClient.search(query);
 export const getTrending = () => youtubeClient.trending();
 export const getCategories = () => youtubeClient.categories();
 
+export async function ensureBotInGroup(groupId: number) {
+  const [err, botInfo] = await tryCatch(bot.api.getMe());
+  if (err) throw new BotNotInGroupError(groupId);
+
+  const [memberErr, member] = await tryCatch(
+    bot.api.getChatMember(groupId, botInfo.id),
+  );
+  if (memberErr) throw new BotNotInGroupError(groupId);
+
+  if (INACTIVE_STATUSES.includes(member.status)) {
+    throw new BotNotInGroupError(groupId);
+  }
+}
+
 export async function first(groupId: number) {
+  await ensureBotInGroup(groupId);
+
   return db.query.groups.findFirst({
     where: eq(groups.id, groupId),
   });
@@ -116,6 +136,8 @@ export async function play(
 }
 
 export async function pause(groupId: number) {
+  await ensureBotInGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, status: PLAYER_STATUS.PAUSED })
@@ -125,6 +147,8 @@ export async function pause(groupId: number) {
 }
 
 export async function resume(groupId: number) {
+  await ensureBotInGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, status: PLAYER_STATUS.PLAYING })
@@ -134,6 +158,8 @@ export async function resume(groupId: number) {
 }
 
 export async function stop(groupId: number) {
+  await ensureBotInGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, status: PLAYER_STATUS.STOPPED })
@@ -329,6 +355,8 @@ export async function playFromQueue(groupId: number, itemId: number) {
 }
 
 export async function setVolume(groupId: number, volume: number) {
+  await ensureBotInGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, volume })
@@ -338,6 +366,8 @@ export async function setVolume(groupId: number, volume: number) {
 }
 
 export async function setPosition(groupId: number, position: number) {
+  await ensureBotInGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, position })
@@ -347,6 +377,8 @@ export async function setPosition(groupId: number, position: number) {
 }
 
 export async function getQueue(groupId: number) {
+  await ensureBotInGroup(groupId);
+
   return db
     .select()
     .from(queueItems)
@@ -360,6 +392,8 @@ export async function addToQueue(
   requestedBy?: string,
   groupName?: string,
 ) {
+  await ensureBotInGroup(groupId);
+
   const results = await search(query);
   const video = results[0];
   if (!video) {
@@ -387,6 +421,8 @@ export async function addToQueue(
 }
 
 export async function removeFromQueue(groupId: number, itemId: number) {
+  await ensureBotInGroup(groupId);
+
   await db
     .delete(queueItems)
     .where(and(eq(queueItems.id, itemId), eq(queueItems.groupId, groupId)));
@@ -395,6 +431,8 @@ export async function removeFromQueue(groupId: number, itemId: number) {
 }
 
 export async function clearQueue(groupId: number) {
+  await ensureBotInGroup(groupId);
+
   await db.delete(queueItems).where(eq(queueItems.groupId, groupId));
 
   new QueueUpdatedEvent().toRoom(groupId);

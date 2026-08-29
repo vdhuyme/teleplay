@@ -30,3 +30,13 @@ export class NoVideoFoundError extends AppError {
     );
   }
 }
+
+export class BotNotInGroupError extends AppError {
+  constructor(groupId: number) {
+    super(
+      BotNotInGroupError.name,
+      `Bot is not a member of group ${groupId}`,
+      HTTP_STATUS.BAD_REQUEST,
+    );
+  }
+}
