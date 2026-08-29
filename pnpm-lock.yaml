@@ -19,6 +19,9 @@ catalogs:
     '@types/node':
       specifier: ^26.3.0
       version: 26.3.0
+    grammy:
+      specifier: ^1.45.1
+      version: 1.45.1
     tsx:
       specifier: ^4.23.12
       version: 4.23.12
@@ -86,6 +89,9 @@ importers:
       express-zod-safe:
         specifier: ^3.2.1
         version: 3.2.1(@types/express@5.0.6)(express@5.2.1)(zod@4.4.3)
+      grammy:
+        specifier: 'catalog:'
+        version: 1.45.1
       mysql2:
         specifier: catalog:db
         version: 3.24.2(@types/node@26.3.0)
@@ -130,7 +136,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/youtube
       grammy:
-        specifier: ^1.45.1
+        specifier: 'catalog:'
         version: 1.45.1
     devDependencies:
       '@types/node':
