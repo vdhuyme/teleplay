@@ -64,12 +64,9 @@ export async function searchCommand(ctx: Context) {
   const keyboard = new InlineKeyboard();
 
   results.data.forEach((video, index) => {
-    const title =
-      video.title.length > 40
-        ? `${video.title.substring(0, 37)}...`
-        : video.title;
-
-    keyboard.text(`${index + 1}. ${title}`, `sp:${playerId}:${index}`).row();
+    keyboard
+      .text(`${index + 1}. ${video.title}`, `sp:${playerId}:${index}`)
+      .row();
   });
 
   await ctx.reply('Select a song to play:', {

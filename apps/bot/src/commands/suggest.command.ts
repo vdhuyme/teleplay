@@ -26,12 +26,9 @@ function buildResultsKeyboard(
   const keyboard = new InlineKeyboard();
 
   results.forEach((video, index) => {
-    const title =
-      video.title.length > 40
-        ? `${video.title.substring(0, 37)}...`
-        : video.title;
-
-    keyboard.text(`${index + 1}. ${title}`, `sgp:${playerId}:${index}`).row();
+    keyboard
+      .text(`${index + 1}. ${video.title}`, `sgp:${playerId}:${index}`)
+      .row();
   });
 
   keyboard.text('Back', `sgback:${playerId}`).row();
@@ -196,12 +193,9 @@ export async function suggestCallback(ctx: Context) {
 
     const keyboard = new InlineKeyboard();
     results.forEach((video, index) => {
-      const title =
-        video.title.length > 40
-          ? `${video.title.substring(0, 37)}...`
-          : video.title;
-
-      keyboard.text(`${index + 1}. ${title}`, `sgp:${playerId}:${index}`).row();
+      keyboard
+        .text(`${index + 1}. ${video.title}`, `sgp:${playerId}:${index}`)
+        .row();
     });
     keyboard.text('Back', `sgback:${playerId}`).row();
 
