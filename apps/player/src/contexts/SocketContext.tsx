@@ -24,18 +24,14 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const socket = io(App.get('API_URL') ?? '', {
+      path: App.get('SOCKET_PATH') ?? '/socket.io',
       transports: ['websocket', 'polling'],
     });
 
     socketRef.current = socket;
 
-    socket.on('connect', () => {
-      setConnected(true);
-    });
-
-    socket.on('disconnect', () => {
-      setConnected(false);
-    });
+    socket.on('connect', () => setConnected(true));
+    socket.on('disconnect', () => setConnected(false));
 
     return () => {
       socket.disconnect();
