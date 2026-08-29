@@ -1,10 +1,7 @@
 import { BotError, GrammyError, HttpError } from 'grammy';
 
 export function errorHandler({ ctx, error }: BotError): void {
-  console.error('Bot error:', {
-    updateId: ctx.update.update_id,
-    error,
-  });
+  console.error('Bot error:', { updateId: ctx.update.update_id, error });
 
   if (error instanceof GrammyError) {
     console.error('Telegram API: ', error.description);
