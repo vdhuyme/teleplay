@@ -26,12 +26,33 @@ export const getCategories = () => youtubeClient.categories();
 
 export async function ensureBotInGroup(groupId: number) {
   const [err, botInfo] = await tryCatch(bot.api.getMe());
-  if (err) throw new BotNotInGroupError(groupId);
+
+  console.log('[ensureBotInGroup]', {
+    groupId,
+    botId: botInfo?.id,
+    username: botInfo?.username,
+    error: err?.message,
+  });
+
+  if (err || !botInfo) {
+    throw new BotNotInGroupError(groupId);
+  }
 
   const [memberErr, member] = await tryCatch(
     bot.api.getChatMember(groupId, botInfo.id),
   );
-  if (memberErr) throw new BotNotInGroupError(groupId);
+
+  console.log('[getChatMember]', {
+    groupId,
+    botId: botInfo.id,
+    username: botInfo.username,
+    status: member?.status,
+    error: memberErr?.message,
+  });
+
+  if (memberErr) {
+    throw new BotNotInGroupError(groupId);
+  }
 
   if (INACTIVE_STATUSES.includes(member.status)) {
     throw new BotNotInGroupError(groupId);
