@@ -18,7 +18,7 @@ import { PLAYER_STATUS } from '../groups';
 
 const youtubeClient = new Youtube(App.getOrThrow('YOUTUBE_API_KEY'));
 const bot = new Bot(App.getOrThrow('TELEGRAM_BOT_TOKEN'));
-const INACTIVE_STATUSES: string[] = ['left', 'kicked'];
+const INACTIVE_STATUSES: string[] = ['left', 'kicked', 'restricted'];
 
 export const search = (query: string) => youtubeClient.search(query);
 export const getTrending = () => youtubeClient.trending();
@@ -27,13 +27,6 @@ export const getCategories = () => youtubeClient.categories();
 export async function ensureBotInGroup(groupId: number) {
   const [err, botInfo] = await tryCatch(bot.api.getMe());
 
-  console.log('[ensureBotInGroup]', {
-    groupId,
-    botId: botInfo?.id,
-    username: botInfo?.username,
-    error: err?.message,
-  });
-
   if (err || !botInfo) {
     throw new BotNotInGroupError(groupId);
   }
@@ -41,14 +34,6 @@ export async function ensureBotInGroup(groupId: number) {
   const [memberErr, member] = await tryCatch(
     bot.api.getChatMember(groupId, botInfo.id),
   );
-
-  console.log('[getChatMember]', {
-    groupId,
-    botId: botInfo.id,
-    username: botInfo.username,
-    status: member?.status,
-    error: memberErr?.message,
-  });
 
   if (memberErr) {
     throw new BotNotInGroupError(groupId);
@@ -73,13 +58,13 @@ export async function play(
   requestedBy?: string,
   groupName?: string,
 ) {
+  const group = await first(groupId);
+
   const results = await search(query);
   const video = results[0];
   if (!video) {
     throw new NoVideoFoundError(query);
   }
-
-  const group = await first(groupId);
 
   if (
     isNil(group) ||
