@@ -8,23 +8,33 @@ import { NowPlaying } from './player/NowPlaying';
 import { PlayerControls } from './player/PlayerControls';
 import { SearchPanel } from './player/SearchPanel';
 import { Queue } from './Queue';
+import { PlayerState } from '@/api/players';
+import { PlayerState as SocketPlayerState } from '@/socket/types';
 
 interface PlayerProps {
-  playerId: string;
+  player: PlayerState;
 }
 
-export function Player({ playerId }: PlayerProps) {
+export function Player({ player }: PlayerProps) {
   const [activeTab, setActiveTab] = useState<'search' | 'queue'>('search');
   const { state, setState, queue, connected, handleVideoEnded } =
-    usePlayerState(playerId);
+    usePlayerState(String(player.id), {
+      initialState: {
+        status: player.status as SocketPlayerState['status'],
+        videoId: player.videoId,
+        title: player.title,
+        thumbnail: player.thumbnail,
+        duration: player.duration,
+        position: player.position,
+        volume: player.volume,
+        requestedBy: player.requestedBy,
+      },
+    });
 
-  const handlePause = () => {
-    setState((prev) => ({ ...prev, status: 'paused' }));
-  };
+  const handlePause = () => setState((prev) => ({ ...prev, status: 'paused' }));
 
-  const handleResume = () => {
+  const handleResume = () =>
     setState((prev) => ({ ...prev, status: 'playing' }));
-  };
 
   const handleStop = () => {
     setState((prev) => ({
@@ -58,13 +68,13 @@ export function Player({ playerId }: PlayerProps) {
         <div className="lg:col-span-2">
           <div className="card-spotify">
             <NowPlaying
-              playerId={playerId}
+              playerId={String(player.id)}
               state={state}
               onStateChange={handleStateChange}
               onEnded={handleVideoEnded}
             />
             <PlayerControls
-              playerId={playerId}
+              playerId={String(player.id)}
               state={state}
               hasQueue={queue.length > 0}
               onPause={handlePause}
@@ -110,9 +120,9 @@ export function Player({ playerId }: PlayerProps) {
 
             <div className="p-4">
               {activeTab === 'search' ? (
-                <SearchPanel playerId={playerId} />
+                <SearchPanel playerId={String(player.id)} />
               ) : (
-                <Queue items={queue} playerId={playerId} />
+                <Queue items={queue} playerId={String(player.id)} />
               )}
             </div>
           </div>

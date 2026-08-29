@@ -9,7 +9,7 @@ import type { PlayerState } from '@/socket/types';
 
 export type { PlayerState } from '@/socket/types';
 
-const initialState: PlayerState = {
+const defaultState: PlayerState = {
   status: 'idle',
   videoId: null,
   title: null,
@@ -20,26 +20,20 @@ const initialState: PlayerState = {
   requestedBy: null,
 };
 
-export function usePlayerState(playerId: string) {
-  const [state, setState] = useState<PlayerState>(initialState);
+interface UsePlayerStateOptions {
+  initialState?: PlayerState;
+}
+
+export function usePlayerState(
+  playerId: string,
+  options?: UsePlayerStateOptions,
+) {
+  const [state, setState] = useState<PlayerState>(
+    options?.initialState ?? defaultState,
+  );
   const [queue, setQueue] = useState<api.players.QueueItem[]>([]);
 
   const { connected, lastEvent } = usePlayerSocket(playerId);
-
-  useEffect(() => {
-    const fetchInitialState = async () => {
-      const [err, result] = await tryCatch(
-        api.players.getState(Number(playerId)),
-      );
-      if (err) {
-        console.error('Failed to fetch initial state:', err);
-        return;
-      }
-      setState(result.data as PlayerState);
-    };
-
-    fetchInitialState();
-  }, [playerId]);
 
   useEffect(() => {
     if (!lastEvent) return;
