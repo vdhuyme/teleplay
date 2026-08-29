@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { isNil } from './ts-utils';
 
 export const Environment = {
@@ -12,6 +13,10 @@ export const API_ENV_KEYS = {
   DATABASE_URL: 'DATABASE_URL',
   YOUTUBE_API_KEY: 'YOUTUBE_API_KEY',
   PORT: 'PORT',
+  API_URL: 'API_URL',
+  AUTH_USERNAME: 'AUTH_USERNAME',
+  AUTH_PASSWORD: 'AUTH_PASSWORD',
+  NEXTAUTH_SECRET: 'NEXTAUTH_SECRET',
 } as const;
 
 export const BOT_ENV = {
@@ -19,7 +24,9 @@ export const BOT_ENV = {
   API_URL: 'API_URL',
 } as const;
 
-type EnvKey = string;
+type EnvKey =
+  | (typeof API_ENV_KEYS)[keyof typeof API_ENV_KEYS]
+  | (typeof BOT_ENV)[keyof typeof BOT_ENV];
 
 /**
  * A utility class for managing application environment variables and providing

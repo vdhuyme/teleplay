@@ -18,6 +18,7 @@
     "@teleplay/core": "workspace:*",
     "@teleplay/youtube": "workspace:*",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "drizzle-orm": "catalog:db",
     "express": "^5.2.1",
     "express-zod-safe": "^3.2.1",

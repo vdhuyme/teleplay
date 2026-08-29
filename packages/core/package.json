@@ -11,5 +11,8 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
   }
 }
