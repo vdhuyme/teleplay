@@ -24,7 +24,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const socket = io(App.get('API_URL') ?? '', {
-      path: App.get('SOCKET_PATH') ?? '/socket.io',
       transports: ['websocket', 'polling'],
     });
 

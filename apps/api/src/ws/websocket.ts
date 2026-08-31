@@ -1,7 +1,6 @@
 import type { Server as HttpServer } from 'http';
 import { Server as SocketServer, Socket } from 'socket.io';
 import type { ClientToServerEvents, ServerToClientEvents } from './types';
-import { App } from '@teleplay/core';
 
 type TypedSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 
@@ -10,7 +9,6 @@ export class SocketIoServer {
 
   constructor() {
     this.wss = new SocketServer({
-      path: App.get('SOCKET_PATH') ?? '/socket.io',
       cors: {
         origin: '*',
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
