@@ -10,6 +10,7 @@ export type Environment = (typeof Environment)[keyof typeof Environment];
 
 const ENV = {
   NODE_ENV: process.env.NODE_ENV,
+  SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
   SOCKET_PATH: process.env.NEXT_PUBLIC_SOCKET_PATH,
   API_URL: process.env.NEXT_PUBLIC_API_URL,
   AUTH_USERNAME: process.env.AUTH_USERNAME,

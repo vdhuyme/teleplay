@@ -23,14 +23,22 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(App.get('API_URL') ?? '', {
+    const socketUrl = App.get('SOCKET_URL') ?? App.get('API_URL') ?? '';
+    const socketPath = App.get('SOCKET_PATH') ?? '/socket.io';
+
+    const socket = io(socketUrl, {
+      path: socketPath,
       transports: ['websocket', 'polling'],
+      reconnection: true,
     });
 
     socketRef.current = socket;
 
     socket.on('connect', () => setConnected(true));
     socket.on('disconnect', () => setConnected(false));
+    socket.on('connect_error', (err) =>
+      console.error('Socket connect_error:', err.message),
+    );
 
     return () => {
       socket.disconnect();
