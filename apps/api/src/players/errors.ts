@@ -30,3 +30,13 @@ export class NoVideoFoundError extends AppError {
     );
   }
 }
+
+export class InvalidGroupError extends AppError {
+  constructor(groupId: number) {
+    super(
+      InvalidGroupError.name,
+      `Group ${groupId} does not exist or is invalid`,
+      HTTP_STATUS.BAD_REQUEST,
+    );
+  }
+}

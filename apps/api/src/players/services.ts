@@ -1,8 +1,9 @@
 import { db, queueItems, playHistory, groups } from '../database/index';
 import { eq, and, asc, desc, sql } from 'drizzle-orm';
+import { Bot } from 'grammy';
 import { Youtube } from '@teleplay/youtube';
-import { NoVideoFoundError } from './errors';
-import { isNil, App } from '@teleplay/core';
+import { NoVideoFoundError, InvalidGroupError } from './errors';
+import { isNil, App, tryCatch } from '@teleplay/core';
 import {
   PlayEvent,
   PauseEvent,
@@ -16,10 +17,19 @@ import {
 import { PLAYER_STATUS } from '../groups';
 
 const youtubeClient = new Youtube(App.getOrThrow('YOUTUBE_API_KEY'));
+const bot = new Bot(App.getOrThrow('TELEGRAM_BOT_TOKEN'));
 
 export const search = (query: string) => youtubeClient.search(query);
 export const getTrending = () => youtubeClient.trending();
 export const getCategories = () => youtubeClient.categories();
+
+export async function existingGroup(groupId: number): Promise<void> {
+  const [err] = await tryCatch(async () => await bot.api.getChat(groupId));
+
+  if (err) {
+    throw new InvalidGroupError(groupId);
+  }
+}
 
 export async function first(groupId: number) {
   return db.query.groups.findFirst({
@@ -33,6 +43,8 @@ export async function play(
   requestedBy?: string,
   groupName?: string,
 ) {
+  await existingGroup(groupId);
+
   const group = await first(groupId);
 
   const results = await search(query);
@@ -117,6 +129,8 @@ export async function play(
 }
 
 export async function pause(groupId: number) {
+  await existingGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, status: PLAYER_STATUS.PAUSED })
@@ -126,6 +140,8 @@ export async function pause(groupId: number) {
 }
 
 export async function resume(groupId: number) {
+  await existingGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, status: PLAYER_STATUS.PLAYING })
@@ -135,6 +151,8 @@ export async function resume(groupId: number) {
 }
 
 export async function stop(groupId: number) {
+  await existingGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, status: PLAYER_STATUS.STOPPED })
@@ -144,6 +162,8 @@ export async function stop(groupId: number) {
 }
 
 export async function skip(groupId: number) {
+  await existingGroup(groupId);
+
   const group = await first(groupId);
 
   if (
@@ -212,6 +232,8 @@ export async function skip(groupId: number) {
 }
 
 export async function videoEnded(groupId: number) {
+  await existingGroup(groupId);
+
   const group = await first(groupId);
 
   if (group?.videoId) {
@@ -276,6 +298,8 @@ export async function videoEnded(groupId: number) {
 }
 
 export async function playFromQueue(groupId: number, itemId: number) {
+  await existingGroup(groupId);
+
   const items = await db
     .select()
     .from(queueItems)
@@ -330,6 +354,8 @@ export async function playFromQueue(groupId: number, itemId: number) {
 }
 
 export async function setVolume(groupId: number, volume: number) {
+  await existingGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, volume })
@@ -339,6 +365,8 @@ export async function setVolume(groupId: number, volume: number) {
 }
 
 export async function setPosition(groupId: number, position: number) {
+  await existingGroup(groupId);
+
   await db
     .insert(groups)
     .values({ id: groupId, position })
@@ -348,6 +376,8 @@ export async function setPosition(groupId: number, position: number) {
 }
 
 export async function getQueue(groupId: number) {
+  await existingGroup(groupId);
+
   return db
     .select()
     .from(queueItems)
@@ -361,6 +391,8 @@ export async function addToQueue(
   requestedBy?: string,
   groupName?: string,
 ) {
+  await existingGroup(groupId);
+
   const results = await search(query);
   const video = results[0];
   if (!video) {
@@ -388,6 +420,8 @@ export async function addToQueue(
 }
 
 export async function removeFromQueue(groupId: number, itemId: number) {
+  await existingGroup(groupId);
+
   await db
     .delete(queueItems)
     .where(and(eq(queueItems.id, itemId), eq(queueItems.groupId, groupId)));
@@ -396,6 +430,8 @@ export async function removeFromQueue(groupId: number, itemId: number) {
 }
 
 export async function clearQueue(groupId: number) {
+  await existingGroup(groupId);
+
   await db.delete(queueItems).where(eq(queueItems.groupId, groupId));
 
   new QueueUpdatedEvent().toRoom(groupId);
