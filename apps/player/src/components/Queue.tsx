@@ -10,9 +10,16 @@ import type { QueueItem as ApiQueueItem } from '@/api/players';
 interface QueueProps {
   items: ApiQueueItem[];
   playerId: string;
+  currentVideoId: string | null;
+  onPlayFromQueue?: (item: ApiQueueItem) => void;
 }
 
-export function Queue({ items, playerId }: QueueProps) {
+export function Queue({
+  items,
+  playerId,
+  currentVideoId,
+  onPlayFromQueue,
+}: QueueProps) {
   const [playingId, setPlayingId] = useState<number | null>(null);
 
   const formatDuration = (seconds: number) => {
@@ -22,6 +29,9 @@ export function Queue({ items, playerId }: QueueProps) {
   };
 
   const handlePlay = async (itemId: number) => {
+    const item = items.find((i) => i.id === itemId);
+    if (!item) return;
+
     setPlayingId(itemId);
     const [err] = await tryCatch(
       api.players.playFromQueue(Number(playerId), itemId),
@@ -29,6 +39,7 @@ export function Queue({ items, playerId }: QueueProps) {
     if (err) {
       toast.error('Failed to play from queue');
     } else {
+      onPlayFromQueue?.(item);
       toast.success('Now playing from queue');
     }
     setPlayingId(null);
@@ -55,7 +66,11 @@ export function Queue({ items, playerId }: QueueProps) {
               key={item.id}
               onClick={() => handlePlay(item.id)}
               disabled={playingId === item.id}
-              className="w-full flex items-center gap-3 p-3 bg-bg-surface hover:bg-bg-card-alt rounded-md transition-colors text-left disabled:opacity-50"
+              className={`w-full flex items-center gap-3 p-3 rounded-md transition-colors text-left disabled:opacity-50 ${
+                item.videoId === currentVideoId
+                  ? 'bg-spotify-green/20 border-l-4 border-spotify-green'
+                  : 'bg-bg-surface hover:bg-bg-card-alt'
+              }`}
             >
               <img
                 src={item.thumbnail}

@@ -122,7 +122,23 @@ export function Player({ player }: PlayerProps) {
               {activeTab === 'search' ? (
                 <SearchPanel playerId={String(player.id)} />
               ) : (
-                <Queue items={queue} playerId={String(player.id)} />
+                <Queue
+                  items={queue}
+                  playerId={String(player.id)}
+                  currentVideoId={state.videoId}
+                  onPlayFromQueue={(item) => {
+                    setState((prev) => ({
+                      ...prev,
+                      status: 'playing',
+                      videoId: item.videoId,
+                      title: item.title,
+                      thumbnail: item.thumbnail,
+                      duration: item.duration,
+                      requestedBy: item.requestedBy,
+                      position: 0,
+                    }));
+                  }}
+                />
               )}
             </div>
           </div>
