@@ -8,7 +8,7 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ) {
-  const timestamp = Math.floor(Date.now() / 1000);
+  const timestamp = new Date().toISOString();
 
   if (err instanceof AppError) {
     res.status(err.statusCode).json({
@@ -24,7 +24,7 @@ export function errorHandler(
 
   res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     error: {
-      code: 'INTERNAL_ERROR',
+      status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
       message: 'An unexpected error occurred',
       timestamp,
     },
