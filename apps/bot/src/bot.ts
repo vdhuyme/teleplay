@@ -24,6 +24,7 @@ import {
   volumeCommand,
   removeCommand,
   playFromQueueCommand,
+  shareCommand,
 } from './commands';
 
 const bot = new Bot(App.getOrThrow('TELEGRAM_BOT_TOKEN'));
@@ -48,6 +49,7 @@ bot.command('queue', queueCommand);
 bot.command('now', nowCommand);
 bot.command('volume', volumeCommand);
 bot.command('clear', clearCommand);
+bot.command('share', shareCommand);
 bot.command('suggest', suggestCommand);
 bot.command('remove', removeCommand);
 bot.command('playfromqueue', playFromQueueCommand);

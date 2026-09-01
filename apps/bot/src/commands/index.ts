@@ -13,3 +13,4 @@ export * from './now.command';
 export * from './suggest.command';
 export * from './remove.command';
 export * from './playfromqueue.command';
+export * from './share.command';

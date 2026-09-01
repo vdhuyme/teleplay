@@ -12,9 +12,8 @@ export type Environment = (typeof Environment)[keyof typeof Environment];
 export const API_ENV_KEYS = {
   DATABASE_URL: 'DATABASE_URL',
   YOUTUBE_API_KEY: 'YOUTUBE_API_KEY',
+  TELEGRAM_BOT_TOKEN: 'TELEGRAM_BOT_TOKEN',
   PORT: 'PORT',
-  API_URL: 'API_URL',
-  SOCKET_PATH: 'SOCKET_PATH',
 } as const;
 
 export const BOT_ENV = {
@@ -22,9 +21,14 @@ export const BOT_ENV = {
   API_URL: 'API_URL',
 } as const;
 
+export const CLIENT_ENV = {
+  CLIENT_URL: 'CLIENT_URL',
+} as const;
+
 type EnvKey =
   | (typeof API_ENV_KEYS)[keyof typeof API_ENV_KEYS]
-  | (typeof BOT_ENV)[keyof typeof BOT_ENV];
+  | (typeof BOT_ENV)[keyof typeof BOT_ENV]
+  | (typeof CLIENT_ENV)[keyof typeof CLIENT_ENV];
 
 /**
  * A utility class for managing application environment variables and providing

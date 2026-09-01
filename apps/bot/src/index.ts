@@ -31,6 +31,10 @@ bot.start({
           description: 'Play a specific song from queue',
         },
         { command: 'help', description: 'Show help' },
+        {
+          command: 'share',
+          description: 'Share the player link with others',
+        },
       ]),
     );
 
