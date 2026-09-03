@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, ListMusic } from 'lucide-react';
+import { Search, ListMusic, Volume2, VolumeX } from 'lucide-react';
 import { usePlayerState } from '@/hooks/usePlayerState';
 import { PlayerHeader } from './player/PlayerHeader';
 import { NowPlaying } from './player/NowPlaying';
@@ -17,19 +17,26 @@ interface PlayerProps {
 
 export function Player({ player }: PlayerProps) {
   const [activeTab, setActiveTab] = useState<'search' | 'queue'>('search');
-  const { state, setState, queue, connected, handleVideoEnded } =
-    usePlayerState(String(player.id), {
-      initialState: {
-        status: player.status as SocketPlayerState['status'],
-        videoId: player.videoId,
-        title: player.title,
-        thumbnail: player.thumbnail,
-        duration: player.duration,
-        position: player.position,
-        volume: player.volume,
-        requestedBy: player.requestedBy,
-      },
-    });
+  const {
+    state,
+    setState,
+    queue,
+    connected,
+    handleVideoEnded,
+    ttsEnabled,
+    toggleTts,
+  } = usePlayerState(String(player.id), {
+    initialState: {
+      status: player.status as SocketPlayerState['status'],
+      videoId: player.videoId,
+      title: player.title,
+      thumbnail: player.thumbnail,
+      duration: player.duration,
+      position: player.position,
+      volume: player.volume,
+      requestedBy: player.requestedBy,
+    },
+  });
 
   const handlePause = () => setState((prev) => ({ ...prev, status: 'paused' }));
 
@@ -82,6 +89,29 @@ export function Player({ player }: PlayerProps) {
               onStop={handleStop}
               onVolumeChange={handleVolumeChange}
             />
+
+            <div className="flex items-center gap-2 mt-3">
+              <button
+                onClick={toggleTts}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-medium transition-colors ${
+                  ttsEnabled
+                    ? 'bg-spotify-green/20 text-spotify-green'
+                    : 'bg-bg-surface text-text-secondary hover:text-text-base'
+                }`}
+                title={
+                  ttsEnabled
+                    ? 'Tắt thông báo âm thanh'
+                    : 'Bật thông báo âm thanh'
+                }
+              >
+                {ttsEnabled ? (
+                  <Volume2 className="w-3.5 h-3.5" />
+                ) : (
+                  <VolumeX className="w-3.5 h-3.5" />
+                )}
+                <span>Thông báo</span>
+              </button>
+            </div>
           </div>
         </div>
 

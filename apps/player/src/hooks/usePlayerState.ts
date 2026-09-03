@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePlayerSocket } from './usePlayerSocket';
+import { useTtsAnnouncement } from './useTtsAnnouncement';
 import * as api from '@/api';
 import { tryCatch } from '@teleplay/core';
 import { SOCKET_EVENTS } from '@/socket/events';
@@ -34,6 +35,7 @@ export function usePlayerState(
   const [queue, setQueue] = useState<api.players.QueueItem[]>([]);
 
   const { connected, lastEvent } = usePlayerSocket(playerId);
+  const tts = useTtsAnnouncement();
 
   useEffect(() => {
     if (!lastEvent) return;
@@ -52,6 +54,9 @@ export function usePlayerState(
           duration: lastEvent.duration,
           requestedBy: lastEvent.requestedBy,
         }));
+        if (lastEvent.title && lastEvent.requestedBy) {
+          tts.announce(lastEvent.title, lastEvent.requestedBy);
+        }
         break;
       case SOCKET_EVENTS.PAUSE:
         setState((prev) => ({ ...prev, status: 'paused' }));
@@ -112,5 +117,7 @@ export function usePlayerState(
     connected,
     fetchQueue,
     handleVideoEnded,
+    ttsEnabled: tts.enabled,
+    toggleTts: tts.toggle,
   };
 }
